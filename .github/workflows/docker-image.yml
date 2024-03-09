@@ -27,5 +27,9 @@ jobs:
       env:
         IMAGE_TAG: ${{ github.sha }} # 用于标记容器版本号
       run: |
-        docker build -t registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG .
-        docker push registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG
+        docker build \
+          --file Docker/Dockerfile \
+          -t registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG \
+          .
+        docker push \
+          registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG
