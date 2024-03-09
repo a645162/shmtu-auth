@@ -1,8 +1,9 @@
 import threading
 from time import sleep as time_sleep
 
-from shmtuauth.src.core.shmtu_auth import ShmtuNetAuth
-from shmtuauth.utils import get_env_int, get_user_list
+from ..core.shmtu_auth import ShmtuNetAuth
+from ..utils.env import get_env_int
+from ..utils.program_env_config import get_user_list
 
 # 检测时间间隔，单位：秒
 time_interval = 60

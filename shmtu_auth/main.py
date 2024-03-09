@@ -1,4 +1,4 @@
-from shmtuauth.src.monitor import auth_status
+from src.monitor import auth_status
 
 if __name__ == '__main__':
     # SHMTU Auth

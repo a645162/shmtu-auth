@@ -13,15 +13,6 @@ export SHMTU_AUTH_RETRY="10"
 # --------------------------------------------------
 
 # --------------------------------------------------
-# HardDriverMonitorTool
-# --------------------------------------------------
-
-# --------------------------------------------------
-# IPMonitorTool
-export SHMTU_AUTH_MONITOR_IP_TIME_INTERVAL="5"
-# --------------------------------------------------
-
-# --------------------------------------------------
 # Notify
 export SHMTU_AUTH_WEBHOOK_WEWORK_DEPLOY=""
 export SHMTU_AUTH_WEBHOOK_WEWORK_TEST=""

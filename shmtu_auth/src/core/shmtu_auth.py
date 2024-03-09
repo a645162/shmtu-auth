@@ -1,4 +1,4 @@
-from shmtuauth.src.core.core import ShmtuNetAuthCore
+from ..core.core import ShmtuNetAuthCore
 
 
 class ShmtuNetAuth(ShmtuNetAuthCore):

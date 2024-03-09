@@ -2,9 +2,9 @@ import json
 
 import requests as req
 
-from shmtuauth.src.core.core_exp import *
-from shmtuauth.src.core.shmtu_auth_const_value import *
-from shmtuauth.utils.program_env_config import *
+from ..core.core_exp import check_is_connected, get_query_string
+from ..core.shmtu_auth_const_value import ServiceType
+from ..utils.env import get_env_str
 
 
 class ShmtuNetAuthCore:

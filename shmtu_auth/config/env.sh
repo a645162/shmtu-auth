@@ -13,15 +13,6 @@ CheckAndLoadEnvVariable "SHMTU_AUTH_RETRY" "10"
 # --------------------------------------------------
 
 # --------------------------------------------------
-# HardDriverMonitorTool
-# --------------------------------------------------
-
-# --------------------------------------------------
-# IPMonitorTool
-CheckAndLoadEnvVariable "SHMTU_AUTH_MONITOR_IP_TIME_INTERVAL" "5"
-# --------------------------------------------------
-
-# --------------------------------------------------
 # Notify
 CheckAndLoadEnvVariable "SHMTU_AUTH_WEBHOOK_WEWORK_DEPLOY" ""
 CheckAndLoadEnvVariable "SHMTU_AUTH_WEBHOOK_WEWORK_TEST" ""

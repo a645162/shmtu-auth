@@ -5,11 +5,6 @@ global:
 AuthTool:
   SHMTU_AUTH_RETRY: 10
 
-HardDriverMonitorTool:
-
-IPMonitorTool:
-  SHMTU_AUTH_MONITOR_IP_TIME_INTERVAL: 5
-
 Notify:
   SHMTU_AUTH_WEBHOOK_WEWORK_DEPLOY: ""
   SHMTU_AUTH_WEBHOOK_WEWORK_TEST: ""

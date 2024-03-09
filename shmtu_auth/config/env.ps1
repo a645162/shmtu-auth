@@ -21,17 +21,6 @@ CheckAndLoadEnvVariable `
 # --------------------------------------------------
 
 # --------------------------------------------------
-# HardDriverMonitorTool
-# --------------------------------------------------
-
-# --------------------------------------------------
-# IPMonitorTool
-CheckAndLoadEnvVariable `
-	-EnvVariableName "SHMTU_AUTH_MONITOR_IP_TIME_INTERVAL" `
-	-DefaultValue "5"
-# --------------------------------------------------
-
-# --------------------------------------------------
 # Notify
 CheckAndLoadEnvVariable `
 	-EnvVariableName "SHMTU_AUTH_WEBHOOK_WEWORK_DEPLOY" `
