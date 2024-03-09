@@ -3,15 +3,14 @@ MAINTAINER Haomin Kong
 
 LABEL AUTHOR="Haomin Kong" VERSION=3
 
-WORKDIR /ysuauth
-
 ENV BASE_PATH="/usr/local/shmtu/shmtu-auth"
 
-ENV LOGS_PATH="$BASE_PATH/logs" \
-    SETTINGS_PATH="$BASE_PATH/settings"
+WORKDIR "$BASE_PATH"
+
+ENV LOGS_PATH="$BASE_PATH/logs"
 
 # Copy Directory
-COPY shmtu_auth/* "$BASE_PATH/"
+COPY shmtu_auth/ "$BASE_PATH/"
 
 # Copy Files
 COPY requirements.txt $BASE_PATH/requirements.txt
@@ -35,4 +34,4 @@ RUN echo "[global] \
     && echo "Asia/Shanghai" > /etc/timezone \
     && chmod +x "$BASE_PATH/start.sh"
 
-ENTRYPOINT ["$BASE_PATH/start.sh"]
+ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/start.sh"]

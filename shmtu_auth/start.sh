@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Load Functions
 source ./scripts/env_func.sh

@@ -1,0 +1,26 @@
+version: "3"
+services:
+  shmtu_auth_1: #第1个
+    image: a645162/shmtu_auth:latest
+    restart: always
+    container_name: shmtu_auth
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 200M
+    network_mode: host
+    tty: true
+    volumes:
+      - /root/shmtu/auth/logs:/usr/local/shmtu/shmtu-auth/logs
+    environment:
+      # 1、每个学生之间使用&隔开
+      # 2、每个学生，请提供其对应密码
+      # 3、请将大括号一并删除
+      - SHMTU_AUTH_USER_LIST=学号1;学号2;学号3
+      - SHMTU_AUTH_USER_PWD_学号1=学号1的密码
+      - SHMTU_AUTH_USER_PWD_学号2=学号2的密码
+      - SHMTU_AUTH_USER_PWD_学号3=学号3的密码
