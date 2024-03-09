@@ -1,0 +1,29 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to Aliyun Container Registry (ACR)
+      uses: aliyun/acr-login@v1 # 使用阿里云镜像服务action
+      with:
+        login-server: registry.cn-shanghai.aliyuncs.com
+        region-id: cn-shanghai
+        access-key-id: '${{ secrets.ALIYUNACCESSKEYID }}'
+        access-key-secret: '${{ secrets.ALIYUNACCESSKEYSECRET }}'
+    - name: Build and Push Docker Image
+      env:
+        IMAGE_TAG: ${{ github.sha }} # 用于标记容器版本号
+      run: |
+        docker build -t registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG .
+        docker push registry.cn-shanghai.aliyuncs.com/khm_school/shmtu-auth:$IMAGE_TAG
