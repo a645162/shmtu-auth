@@ -17,8 +17,29 @@ jobs:
         with:
           submodules: true
 
-      #      - uses: docker/setup-qemu-action@v3
-      #      - uses: docker/setup-buildx-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Aliyun Region
+        env:
+          ACR_REGION: cn-shanghai
+        run: |
+          echo "ACR_REGION=$ACR_REGION" >> $GITHUB_ENV
+          echo "ACR_REGISTRY=registry.${ACR_REGION}.aliyuncs.com" >> $GITHUB_ENV
+
+      - name: Confirm Aliyun ACR
+        run: |
+          echo "Aliyun ACR REGION=$ACR_REGION"
+          echo "Aliyun ACR REGISTRY=$ACR_REGISTRY"
+
+      - name: Login to Aliyun Container Registry (ACR)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -26,40 +47,52 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Set up Aliyun Region
-        env:
-          ACR_REGION: cn-hangzhou
-          ACR_REGISTRY: registry.$ACR_REGION.aliyuncs.com
-        run: echo "Aliyun ACR $ACR_REGION"
+      - name: Check and set image version
+        id: prepare
+        run: |
+          case ${{ github.ref }} in
+            refs/heads/master)
+              echo ::set-output name=version::edge
+              echo ::set-output name=push::true
+            ;;
+            refs/tags/*)
+              echo ::set-output name=version::$(echo ${{ github.ref }} | sed -E 's|refs/tags/||')
+              echo ::set-output name=push::true
+            ;;
+            *)
+              echo ::set-output name=version::${{ github.sha }}
+              echo ::set-output name=push::false
+            ;;
+          esac;
 
-      - name: Login to Aliyun Container Registry (ACR)
-        uses: aliyun/acr-login@v1 # 使用阿里云镜像服务action
-        with:
-          login-server: $ACR_REGISTRY
-          region-id: $ACR_REGION
-          username: ${{ secrets.ALIYUN_USERNAME }}
-          password: ${{ secrets.ALIYUN_PASSWORD }}
-
-      - name: Build the Docker image
+      - name: Set up Image Tags
         env:
-          #          IMAGE_TAG: ${{ github.sha }}
+          GITHUB_SHA: ${{ github.sha }}
           IMAGE_TAG: latest
         run: |
-          docker build \
+          echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Build the Docker image
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64,linux/386,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x \
             --file Docker/Dockerfile \
             -t ${{ github.repository }}:$IMAGE_TAG \
-            -t registry.cn-hangzhou.aliyuncs.com/${{ github.repository }}:$IMAGE_TAG \
+            -t $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG \
             .
 
-          echo "TAG:${{ github.repository }}:$IMAGE_TAG"
+          echo "Docker HUB TAG:${{ github.repository }}:$IMAGE_TAG"
+          echo "Aliyun ACR TAG:$ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG"
 
       - name: Push Image to Docker Hub
         run: |
+          echo "Try to push to ${{ github.repository }}:$IMAGE_TAG"
           docker push \
-          ${{ github.repository }}:$IMAGE_TAG
+            ${{ github.repository }}:$IMAGE_TAG
 
       - name: Push Image to Aliyun Container Registry (ACR)
         run: |
           echo "Try to push to $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG"
-          docker push \
-            $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG
+          docker push $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG

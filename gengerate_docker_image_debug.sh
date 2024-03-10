@@ -9,4 +9,5 @@ docker build \
   --progress=plain \
   -f Docker/Dockerfile \
   -t a645162/shmtu_auth:latest \
+  -t registry.cn-hangzhou.aliyuncs.com/a645162/shmtu_auth:latest \
   .
