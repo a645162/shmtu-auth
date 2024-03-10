@@ -1,14 +1,16 @@
-name: Docker Image CI
+name: Docker Image Release CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+    tags:
+      - v*
+      - latest
 
 jobs:
 
-  build:
+  build-docker-image-tag:
 
     runs-on: ubuntu-latest
 
@@ -47,13 +49,23 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: Set up Image Tags
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          IMAGE_TAG: latest
+        run: |
+          echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "Tag string: ${{github.ref}}"
+
       - name: Check and set image version
-        id: prepare
+        id: prepare_tag
         run: |
           case ${{ github.ref }} in
-            refs/heads/master)
+            refs/heads/main)
               echo ::set-output name=version::edge
-              echo ::set-output name=push::true
+              echo ::set-output name=push::false
             ;;
             refs/tags/*)
               echo ::set-output name=version::$(echo ${{ github.ref }} | sed -E 's|refs/tags/||')
@@ -65,16 +77,13 @@ jobs:
             ;;
           esac;
 
-      - name: Set up Image Tags
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-          IMAGE_TAG: latest
+      - name: Show version and push settings
         run: |
-          echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_ENV
-          echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "Setting-Version: ${{ steps.prepare_tag.outputs.version }}"
+          echo "Setting-Push: ${{ steps.prepare_tag.outputs.push }}"
 
       - name: Build & Push image
+        id: docker_build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -87,7 +96,10 @@ jobs:
             linux/arm/v6,
             linux/ppc64le,
             linux/s390x
-          push: true
-          tags:
-            ${{ github.repository }}:${{ env.IMAGE_TAG }},
-            ${{ env.ACR_REGISTRY }}/${{ github.repository }}:${{ env.IMAGE_TAG }}
+          push: ${{ steps.prepare_tag.outputs.push }}
+          tags: |
+            ${{ github.repository }}:${{ steps.prepare_tag.outputs.version }},
+            ${{ env.ACR_REGISTRY }}/${{ github.repository }}:${{ steps.prepare_tag.outputs.version }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
