@@ -74,25 +74,20 @@ jobs:
           echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Build the Docker image
-        run: |
-          docker buildx build \
-            --platform linux/amd64,linux/arm64,linux/386,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x \
-            --file Docker/Dockerfile \
-            -t ${{ github.repository }}:$IMAGE_TAG \
-            -t $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG \
-            .
-
-          echo "Docker HUB TAG:${{ github.repository }}:$IMAGE_TAG"
-          echo "Aliyun ACR TAG:$ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG"
-
-      - name: Push Image to Docker Hub
-        run: |
-          echo "Try to push to ${{ github.repository }}:$IMAGE_TAG"
-          docker push \
-            ${{ github.repository }}:$IMAGE_TAG
-
-      - name: Push Image to Aliyun Container Registry (ACR)
-        run: |
-          echo "Try to push to $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG"
-          docker push $ACR_REGISTRY/${{ github.repository }}:$IMAGE_TAG
+      - name: Build & Push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Docker/Dockerfile
+          platforms:
+            linux/amd64,
+            linux/arm64,
+            linux/386,
+            linux/arm/v7,
+            linux/arm/v6,
+            linux/ppc64le,
+            linux/s390x
+          push: true
+          tags:
+            ${{ github.repository }}:${{ env.IMAGE_TAG }},
+            ${{ env.ACR_REGISTRY }}/${{ github.repository }}:${{ env.IMAGE_TAG }}
