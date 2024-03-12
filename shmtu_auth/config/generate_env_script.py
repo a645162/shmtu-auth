@@ -102,12 +102,12 @@ def save_env_script(
     script_pwsh = f"{str_public_comment}{script_pwsh}"
 
     with open(sh_path, 'w') as file:
-        file.write(script_sh)
+        file.write(script_sh.strip() + "\n")
     convert_to_lf(sh_path)
     print(f"Write sh to {sh_path}")
 
     with open(pwsh_path, 'w') as file:
-        file.write(script_pwsh)
+        file.write(script_pwsh.strip() + "\n")
     convert_to_crlf(pwsh_path)
     print(f"Write pwsh to {pwsh_path}")
 

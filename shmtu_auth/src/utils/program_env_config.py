@@ -35,6 +35,10 @@ def get_user_list():
     return return_list
 
 
+def convert_password_to_star(password: str) -> str:
+    return "*" * len(password)
+
+
 if __name__ == "__main__":
     my_variable_value = get_env_str("SHMTU_AUTH_USER_LIST", "")
     print(my_variable_value)

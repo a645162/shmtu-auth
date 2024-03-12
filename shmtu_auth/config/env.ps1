@@ -45,4 +45,3 @@ CheckAndLoadEnvVariable `
 	-EnvVariableName "SHMTU_AUTH_USER_PWD_202300000000" `
 	-DefaultValue "202300000000"
 # --------------------------------------------------
-

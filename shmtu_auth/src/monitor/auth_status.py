@@ -3,7 +3,7 @@ from time import sleep as time_sleep
 
 from ..core.shmtu_auth import ShmtuNetAuth
 from ..utils.env import get_env_int
-from ..utils.program_env_config import get_user_list
+from ..utils.program_env_config import get_user_list, convert_password_to_star
 
 # 检测时间间隔，单位：秒
 time_interval = 60
@@ -14,15 +14,25 @@ if env_time_interval > 0:
 
 
 def monitor_auth():
-    print("Auth status monitor started.")
-
+    print("Initializing...")
     net_auth = ShmtuNetAuth()
 
+    print("Reading user information...")
     user_list_3 = get_user_list()
 
     if len(user_list_3) == 0:
         print("No user information found.")
         return
+
+    user_count = len(user_list_3)
+    print(f"Found {user_count} user:")
+    for i in range(user_count):
+        user = user_list_3[i]
+        user_name = user[0]
+        password = convert_password_to_star(user[1])
+        print(f"[{i + 1}]User: {user_name}, Password: {password}")
+
+    print("Auth status monitor started.")
 
     while True:
         if not net_auth.check_is_online():
