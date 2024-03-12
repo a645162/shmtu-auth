@@ -3,7 +3,8 @@ from time import sleep as time_sleep
 
 from ..core.shmtu_auth import ShmtuNetAuth
 from ..utils.env import get_env_int
-from ..utils.program_env_config import get_user_list, convert_password_to_star
+from ..utils.program_env_config import convert_password_to_star, convert_number_to_star
+from ..utils.program_env_config import get_user_list
 
 from ..utils.logs import *
 
@@ -30,7 +31,7 @@ def monitor_auth():
     logger.info(f"Found {user_count} user:")
     for i in range(user_count):
         user = user_list_3[i]
-        user_name = user[0]
+        user_name = convert_number_to_star(user[0])
         password = convert_password_to_star(user[1])
         logger.info(f"[{i + 1}]User: {user_name}, Password: {password}")
 

@@ -38,7 +38,8 @@ class ShmtuNetAuthCore:
         :return: 是否已经认证
         """
         self.isLogin = check_is_connected()
-        logger.info(f"Network Auth Status: {self.isLogin}")
+        if not self.isLogin:
+            logger.info(f"Network Auth Status: {self.isLogin}")
         return self.isLogin
 
     def test_net_by_ismu(self) -> bool:
