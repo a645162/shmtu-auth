@@ -16,25 +16,25 @@ if env_time_interval > 0:
 
 
 def monitor_auth():
-    print("Initializing...")
+    logger.info("Initializing...")
     net_auth = ShmtuNetAuth()
 
-    print("Reading user information...")
+    logger.info("Reading user information...")
     user_list_3 = get_user_list()
 
     if len(user_list_3) == 0:
-        print("No user information found.")
+        logger.error("No user information found.")
         return
 
     user_count = len(user_list_3)
-    print(f"Found {user_count} user:")
+    logger.info(f"Found {user_count} user:")
     for i in range(user_count):
         user = user_list_3[i]
         user_name = user[0]
         password = convert_password_to_star(user[1])
-        print(f"[{i + 1}]User: {user_name}, Password: {password}")
+        logger.info(f"[{i + 1}]User: {user_name}, Password: {password}")
 
-    print("Auth status monitor started.")
+    logger.info("Auth status monitor started.")
 
     while True:
         if not net_auth.check_is_online():
