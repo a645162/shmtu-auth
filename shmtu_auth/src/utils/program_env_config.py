@@ -35,6 +35,14 @@ def get_user_list():
     return return_list
 
 
+def convert_number_to_star(number: str) -> str:
+    length = len(number)
+    if length == 12:
+        new_str = number[0:4] + "*****" + number[9:12]
+        return new_str
+    return "*" * length
+
+
 def convert_password_to_star(password: str) -> str:
     return "*" * len(password)
 
