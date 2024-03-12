@@ -1,4 +1,5 @@
 import yaml
+from end_line import convert_to_crlf, convert_to_lf
 
 
 def read_yaml(file_path: str = 'env_list.yaml') -> dict:
@@ -102,10 +103,12 @@ def save_env_script(
 
     with open(sh_path, 'w') as file:
         file.write(script_sh)
+    convert_to_lf(sh_path)
     print(f"Write sh to {sh_path}")
 
     with open(pwsh_path, 'w') as file:
         file.write(script_pwsh)
+    convert_to_crlf(pwsh_path)
     print(f"Write pwsh to {pwsh_path}")
 
 

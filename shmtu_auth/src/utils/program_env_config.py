@@ -1,4 +1,4 @@
-from ..utils.env import get_env_str
+from .env import get_env_str
 
 
 def get_user_num_list():

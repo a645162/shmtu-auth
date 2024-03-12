@@ -36,3 +36,13 @@ CheckAndLoadEnvVariable `
 	-DefaultValue "$SHMTU_AUTH_WEBHOOK_WEWORK_TEST"
 # --------------------------------------------------
 
+# --------------------------------------------------
+# Test
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_AUTH_USER_LIST" `
+	-DefaultValue "202300000000"
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_AUTH_USER_PWD_202300000000" `
+	-DefaultValue "202300000000"
+# --------------------------------------------------
+

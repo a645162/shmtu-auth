@@ -7,9 +7,11 @@
 . ./config/env.ps1
 
 Write-Host "Python path:"
-which python
+Get-Command python
+Write-Host ""
 
 Write-Host "Python version:"
 python --version
+Write-Host ""
 
 python main.py

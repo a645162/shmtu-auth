@@ -20,3 +20,9 @@ $env:SHMTU_AUTH_WEBHOOK_WEWORK = "$SHMTU_AUTH_WEBHOOK_WEWORK_DEPLOY"
 $env:SHMTU_AUTH_WEBHOOK_WEWORK_WARNING = "$SHMTU_AUTH_WEBHOOK_WEWORK_TEST"
 # --------------------------------------------------
 
+# --------------------------------------------------
+# Test
+$env:SHMTU_AUTH_USER_LIST = "202300000000"
+$env:SHMTU_AUTH_USER_PWD_202300000000 = "202300000000"
+# --------------------------------------------------
+

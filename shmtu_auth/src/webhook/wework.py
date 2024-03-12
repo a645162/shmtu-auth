@@ -5,8 +5,8 @@ from time import sleep as time_sleep
 
 import requests
 
-from shmtuauth.utils import my_time
-from shmtuauth.utils.env import *
+from ..utils import my_time
+from ..utils.env import get_env_str, get_env_time
 
 ENV_VAR_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK"
 WARNING_ENV_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK_WARNING"
@@ -118,10 +118,3 @@ if __name__ == "__main__":
         f"Test Pass!\n",
         mentioned_id=["khm"],
     )
-
-    # direct_send_markdown(
-    #     f"# GPU Monitor\n"
-    #     f"## Machine Name\n{machine_name}\n"
-    #     f"## Time\n{formatted_time}\n"
-    #     f"# Test Pass!\n"
-    # )

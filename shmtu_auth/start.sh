@@ -8,8 +8,10 @@ source ./config/env.sh
 
 echo "Python path:"
 which python
+echo ""
 
 echo "Python version:"
 python --version
+echo ""
 
 python main.py
