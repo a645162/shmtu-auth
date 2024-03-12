@@ -15,8 +15,10 @@ COPY shmtu_auth/ "$BASE_PATH/"
 # Copy Files
 COPY requirements.txt $BASE_PATH/requirements.txt
 
-RUN pip3 --no-cache-dir install -i https://pypi.tuna.tsinghua.edu.cn/simple pip -U \
-    && pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
+RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
+    && sed -i 's/\r$//' $BASE_PATH/scripts/*.sh \
+    && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
+    && apk add --no-cache bash \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
     && rm -f $BASE_PATH/requirements.txt \
     && rm -rf ~/.cache/pip \
@@ -24,6 +26,10 @@ RUN pip3 --no-cache-dir install -i https://pypi.tuna.tsinghua.edu.cn/simple pip 
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo Haomin Kong >> /docker_author \
     && echo "Asia/Shanghai" > /etc/timezone \
+    && mkdir $BASE_PATH/logs \
     && chmod +x "$BASE_PATH/start.sh"
 
 ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/start.sh"]
+
+# For Debug
+#ENTRYPOINT ["top"]

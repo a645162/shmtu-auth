@@ -1,4 +1,4 @@
-from ..utils.env import get_env_str
+from .env import get_env_str
 
 
 def get_user_num_list():
@@ -33,6 +33,10 @@ def get_user_list():
             return_list.append((truly_user_num, pwd, is_encrypt))
 
     return return_list
+
+
+def convert_password_to_star(password: str) -> str:
+    return "*" * len(password)
 
 
 if __name__ == "__main__":
