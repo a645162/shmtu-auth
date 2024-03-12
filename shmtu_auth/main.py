@@ -1,4 +1,5 @@
 from src.monitor import auth_status
+from src.utils.logs import *
 
 if __name__ == '__main__':
     # SHMTU Auth
@@ -11,5 +12,7 @@ if __name__ == '__main__':
     print("Author: Haomin Kong")
     print("E-Mail: a645162@gmail.com")
     print("=" * star_len)
+
+    logger.info("Program Start.")
 
     auth_status.start_monitor_auth()

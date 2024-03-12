@@ -5,10 +5,12 @@ from ..core.shmtu_auth import ShmtuNetAuth
 from ..utils.env import get_env_int
 from ..utils.program_env_config import get_user_list, convert_password_to_star
 
+from ..utils.logs import *
+
 # 检测时间间隔，单位：秒
 time_interval = 60
 
-env_time_interval = get_env_int("SHMTU_AUTH_MONITOR_AUTH_TIME_INTERVAL", -1)
+env_time_interval = get_env_int("SHMTU_AUTH_TIME_INTERVAL", -1)
 if env_time_interval > 0:
     time_interval = env_time_interval
 
@@ -42,5 +44,9 @@ def monitor_auth():
 
 
 def start_monitor_auth():
+    logger.info("Create Thread")
     t = threading.Thread(target=monitor_auth)
+    logger.info("Created Thread")
+    logger.info("Start Thread")
     t.start()
+    logger.info("Thread Started.")

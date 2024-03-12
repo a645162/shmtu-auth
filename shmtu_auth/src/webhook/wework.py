@@ -9,7 +9,6 @@ from ..utils import my_time
 from ..utils.env import get_env_str, get_env_time
 
 ENV_VAR_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK"
-WARNING_ENV_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK_WARNING"
 
 machine_name = get_env_str("SHMTU_AUTH_MACHINE_NAME", "")
 
@@ -34,9 +33,6 @@ def get_wework_url(webhook_env: str = ""):
 
     webhook_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + wework_env
     return webhook_url
-
-
-webhook_warning_url = get_wework_url(get_env_str(WARNING_ENV_NAME, ""))
 
 
 def direct_send_text(
