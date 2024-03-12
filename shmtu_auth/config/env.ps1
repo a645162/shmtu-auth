@@ -5,12 +5,6 @@
 CheckAndLoadEnvVariable `
 	-EnvVariableName "SHMTU_MACHINE_NAME" `
 	-DefaultValue ""
-CheckAndLoadEnvVariable `
-	-EnvVariableName "SHMTU_WEBHOOK_SLEEP_TIME_START" `
-	-DefaultValue "23:00"
-CheckAndLoadEnvVariable `
-	-EnvVariableName "SHMTU_WEBHOOK_SLEEP_TIME_END" `
-	-DefaultValue "7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -25,6 +19,12 @@ CheckAndLoadEnvVariable `
 CheckAndLoadEnvVariable `
 	-EnvVariableName "SHMTU_AUTH_WEBHOOK_WEWORK" `
 	-DefaultValue ""
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_WEBHOOK_SLEEP_TIME_START" `
+	-DefaultValue "23:00"
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_WEBHOOK_SLEEP_TIME_END" `
+	-DefaultValue "7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------

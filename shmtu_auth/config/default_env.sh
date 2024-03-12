@@ -3,8 +3,6 @@
 # --------------------------------------------------
 # global
 export SHMTU_MACHINE_NAME=""
-export SHMTU_WEBHOOK_SLEEP_TIME_START="23:00"
-export SHMTU_WEBHOOK_SLEEP_TIME_END="7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -15,6 +13,8 @@ export SHMTU_AUTH_TIME_INTERVAL="10"
 # --------------------------------------------------
 # Notify
 export SHMTU_AUTH_WEBHOOK_WEWORK=""
+export SHMTU_WEBHOOK_SLEEP_TIME_START="23:00"
+export SHMTU_WEBHOOK_SLEEP_TIME_END="7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------

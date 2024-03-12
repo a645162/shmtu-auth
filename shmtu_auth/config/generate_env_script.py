@@ -4,11 +4,12 @@ from end_line import convert_to_crlf, convert_to_lf
 
 def read_yaml(file_path: str = 'env_list.yaml') -> dict:
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             data_dict = yaml.safe_load(file)
-    except:
+    except Exception as e:
         data_dict = {}
         print('读取文件失败，使用空字典代替')
+        print(e)
 
     return data_dict
 

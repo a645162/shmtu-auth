@@ -3,8 +3,6 @@
 # --------------------------------------------------
 # global
 $env:SHMTU_MACHINE_NAME = ""
-$env:SHMTU_WEBHOOK_SLEEP_TIME_START = "23:00"
-$env:SHMTU_WEBHOOK_SLEEP_TIME_END = "7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -15,6 +13,8 @@ $env:SHMTU_AUTH_TIME_INTERVAL = "10"
 # --------------------------------------------------
 # Notify
 $env:SHMTU_AUTH_WEBHOOK_WEWORK = ""
+$env:SHMTU_WEBHOOK_SLEEP_TIME_START = "23:00"
+$env:SHMTU_WEBHOOK_SLEEP_TIME_END = "7:00"
 # --------------------------------------------------
 
 # --------------------------------------------------
