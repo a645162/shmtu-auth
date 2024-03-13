@@ -1,5 +1,7 @@
 from src.monitor import auth_status
-from src.utils.logs import *
+from src.utils.logs import get_logger
+
+logger = get_logger()
 
 if __name__ == '__main__':
     # SHMTU Auth

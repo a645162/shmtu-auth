@@ -32,7 +32,7 @@ class ShmtuNetAuthCore:
         env_ua = get_env_str("SHMTU_AUTH_USER_AGENT", "")
         if env_ua != "":
             self.header["User-Agent"] = env_ua
-        logger.info(f"ShmtuNetAuthCore initialization complete!")
+        logger.info("ShmtuNetAuthCore initialization complete!")
 
     def test_net(self) -> bool:
         """
@@ -57,8 +57,7 @@ class ShmtuNetAuthCore:
                 self.isLogin = True
             else:
                 self.isLogin = False
-        except Exception as e:
-            # print(e)
+        except Exception:
             self.isLogin = False
         return self.isLogin
 

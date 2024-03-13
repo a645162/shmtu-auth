@@ -2,3 +2,7 @@ requests
 beautifulsoup4
 PyYaml
 loguru
+
+pytest
+pylint
+flake8
