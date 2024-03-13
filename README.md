@@ -7,13 +7,23 @@
 
 ## Usage
 
-### Windows
+### Docker(Recommended)
+
+[https://hub.docker.com/r/a645162/shmtu-auth](https://hub.docker.com/r/a645162/shmtu-auth)
+
+```bash
+docker pull registry.cn-shanghai.aliyuncs.com/a645162/shmtu-auth:latest
+```
+
+### Directly Run
+
+#### Windows
 
 ```powershell
 .\start.ps1
 ```
 
-### Linux
+#### Linux
 
 ```bash
 chmod +x start.sh
