@@ -8,7 +8,9 @@ import requests
 from ..utils import my_time
 from ..utils.env import get_env_str, get_env_time
 
-from ..utils.logs import *
+from ..utils.logs import get_logger
+
+logger = get_logger()
 
 ENV_VAR_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK"
 

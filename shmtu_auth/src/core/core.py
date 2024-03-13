@@ -6,7 +6,9 @@ from ..core.core_exp import check_is_connected, get_query_string
 from ..core.shmtu_auth_const_value import ServiceType
 from ..utils.env import get_env_str
 
-from ..utils.logs import *
+from ..utils.logs import get_logger
+
+logger = get_logger()
 
 
 class ShmtuNetAuthCore:

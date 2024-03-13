@@ -1,19 +1,19 @@
-from loguru import logger
-import datetime, os
+import os
+import loguru
+
 from ..utils.env import get_env_str
 
-current_date = datetime.datetime.today()
-formatted_date = current_date.strftime("%Y%m%d_%H%M%S")
+logger = loguru.logger
 
 log_directory_path = get_env_str("LOGS_PATH", "./logs")
-log_file_name = f"shmtu_auth_{formatted_date}.log"
+print("Log:\n" + log_directory_path)
+log_file_name = "shmtu_auth_{time}.log"
 log_path = os.path.join(log_directory_path, log_file_name)
-logger.add(log_path)
-print("Log:\n" + log_path)
+logger.add(log_path, rotation='00:00', retention='60 days')
 
 
-def get_current_date_time_str() -> str:
-    return datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+def get_logger() -> loguru.logger:
+    return logger
 
 
 if __name__ == "__main__":
