@@ -1,6 +1,6 @@
 import json
 
-import requests as req
+import requests
 
 from ..core.core_exp import check_is_connected, get_query_string
 from ..core.shmtu_auth_const_value import ServiceType
@@ -51,7 +51,7 @@ class ShmtuNetAuthCore:
         :return: 是否已经认证
         """
         try:
-            res = req.get("http://ismu.shmtu.edu.cn/", headers=self.header)
+            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header)
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
@@ -94,7 +94,7 @@ class ShmtuNetAuthCore:
 
                 self.data["queryString"] = current_query_string
 
-                res = req.post(
+                res = requests.post(
                     self.url + "login",
                     headers=self.header,
                     data=self.data
@@ -121,7 +121,7 @@ class ShmtuNetAuthCore:
         #！！！注意！！！#此操作会获得账号alldata['userId']姓名alldata['userName']以及密码alldata['password']
         :return:全部数据的字典格式
         """
-        res = req.get(
+        res = requests.get(
             self.url + "getOnlineUserInfo",
             headers=self.header
         )
@@ -143,7 +143,7 @@ class ShmtuNetAuthCore:
         # if self.alldata == None:
         #     self.get_alldata()
 
-        res = req.get(self.url + "logout", headers=self.header)
+        res = requests.get(self.url + "logout", headers=self.header)
         logout_json = json.loads(res.text)
         self.info = logout_json["message"]
         logger.info(f"Logout: {logout_json}")
