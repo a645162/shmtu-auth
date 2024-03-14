@@ -1,9 +1,10 @@
-from src.monitor import auth_status
-from src.utils.logs import get_logger
+from .monitor import auth_status
+from .utils.logs import get_logger
 
 logger = get_logger()
 
-if __name__ == '__main__':
+
+def entry():
     # SHMTU Auth
     url = "https://github.com/a645162/shmtu-auth"
     star_len = len(url) + 2
@@ -18,3 +19,7 @@ if __name__ == '__main__':
     logger.info("Program Start.")
 
     auth_status.start_monitor_auth()
+
+
+if __name__ == "__main__":
+    entry()
