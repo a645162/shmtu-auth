@@ -1,6 +1,9 @@
 # Save Current Loaction
 $baseLocation = Get-Location
 
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+
 $project_name= "shmtu_auth"
 
 $srcLocation = "$baseLocation\$project_name"

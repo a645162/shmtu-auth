@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from ..core.core_exp import check_is_connected, get_query_string
+from ..core.core_exp import check_is_connected_retry, get_query_string
 from ..core.shmtu_auth_const_value import ServiceType
 from ..utils.env import get_env_str
 
@@ -39,7 +39,7 @@ class ShmtuNetAuthCore:
         测试网络是否认证
         :return: 是否已经认证
         """
-        self.isLogin = check_is_connected()
+        self.isLogin = check_is_connected_retry(retry_times=3, wait_time=5)
         if not self.isLogin:
             logger.info(f"Network Auth Status: {self.isLogin}")
         return self.isLogin
