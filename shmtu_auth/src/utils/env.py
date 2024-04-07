@@ -12,7 +12,7 @@ def get_env_int(key, default=None):
     str_int = get_env_str(key, "")
     try:
         return int(str_int)
-    except:
+    except Exception:
         return default
 
 
@@ -23,12 +23,12 @@ def get_env_time(key, default=None):
         return default
 
     time_str_1 = time_str[:index].strip()
-    time_str_2 = time_str[index + 1 :].strip()
+    time_str_2 = time_str[index + 1:].strip()
 
     try:
         int_1 = int(time_str_1)
         int_2 = int(time_str_2)
 
         return datetime.time(int_1, int_2)
-    except:
+    except Exception:
         return default

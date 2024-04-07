@@ -9,7 +9,7 @@ Auth:
 Notify:
   # 企业微信机器人WebHook Key/URL
   SHMTU_AUTH_WEBHOOK_WEWORK: ""
-  # WebHook工作时间段(夜间免打扰)
+  # WebHook免打扰时间段(夜间免打扰)
   SHMTU_WEBHOOK_SLEEP_TIME_START: "23:00"
   SHMTU_WEBHOOK_SLEEP_TIME_END: "7:00"
 

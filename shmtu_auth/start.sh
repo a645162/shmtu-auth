@@ -14,4 +14,4 @@ echo "Python version:"
 python --version
 echo ""
 
-python main.py
+python __main__.py

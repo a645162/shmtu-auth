@@ -1,12 +1,14 @@
 import json
 
-import requests as req
+import requests
 
-from ..core.core_exp import check_is_connected, get_query_string
+from ..core.core_exp import check_is_connected_retry, get_query_string
 from ..core.shmtu_auth_const_value import ServiceType
 from ..utils.env import get_env_str
 
-from ..utils.logs import *
+from ..utils.logs import get_logger
+
+logger = get_logger()
 
 
 class ShmtuNetAuthCore:
@@ -30,14 +32,14 @@ class ShmtuNetAuthCore:
         env_ua = get_env_str("SHMTU_AUTH_USER_AGENT", "")
         if env_ua != "":
             self.header["User-Agent"] = env_ua
-        logger.info(f"ShmtuNetAuthCore initialization complete!")
+        logger.info("ShmtuNetAuthCore initialization complete!")
 
     def test_net(self) -> bool:
         """
         测试网络是否认证
         :return: 是否已经认证
         """
-        self.isLogin = check_is_connected()
+        self.isLogin = check_is_connected_retry(retry_times=3, wait_time=5)
         if not self.isLogin:
             logger.info(f"Network Auth Status: {self.isLogin}")
         return self.isLogin
@@ -49,14 +51,13 @@ class ShmtuNetAuthCore:
         :return: 是否已经认证
         """
         try:
-            res = req.get("http://ismu.shmtu.edu.cn/", headers=self.header)
+            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header)
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
             else:
                 self.isLogin = False
-        except Exception as e:
-            # print(e)
+        except Exception:
             self.isLogin = False
         return self.isLogin
 
@@ -93,7 +94,7 @@ class ShmtuNetAuthCore:
 
                 self.data["queryString"] = current_query_string
 
-                res = req.post(
+                res = requests.post(
                     self.url + "login",
                     headers=self.header,
                     data=self.data
@@ -120,7 +121,7 @@ class ShmtuNetAuthCore:
         #！！！注意！！！#此操作会获得账号alldata['userId']姓名alldata['userName']以及密码alldata['password']
         :return:全部数据的字典格式
         """
-        res = req.get(
+        res = requests.get(
             self.url + "getOnlineUserInfo",
             headers=self.header
         )
@@ -142,7 +143,7 @@ class ShmtuNetAuthCore:
         # if self.alldata == None:
         #     self.get_alldata()
 
-        res = req.get(self.url + "logout", headers=self.header)
+        res = requests.get(self.url + "logout", headers=self.header)
         logout_json = json.loads(res.text)
         self.info = logout_json["message"]
         logger.info(f"Logout: {logout_json}")

@@ -7,6 +7,8 @@ on:
     tags:
       - v*
       - latest
+#  release:
+#    types: [ published ]
 
 jobs:
 

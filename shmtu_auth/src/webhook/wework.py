@@ -8,7 +8,9 @@ import requests
 from ..utils import my_time
 from ..utils.env import get_env_str, get_env_time
 
-from ..utils.logs import *
+from ..utils.logs import get_logger
+
+logger = get_logger()
 
 ENV_VAR_NAME = "SHMTU_AUTH_WEBHOOK_WEWORK"
 
@@ -26,7 +28,7 @@ def get_wework_url(webhook_env: str = ""):
         return None
 
     if len(wework_env) == 0:
-        print(f"WeWork Key Env!")
+        print("WeWork Key Env!")
         return None
 
     # Judge is URL
@@ -50,7 +52,7 @@ def direct_send_text(
         mentioned_id = []
 
     if not webhook_url:
-        print(f"URL Not Set!")
+        print("URL Not Set!")
         return
 
     msg = f"{machine_name}\n" f"{msg}"

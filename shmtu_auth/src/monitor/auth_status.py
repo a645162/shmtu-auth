@@ -6,7 +6,9 @@ from ..utils.env import get_env_int
 from ..utils.program_env_config import convert_password_to_star, convert_number_to_star
 from ..utils.program_env_config import get_user_list
 
-from ..utils.logs import *
+from ..utils.logs import get_logger
+
+logger = get_logger()
 
 # 检测时间间隔，单位：秒
 time_interval = 60
@@ -39,7 +41,10 @@ def monitor_auth():
 
     while True:
         if not net_auth.check_is_online():
-            net_auth.login_by_list(user_list_3)
+            if net_auth.login_by_list(user_list_3):
+                logger.info("Login success.")
+            else:
+                logger.error("Login failed.")
 
         time_sleep(time_interval)
 

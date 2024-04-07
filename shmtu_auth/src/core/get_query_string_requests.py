@@ -5,7 +5,7 @@ def get_text_code(url: str) -> (str, int):
     try:
         response = requests.get(url)
         return response.text, response.status_code
-    except:
+    except Exception:
         return "", 0
 
 

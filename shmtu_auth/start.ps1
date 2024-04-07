@@ -14,4 +14,4 @@ Write-Host "Python version:"
 python --version
 Write-Host ""
 
-python main.py
+python __main__.py
