@@ -23,6 +23,7 @@ RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
     && apk add --no-cache bash \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
+    && pip3 uninstall pip -y \
     && rm -f $BASE_PATH/requirements.txt \
     && rm -rf ~/.cache/pip \
     && rm -rf /tmp/* \
