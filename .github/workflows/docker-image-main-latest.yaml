@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  build-docker-image-latest:
+  build-docker-image-latest-main:
 
     runs-on: ubuntu-latest
 
