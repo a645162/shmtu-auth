@@ -1,6 +1,8 @@
 from time import sleep as time_sleep
 
 from .get_query_string_requests import is_connect_by_google, get_query_string_by_url
+from .query_string import handle_query_string
+
 from .shmtu_auth_const_value import get_default_query_string
 
 from ..utils.logs import get_logger
@@ -24,10 +26,14 @@ def check_is_connected_retry(
             # logger.info(f"Waiting for {wait_time} seconds...")
             time_sleep(wait_time)
             # logger.info(f"[SHMTU Auth] Retrying({i + 1})...")
+    return False
 
 
 def get_query_string() -> str:
     try_str: str = get_query_string_by_url().strip()
+
+    try_str = handle_query_string(try_str)
+
     if len(try_str) > 0:
         return try_str
     else:
