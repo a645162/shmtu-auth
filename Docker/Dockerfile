@@ -1,4 +1,7 @@
-FROM python:3.8-alpine
+#FROM python:3.8-alpine
+FROM python:3.12-alpine
+#FROM python:3.12-slim
+
 MAINTAINER Haomin Kong
 
 LABEL AUTHOR="Haomin Kong" VERSION=3
@@ -20,6 +23,7 @@ RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
     && apk add --no-cache bash \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
+    && pip3 uninstall pip -y \
     && rm -f $BASE_PATH/requirements.txt \
     && rm -rf ~/.cache/pip \
     && rm -rf /tmp/* \

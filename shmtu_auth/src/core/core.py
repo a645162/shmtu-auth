@@ -12,8 +12,18 @@ logger = get_logger()
 
 
 class ShmtuNetAuthCore:
+    userIndex: str
+    info: str
+    data: dict
+    url: str
+    header: dict
+    isLogin: bool
+    allData: dict
+
     def __init__(self):
-        self.data = None
+        self.userIndex = ""
+        self.info = ""
+        self.data = {}
         self.url: str = \
             "https://ismu.shmtu.edu.cn:8443/eportal/InterFace.do?method="
         self.header: dict = {
@@ -88,9 +98,11 @@ class ShmtuNetAuthCore:
 
             try:
                 if len(current_query_string) == 0:
-                    print("Query String Error!")
                     logger.exception("Query String Error!")
                     return False, "Query String Error!"
+
+                logger.debug("Query String: ", current_query_string)
+                logger.Info("Get Query String Success!")
 
                 self.data["queryString"] = current_query_string
 
@@ -102,18 +114,20 @@ class ShmtuNetAuthCore:
 
                 # login_json = json.loads(res.read().decode('utf-8'))
                 login_json = json.loads(res.text)
-                self.userindex = login_json["userIndex"]
+                self.userIndex = login_json["userIndex"]
                 self.info = login_json["message"]
                 logger.info(f"Login: {login_json}")
                 if login_json["result"] == "success":
-                    return True, "认证成功"
+                    return True, "Login Success"
                 else:
                     return False, self.info
             except Exception as e:
                 print(e)
                 logger.exception(f"Network Error: {e}")
                 return False, "Network Error!"
-        return True, "已经在线"
+
+        logger.info("Already Login!")
+        return True, "Already Login"
 
     def get_all_data(self) -> dict:
         """
