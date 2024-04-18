@@ -15,8 +15,6 @@ def infer_encoding(file_path: str) -> str:
 
 
 def read_file_with_auto_encoding(file_path: str) -> str:
-    file_content = ""
-
     # Check Encoding
     with open(file_path, 'rb') as f:
         raw_data = f.read()

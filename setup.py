@@ -20,7 +20,11 @@ setup(
     license="GPLv3",
     packages=find_packages(),
     python_requires=">=3.6",
-    install_requires=["requests", "chardet", "PyYaml", "loguru"],
+    install_requires=[
+        "requests",
+        "chardet", "PyYaml", "toml",
+        "loguru"
+    ],
     entry_points={
         "console_scripts": [
             "shmtu-auth = shmtu_auth.__main__:main",
