@@ -15,18 +15,22 @@ def parse_run_args():
     )
 
     args = parser.parse_args()
+    # Parse Start
+
+    toml_path = "./config.toml"
+    if not os.path.exists(toml_path):
+        toml_path = "./config/config.toml"
 
     if hasattr(args, 'toml') and args.toml:
-        print('Try to Parse TOML...')
+        print('User TOML path was set.')
+        toml_path = args.toml.strip()
 
-        toml_path = args.toml
-
-        if not os.path.exists(toml_path):
-            print('Toml config not found!')
-            return
-
+    if os.path.exists(toml_path):
         if read_config_toml(toml_path):
             print('Parse TOML Config Success!')
         else:
             print('Parse TOML Config Failed!')
+    else:
+        print('Toml config not found!')
 
+    # Parse End
