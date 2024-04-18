@@ -21,11 +21,18 @@ const vitepressConfig = {
         // 导航栏
         nav: [
             {
-                text: '友情链接',
+                text: 'Link',
                 items: [
-                    {text: '作者的Github', link: 'https://github.com/a645162'},
+                    {
+                        text: '孔昊旻(Haomin Kong)的Github主页',
+                        link: 'https://github.com/a645162'
+                    },
+                    {
+                        text: '本项目Github仓库主页',
+                        link: 'https://github.com/a645162/shmtu-auth'
+                    },
                 ]
-            }
+            },
         ],
 
         // 社交链接
