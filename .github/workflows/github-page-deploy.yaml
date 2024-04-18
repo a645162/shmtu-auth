@@ -6,7 +6,7 @@ on:
       - beta
       - dev
 jobs:
-  build-and-deploy:
+  github-page-build-and-deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Checkout  ️
         uses: actions/checkout@v4
-#      - name: Package Build
-#        run: |
-#          cd packages/@huyikai/vitepress-helper
-#          npm i
-#          npm run build
+      - name: Package Build
+        run: |
+          cd packages/@huyikai/vitepress-helper
+          npm i
+          npm run build
       - name: Install and Build
         run: |
           cd Document/
