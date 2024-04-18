@@ -3,3 +3,5 @@ pylint
 flake8
 
 pyinstaller
+
+pillow

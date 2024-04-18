@@ -30,7 +30,7 @@ pyinstaller `
     -F `
     -c `
     -s `
-    -i ..\Assets\Icon\logopng.fw.ico `
+    -i ..\Assets\Icon\icons\Icon.ico `
     -n $project_name `
     --distpath $outputLocation `
     --workpath $tmpLocation `
