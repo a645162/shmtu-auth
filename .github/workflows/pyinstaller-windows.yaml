@@ -28,21 +28,23 @@ jobs:
       - name: Build EXE with PyInstaller
         run: . .\Build\generate_exe.ps1
 
+      - name: Make logs directory
+        run:
+          mkdir ".\Build\shmtu_auth\logs"
+
+      - name: Copy Config File
+        run:
+          cp ".\shmtu_auth\config\config.note.toml" ".\Build\shmtu_auth\config.toml"
+
       - name: Compress Directory to ZIP
-        env:
-          BUILD_DIST_DIR: .\Build\shmtu_auth
-          ZIP_FILE_PATH: .\Build\shmtu_auth_windows.zip
-        run: |
-          # 创建logs目录
-          mkdir "$env:BUILD_DIST_DIR\logs"
-          # 复制config.toml文件到指定目录
-          cp .\shmtu_auth\config\config.toml "$env:BUILD_DIST_DIR\config.toml"
-          # 压缩整个BUILD_DIST_DIR目录到ZIP_FILE_PATH
-          Compress-Archive -Path "$env:BUILD_DIST_DIR" -DestinationPath "$env:ZIP_FILE_PATH"
+        run:
+          Compress-Archive `
+          -Path ".\Build\shmtu_auth" `
+          -DestinationPath ".\Build\shmtu_auth_windows.zip"
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: Build\shmtu_auth_windows.zip
+          files: ./Build/shmtu_auth_windows.zip

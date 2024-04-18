@@ -1,19 +1,21 @@
 [global]
+# 机器名称
 SHMTU_MACHINE_NAME = ""
 
 [Network]
+# 网络检查重试次数
 SHMTU_AUTH_NETWORK_CHECK_RETRY_TIMES = 3
+# 网络检查重试间隔
 SHMTU_AUTH_NETWORK_CHECK_RETRY_TIME_INTERVAL = 30
 
 [Auth]
+# 认证检测间隔
 SHMTU_AUTH_TIME_INTERVAL = 10
 
-[User]
-SHMTU_AUTH_USER_LIST="{Number1};{Number2}"
-SHMTU_AUTH_USER_PWD_Number1 ="{Number1的密码}"
-SHMTU_AUTH_USER_PWD_Number2="{Number2的密码}"
-
+# 下面的配置项暂时没有用到
 [Notify]
+# 企业微信WebHook
 SHMTU_AUTH_WEBHOOK_WEWORK = ""
+# 睡眠时间段
 SHMTU_WEBHOOK_SLEEP_TIME_START = "23:00"
 SHMTU_WEBHOOK_SLEEP_TIME_END = "7:00"
