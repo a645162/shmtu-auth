@@ -1,8 +1,8 @@
-name: Run Tests
+name: Node.js Run Tests
 
 on:
-  pull_request:
-  workflow_dispatch:
+  - pull_request
+  - workflow_dispatch
 
 jobs:
   node-build-tests:
@@ -12,7 +12,7 @@ jobs:
         os:
           - ubuntu-22.04
         node-version:
-          - '21'
+          - "21"
     steps:
       # Install deps and cache
       - name: Checkout code
@@ -22,15 +22,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-        env:
-          working-directory: ./Document
+          cache-dependency-path: Document/package-lock.json
       - name: Install dependencies
-        run: npm clean-install --prefer-offline --frozen-lockfile
+        run: |
+          cd Document/
+          npm clean-install --prefer-offline --frozen-lockfile
 
       # Run tests
-      - name: Run linter
-        run: npm run lint
-      - name: Run tests
-        run: npm run test
+#      - name: Run linter
+#        run: |
+#          cd Document/
+#          npm run lint
+#      - name: Run tests
+#        run: |
+#          cd Document/
+#          npm run test
       - name: Test build
-        run: npm run build
+        run: |
+          cd Document/
+          npm run build

@@ -2,9 +2,9 @@ name: Github Page Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
       - beta
-      - dev
+
 jobs:
   github-page-build-and-deploy:
     runs-on: ubuntu-latest
