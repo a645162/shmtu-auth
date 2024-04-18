@@ -25,3 +25,5 @@ sips -z 512 512 logo.png --out $iconset_dir_path/icon_512.png
 sips -z 512 512 logo.png --out $iconset_dir_path/icon_512@2x.png
 
 iconutil -c icns logo.iconset
+
+mv logo.icns Logo.icns
