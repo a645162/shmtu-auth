@@ -8,6 +8,16 @@ CheckAndLoadEnvVariable `
 # --------------------------------------------------
 
 # --------------------------------------------------
+# Network
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_AUTH_NETWORK_CHECK_RETRY_TIMES" `
+	-DefaultValue "3"
+CheckAndLoadEnvVariable `
+	-EnvVariableName "SHMTU_AUTH_NETWORK_CHECK_RETRY_TIME_INTERVAL" `
+	-DefaultValue "30"
+# --------------------------------------------------
+
+# --------------------------------------------------
 # Auth
 CheckAndLoadEnvVariable `
 	-EnvVariableName "SHMTU_AUTH_TIME_INTERVAL" `

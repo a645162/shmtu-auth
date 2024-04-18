@@ -1,0 +1,31 @@
+{
+  "name": "shmtu-auth-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "develop base on vitepress-helper",
+  "keywords": [
+    "vite",
+    "vitepress",
+    "vitepress-helper"
+  ],
+  "homepage": "https://github.com/huyikai/vitepress-helper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/huyikai/vitepress-helper"
+  },
+  "license": "MIT",
+  "author": "Haomin Kong",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "cms": "node node_modules/@huyikai/local-cms/cms.js docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.1.0",
+    "vue": "^3.4.23",
+    "@huyikai/vitepress-helper": "^0.0.30",
+    "@huyikai/local-cms": "latest"
+  }
+}
