@@ -21,14 +21,9 @@ const vitepressConfig = {
         // 导航栏
         nav: [
             {
-                text: 'Example',
+                text: '友情链接',
                 items: [
-                    {text: 'MySite', link: 'https://huyikai.xyz'},
-                    {
-                        text: 'Tree-Conver',
-                        link: 'https://huyikai.github.io/tree-conver/'
-                    },
-                    {text: 'LocalCMS', link: 'https://huyikai.github.io/local-cms/'}
+                    {text: '作者的Github', link: 'https://github.com/a645162'},
                 ]
             }
         ],

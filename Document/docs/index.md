@@ -5,8 +5,8 @@ outline: false
 lastUpdated: false
 ---
 
-# Quick Start
+# 快速开始
 
-```shell
-npx @huyikai/vitepress-helper init
-```
+请前往
+[GitHub Release](https://github.com/a645162/shmtu-auth/releases)
+下载最新版本。
