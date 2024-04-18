@@ -1,5 +1,8 @@
 !/Build/
 
+# PyPi Token
+/.pypi_token
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

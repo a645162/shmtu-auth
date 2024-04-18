@@ -4,4 +4,8 @@ flake8
 
 pyinstaller
 
+setuptools
+wheel
+twine
+
 pillow

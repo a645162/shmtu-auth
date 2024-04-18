@@ -4,9 +4,15 @@ from pathlib import Path
 from setuptools import setup, find_packages
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+with open(this_directory / "README.md", encoding="utf-8") as f:
+    long_description = f.read()
 
-__version__ = "1.1.0"
+with open("version.txt", "r", encoding="utf-8") as f:
+    __version__ = f.read().strip()
+
+if __version__.strip() == "":
+    print("version.txt is empty")
+    exit(1)
 
 setup(
     name="shmtu-auth",
@@ -19,7 +25,7 @@ setup(
     author_email="a645162@gmail.com",
     license="GPLv3",
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.5",
     install_requires=[
         "requests",
         "chardet", "PyYaml", "toml",
@@ -27,7 +33,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "shmtu-auth = shmtu_auth.__main__:main",
+            "shmtu-auth = shmtu_auth.main_start:main",
         ],
     },
 )
