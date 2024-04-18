@@ -1,4 +1,5 @@
 import yaml
+import toml
 from end_line import convert_to_crlf, convert_to_lf
 
 
@@ -113,22 +114,44 @@ def save_env_script(
     print(f"Write pwsh to {pwsh_path}")
 
 
+def save_to_toml(dict_data: dict, toml_path: str = 'config.toml'):
+    toml_path = toml_path.strip()
+
+    new_dict_data = dict_data.copy()
+
+    # Remove Test
+    if 'Test' in new_dict_data:
+        del new_dict_data['Test']
+
+    with open(toml_path, 'w', encoding='utf-8') as file:
+        toml.dump(new_dict_data, file)
+
+    print(f"Write toml to {toml_path}")
+
+
 if __name__ == '__main__':
-    yaml_data: dict = read_yaml()
+    dict_date: dict = read_yaml()
 
     # 打印解析后的字典
-    print(yaml_data)
+    print(dict_date)
 
     # 获取字典深度
-    depth = get_dict_depth(yaml_data)
+    depth = get_dict_depth(dict_date)
 
     # 打印深度
     print(f"The depth of the dictionary is: {depth}")
 
-    save_env_script(yaml_data)
+    # Default
+    save_env_script(dict_date)
+
     save_env_script(
-        yaml_data,
+        dict_date,
         sh_path='env.sh',
         pwsh_path='env.ps1',
         default_mode=False
+    )
+
+    save_to_toml(
+        dict_data=dict_date,
+        toml_path="../src/config/config.toml"
     )

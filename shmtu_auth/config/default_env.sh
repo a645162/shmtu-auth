@@ -6,6 +6,12 @@ export SHMTU_MACHINE_NAME=""
 # --------------------------------------------------
 
 # --------------------------------------------------
+# Network
+export SHMTU_AUTH_NETWORK_CHECK_RETRY_TIMES="3"
+export SHMTU_AUTH_NETWORK_CHECK_RETRY_TIME_INTERVAL="30"
+# --------------------------------------------------
+
+# --------------------------------------------------
 # Auth
 export SHMTU_AUTH_TIME_INTERVAL="10"
 # --------------------------------------------------
