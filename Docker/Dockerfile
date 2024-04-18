@@ -21,6 +21,8 @@ COPY requirements.txt $BASE_PATH/requirements.txt
 RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/scripts/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
+    && rm -f $BASE_PATH/config.toml \
+    && rm -f $BASE_PATH/config/config.toml \
     && apk add --no-cache bash \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
     && pip3 uninstall setuptools -y \
