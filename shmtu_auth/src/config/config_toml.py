@@ -22,6 +22,18 @@ def parse_toml_dict(toml_dict: dict):
             env_from_toml[key] = value
 
 
+def output_toml_result():
+    global env_from_toml
+    if len(env_from_toml.keys()) > 0:
+        print("-" * 40)
+        print("TOML Config:")
+        for key, value in env_from_toml.items():
+            print(f"{key}: {value}")
+        print("-" * 40)
+    else:
+        print("No TOML Config Load!")
+
+
 def read_config_toml(
         toml_path: str = 'config.toml'
 ) -> bool:
@@ -40,6 +52,7 @@ def read_config_toml(
         print(f"An error occurred while reading the TOML file: {e}")
         return False
 
+    output_toml_result()
     return True
 
 

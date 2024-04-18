@@ -153,5 +153,9 @@ if __name__ == '__main__':
 
     save_to_toml(
         dict_data=dict_date,
+        toml_path="./config.toml"
+    )
+    save_to_toml(
+        dict_data=dict_date,
         toml_path="../src/config/config.toml"
     )
