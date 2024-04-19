@@ -2,6 +2,8 @@ name: Create Tag from version.txt
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'version.txt'
   workflow_dispatch:

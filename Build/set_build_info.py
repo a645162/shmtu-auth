@@ -7,8 +7,15 @@ build_dir = os.path.dirname(__file__)
 base_dir = os.path.dirname(build_dir)
 
 now = datetime.datetime.now()
+print("Current Time:", now.strftime("%Y-%m-%d %H:%M:%S"))
+
+current_timezone = now.astimezone().tzinfo
+print("Timezone", current_timezone)
+
 now = pytz.timezone("Asia/Shanghai").localize(now)
+
 formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
+print("Current Time:", formatted_now)
 
 
 def set_build_info_variable(
