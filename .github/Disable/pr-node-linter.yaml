@@ -1,0 +1,37 @@
+name: Node.js Lint Code
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  node-lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-22.04
+        node-version:
+          - "21"
+    steps:
+      # Install deps and cache
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: Document/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd Document/
+          npm clean-install --prefer-offline --frozen-lockfile
+
+      # Run the linter
+      - name: Run code linter
+        run: |
+          cd Document/
+          npm run lint

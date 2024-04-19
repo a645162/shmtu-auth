@@ -12,8 +12,18 @@ logger = get_logger()
 
 
 class ShmtuNetAuthCore:
+    userIndex: str
+    info: str
+    data: dict
+    url: str
+    header: dict
+    isLogin: bool
+    allData: dict
+
     def __init__(self):
-        self.data = None
+        self.userIndex = ""
+        self.info = ""
+        self.data = {}
         self.url: str = \
             "https://ismu.shmtu.edu.cn:8443/eportal/InterFace.do?method="
         self.header: dict = {
@@ -50,8 +60,12 @@ class ShmtuNetAuthCore:
         会有一个问题，就是他系统有bug，可能不跳转！
         :return: 是否已经认证
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        # noinspection PyBroadException
         try:
-            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header)
+            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header, verify=False)
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
@@ -69,6 +83,9 @@ class ShmtuNetAuthCore:
         :param password_encrypt: 密码是否为密文
         :return:元组第一项：是否认证状态；第二项：详细信息
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         # if self.isLogin is True:
         self.test_net()
         # self.isLogin = False
@@ -88,32 +105,37 @@ class ShmtuNetAuthCore:
 
             try:
                 if len(current_query_string) == 0:
-                    print("Query String Error!")
                     logger.exception("Query String Error!")
                     return False, "Query String Error!"
+
+                logger.debug("Query String: ", current_query_string)
+                logger.info("Get Query String Success!")
 
                 self.data["queryString"] = current_query_string
 
                 res = requests.post(
                     self.url + "login",
                     headers=self.header,
-                    data=self.data
+                    data=self.data,
+                    verify=False,
                 )
 
                 # login_json = json.loads(res.read().decode('utf-8'))
                 login_json = json.loads(res.text)
-                self.userindex = login_json["userIndex"]
+                self.userIndex = login_json["userIndex"]
                 self.info = login_json["message"]
                 logger.info(f"Login: {login_json}")
                 if login_json["result"] == "success":
-                    return True, "认证成功"
+                    return True, "Login Success"
                 else:
                     return False, self.info
             except Exception as e:
                 print(e)
                 logger.exception(f"Network Error: {e}")
                 return False, "Network Error!"
-        return True, "已经在线"
+
+        logger.info("Already Login!")
+        return True, "Already Login"
 
     def get_all_data(self) -> dict:
         """
@@ -121,9 +143,13 @@ class ShmtuNetAuthCore:
         #！！！注意！！！#此操作会获得账号alldata['userId']姓名alldata['userName']以及密码alldata['password']
         :return:全部数据的字典格式
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         res = requests.get(
             self.url + "getOnlineUserInfo",
-            headers=self.header
+            headers=self.header,
+            verify=False
         )
         try:
             self.allData = json.loads(res.text)
@@ -143,7 +169,10 @@ class ShmtuNetAuthCore:
         # if self.alldata == None:
         #     self.get_alldata()
 
-        res = requests.get(self.url + "logout", headers=self.header)
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        res = requests.get(self.url + "logout", headers=self.header, verify=False)
         logout_json = json.loads(res.text)
         self.info = logout_json["message"]
         logger.info(f"Logout: {logout_json}")

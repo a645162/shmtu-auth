@@ -1,13 +1,13 @@
-name: Docker Image Newest CI
+name: Docker Image Stable Newest CI
 
 on:
-  pull_request:
+  push:
     branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
 
-  build-docker-image-latest:
+  build-docker-image-latest-main:
 
     runs-on: ubuntu-latest
 

@@ -6,6 +6,12 @@ CheckAndLoadEnvVariable "SHMTU_MACHINE_NAME" ""
 # --------------------------------------------------
 
 # --------------------------------------------------
+# Network
+CheckAndLoadEnvVariable "SHMTU_AUTH_NETWORK_CHECK_RETRY_TIMES" "3"
+CheckAndLoadEnvVariable "SHMTU_AUTH_NETWORK_CHECK_RETRY_TIME_INTERVAL" "30"
+# --------------------------------------------------
+
+# --------------------------------------------------
 # Auth
 CheckAndLoadEnvVariable "SHMTU_AUTH_TIME_INTERVAL" "10"
 # --------------------------------------------------

@@ -1,0 +1,36 @@
+name: Update file on tag push
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Update file
+        run: |
+          # 这里写上修改文件的命令
+          echo "Updating file..."
+          # 例如，您可以修改 README.md 文件
+          echo "New content" >> README.md
+
+      - name: Commit changes
+        run: |
+          # 配置 Git 用户信息
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          # 添加、提交更改
+          git add README.md
+          git commit -m "Update README.md on tag push"
+
+      - name: Push changes
+        run: |
+          # 注意：这里需要设置一个 personal access token (PAT) 
+          # 来允许 GitHub Action 推送到仓库
+          git push origin HEAD:$GITHUB_REF
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

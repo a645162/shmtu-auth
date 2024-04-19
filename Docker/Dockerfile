@@ -1,4 +1,5 @@
-FROM python:3.8-alpine
+FROM python:3.9-alpine
+
 MAINTAINER Haomin Kong
 
 LABEL AUTHOR="Haomin Kong" VERSION=3
@@ -18,8 +19,12 @@ COPY requirements.txt $BASE_PATH/requirements.txt
 RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/scripts/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
+    && rm -f $BASE_PATH/config.toml \
+    && rm -f $BASE_PATH/config/config.toml \
     && apk add --no-cache bash \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
+    && pip3 uninstall setuptools -y \
+    && pip3 uninstall pip -y \
     && rm -f $BASE_PATH/requirements.txt \
     && rm -rf ~/.cache/pip \
     && rm -rf /tmp/* \
@@ -31,5 +36,5 @@ RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
 
 ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/start.sh"]
 
-# For Debug
+# Only for debug use!
 #ENTRYPOINT ["top"]

@@ -1,0 +1,43 @@
+name: Node.js Run Tests
+
+on:
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  node-build-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04 ]
+        node-version: [ "16", "17", "18", "19", "20", "21" ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: Document/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd Document/
+          npm clean-install --prefer-offline --frozen-lockfile
+
+      # Run tests
+      #      - name: Run linter
+      #        run: |
+      #          cd Document/
+      #          npm run lint
+      #      - name: Run tests
+      #        run: |
+      #          cd Document/
+      #          npm run test
+
+      - name: Test build
+        run: |
+          cd Document/
+          npm run build

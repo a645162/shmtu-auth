@@ -1,10 +1,24 @@
+# Check requirements.txt is exist
+if (-not (Test-Path "requirements.txt"))
+{
+    # Go to parent directory
+    Set-Location ..
+}
+
+# Check again
+if (-not (Test-Path "requirements.txt"))
+{
+    Write-Host "File requirements.txt not found"
+    exit
+}
+
 # Save Current Loaction
 $baseLocation = Get-Location
 
 pip install -r requirements.txt
 pip install -r dev-requirements.txt
 
-$project_name= "shmtu_auth"
+$project_name = "shmtu_auth"
 
 $srcLocation = "$baseLocation\$project_name"
 $outputLocation = "$baseLocation\Build\$project_name"
@@ -16,7 +30,7 @@ pyinstaller `
     -F `
     -c `
     -s `
-    -i ..\Assets\Icon\logopng.fw.ico `
+    -i ..\Assets\Icon\icons\Icon.ico `
     -n $project_name `
     --distpath $outputLocation `
     --workpath $tmpLocation `
