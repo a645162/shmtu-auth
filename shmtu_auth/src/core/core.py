@@ -102,7 +102,7 @@ class ShmtuNetAuthCore:
                     return False, "Query String Error!"
 
                 logger.debug("Query String: ", current_query_string)
-                logger.Info("Get Query String Success!")
+                logger.info("Get Query String Success!")
 
                 self.data["queryString"] = current_query_string
 
