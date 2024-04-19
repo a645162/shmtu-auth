@@ -15,11 +15,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-#          ref: beta
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Check Version Setting
+        run: |
+          python --version
+          pip --version
+          python version.py
+
+      - name: Set Build Info
+        run: |
+          pip install pytz
+          python Build/set_build_info.py -d
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
+      - name: Set up Docker BuildX
         uses: docker/setup-buildx-action@v3
 
       - name: Set up Aliyun Region

@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'version.txt'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,6 +18,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
+
+      - name: Check Version Setting
+        run: |
+          python --version
+          pip --version
+          python version.py
 
       - name: Check for version.txt changes
         id: check_changes
