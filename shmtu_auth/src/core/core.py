@@ -60,8 +60,12 @@ class ShmtuNetAuthCore:
         会有一个问题，就是他系统有bug，可能不跳转！
         :return: 是否已经认证
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        # noinspection PyBroadException
         try:
-            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header)
+            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header, verify=False)
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
@@ -79,6 +83,9 @@ class ShmtuNetAuthCore:
         :param password_encrypt: 密码是否为密文
         :return:元组第一项：是否认证状态；第二项：详细信息
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         # if self.isLogin is True:
         self.test_net()
         # self.isLogin = False
@@ -109,7 +116,8 @@ class ShmtuNetAuthCore:
                 res = requests.post(
                     self.url + "login",
                     headers=self.header,
-                    data=self.data
+                    data=self.data,
+                    verify=False,
                 )
 
                 # login_json = json.loads(res.read().decode('utf-8'))
@@ -135,6 +143,9 @@ class ShmtuNetAuthCore:
         #！！！注意！！！#此操作会获得账号alldata['userId']姓名alldata['userName']以及密码alldata['password']
         :return:全部数据的字典格式
         """
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         res = requests.get(
             self.url + "getOnlineUserInfo",
             headers=self.header
@@ -156,6 +167,9 @@ class ShmtuNetAuthCore:
         """
         # if self.alldata == None:
         #     self.get_alldata()
+
+        import urllib3
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         res = requests.get(self.url + "logout", headers=self.header)
         logout_json = json.loads(res.text)

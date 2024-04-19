@@ -27,7 +27,7 @@ setup(
     packages=find_packages(),
     python_requires=">=3.5",
     install_requires=[
-        "requests",
+        "urllib3", "requests",
         "chardet", "PyYaml", "toml",
         "loguru"
     ],

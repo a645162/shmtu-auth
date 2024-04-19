@@ -13,18 +13,18 @@ class ShmtuNetAuth(ShmtuNetAuthCore):
     def login_by_list(self, user_list) -> bool:
 
         for user_3 in user_list:
-            id = user_3[0]
-            pwd = user_3[1]
+            user_id = user_3[0]
+            user_pwd = user_3[1]
             is_encrypt = user_3[2]
 
             status = (
-                self.login(id, pwd, is_encrypt)
+                self.login(user_id, user_pwd, is_encrypt)
             )
 
             if status[0]:
                 return True
             else:
-                encrypt_id = convert_number_to_star(id)
+                encrypt_id = convert_number_to_star(user_id)
                 logger.exception(f"Login failed:{encrypt_id}")
                 logger.exception(f"{status[1]}")
 
