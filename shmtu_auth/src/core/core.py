@@ -148,7 +148,8 @@ class ShmtuNetAuthCore:
 
         res = requests.get(
             self.url + "getOnlineUserInfo",
-            headers=self.header
+            headers=self.header,
+            verify=False
         )
         try:
             self.allData = json.loads(res.text)
@@ -171,7 +172,7 @@ class ShmtuNetAuthCore:
         import urllib3
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        res = requests.get(self.url + "logout", headers=self.header)
+        res = requests.get(self.url + "logout", headers=self.header, verify=False)
         logout_json = json.loads(res.text)
         self.info = logout_json["message"]
         logger.info(f"Logout: {logout_json}")
