@@ -1,6 +1,8 @@
 name: Python Package using Conda(Old Version)
 
-on: [ push ]
+on:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-linux-old:

@@ -1,14 +1,16 @@
-# read the contents of your README file
+import os
+
 from pathlib import Path
 
 from setuptools import setup, find_packages
+
+from version import get_version
 
 this_directory = Path(__file__).parent
 with open(this_directory / "README.md", encoding="utf-8") as f:
     long_description = f.read()
 
-with open("version.txt", "r", encoding="utf-8") as f:
-    __version__ = f.read().strip()
+__version__ = get_version()
 
 if __version__.strip() == "":
     print("version.txt is empty")

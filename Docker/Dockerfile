@@ -3,6 +3,7 @@ FROM python:3.9-alpine
 MAINTAINER Haomin Kong
 
 LABEL AUTHOR="Haomin Kong" VERSION=3
+ENV DOCKER_MODE="Haomin Kong"
 
 ENV BASE_PATH="/usr/local/shmtu/shmtu-auth"
 

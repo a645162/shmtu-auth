@@ -9,6 +9,9 @@
 name: Upload Python Package
 
 on:
+  push:
+    tags:
+      - 'v*'
   release:
     types: [ published ]
 
@@ -27,6 +30,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
+      - name: Check Version Setting
+        run: |
+          python --version
+          pip --version
+          python version.py
+
+      - name: Set Build Info
+        run: |
+          pip install pytz
+          python Build/set_build_info.py -w
 
       - name: Install dependencies
         run: |
