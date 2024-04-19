@@ -1,6 +1,4 @@
-#FROM python:3.8-alpine
-FROM python:3.12-alpine
-#FROM python:3.12-slim
+FROM python:3.8-alpine
 
 MAINTAINER Haomin Kong
 
