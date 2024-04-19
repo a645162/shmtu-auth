@@ -6,7 +6,7 @@
 #
 
 import os
-import sys
+# import sys
 from PIL import Image
 from pathlib import Path
 

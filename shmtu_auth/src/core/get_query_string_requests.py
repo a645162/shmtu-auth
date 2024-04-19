@@ -2,6 +2,7 @@ import requests
 
 
 def get_text_code(url: str) -> (str, int):
+    # noinspection PyBroadException
     try:
         response = requests.get(url)
         return response.text, response.status_code
