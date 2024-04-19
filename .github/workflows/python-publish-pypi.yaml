@@ -28,6 +28,17 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Check Version Setting
+        run: |
+          python --version
+          pip --version
+          python version.py
+
+      - name: Set Build Info
+        run: |
+          pip install pytz
+          python Build/set_build_info.py -w
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

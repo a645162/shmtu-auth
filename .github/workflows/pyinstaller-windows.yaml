@@ -17,6 +17,17 @@ jobs:
         with:
           python-version: 3.9
 
+      - name: Check Version Setting
+        run: |
+          python --version
+          pip --version
+          python version.py
+
+      - name: Set Build Info
+        run: |
+          pip install pytz
+          python Build/set_build_info.py -e
+
       - name: Install dependencies
         run: |
           pip install -r requirements.txt

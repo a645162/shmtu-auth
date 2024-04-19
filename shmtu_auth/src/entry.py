@@ -1,3 +1,7 @@
+import os
+
+from .config import build_info
+
 from .monitor import auth_status
 from .parse_args import parse_run_args
 
@@ -19,8 +23,26 @@ def print_info():
     print("=" * star_len)
 
 
+def check_is_docker() -> bool:
+    env_docker = os.environ.get("DOCKER_MODE")
+    return env_docker and len(env_docker.strip()) > 0
+
+
+def print_build_info():
+    print("Program Version:", build_info.program_version)
+    if check_is_docker():
+        print("Docker Build Time:", build_info.docker_build_time)
+
+    if len(build_info.exe_build_time) > 0:
+        print("Exe Build Time:", build_info.exe_build_time)
+
+    if len(build_info.wheel_build_time) > 0:
+        print("Wheel Build Time:", build_info.wheel_build_time)
+
+
 def entry():
     print_info()
+    print_build_info()
 
     logger.info("Parse args...")
 
