@@ -6,15 +6,16 @@ import pytz
 build_dir = os.path.dirname(__file__)
 base_dir = os.path.dirname(build_dir)
 
-now = datetime.datetime.now()
-print("Current Time:", now.strftime("%Y-%m-%d %H:%M:%S"))
+now_utc = datetime.datetime.now(pytz.utc)
+print("Current Time:", now_utc.strftime("%Y-%m-%d %H:%M:%S"))
 
-current_timezone = now.astimezone().tzinfo
-print("Timezone", current_timezone)
+beijing_timezone = pytz.timezone('Asia/Shanghai')
+beijing_time = now_utc.astimezone(beijing_timezone)
 
-now = pytz.timezone("Asia/Shanghai").localize(now)
+beijing_time_str = beijing_time.strftime("%Y-%m-%d %H:%M:%S")
+print("Beijing Time:", beijing_time_str)
 
-formatted_now = now.strftime("%Y-%m-%d %H:%M:%S")
+formatted_now = beijing_time_str
 print("Current Time:", formatted_now)
 
 
