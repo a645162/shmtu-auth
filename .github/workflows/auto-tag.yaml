@@ -1,0 +1,58 @@
+name: Create Tag from version.txt
+
+on:
+  push:
+    paths:
+      - 'version.txt'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 确保可以访问完整的提交历史
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Check for version.txt changes
+        id: check_changes
+        run: |
+          # 使用 git diff 命令检查文件是否有更改
+          file_changed=$(git diff --name-only HEAD^ HEAD | grep "version.txt" || true)
+          if [[ -n "$file_changed" ]]; then
+            echo "File has been changed"
+            echo "file_changed=true" >>$GITHUB_OUTPUT
+          else
+            echo "File has not been changed"
+            echo "file_changed=false" >>$GITHUB_OUTPUT
+          fi
+
+      - name: Read version from file
+        if: steps.check_changes.outputs.file_changed == 'true'
+        id: read_version
+        run: |
+          # 读取 version.txt 文件的内容作为 tag
+          version=$(python version.py)
+          # Clean Space
+          version=$(echo $version | tr -d ' ')
+          # Clean Line
+          version=$(echo $version | tr -d '\n')
+          
+          echo "Version: $version"
+          # 使用 GITHUB_OUTPUT 环境文件来设置输出(新版API)
+          echo "version=$version" >>$GITHUB_OUTPUT
+
+      - name: Create Tag
+        if: steps.check_changes.outputs.file_changed == 'true'
+        run: |
+          # 使用 version.txt 文件的内容作为 tag
+          version_tag="v${{ steps.read_version.outputs.version }}"
+          echo "Creating tag: $version_tag"
+          # 打 tag
+          git tag $version_tag
+          # 推送 tag 到远程仓库
+          git push origin $version_tag
