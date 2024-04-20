@@ -20,7 +20,7 @@ $baseLocation = Get-Location
 Write-Host "Installing requirements..."
 
 pip install -r requirements.txt > $null
-pip install -r dev-requirements.txt > $null
+pip install -r r-dev-requirements.txt > $null
 
 $project_name = "shmtu_auth"
 $profile_name = "windows_console"

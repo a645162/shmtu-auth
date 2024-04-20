@@ -20,7 +20,7 @@ current_location=$(pwd)
 # Install dependencies
 echo "Installing dependencies..."
 pip install -r requirements.txt > /dev/null
-pip install -r dev-requirements.txt > /dev/null
+pip install -r r-dev-requirements.txt > /dev/null
 
 # Set project name
 project_name="shmtu_auth"
