@@ -37,8 +37,8 @@ class ToolBar(QWidget):
         self.subtitleLabel = CaptionLabel(subtitle, self)
 
         self.documentButton = PushButton(
-            self.tr('Documentation'), self, FluentIcon.DOCUMENT)
-        self.sourceButton = PushButton(self.tr('Source'), self, FluentIcon.GITHUB)
+            "使用文档", self, FluentIcon.DOCUMENT)
+        self.sourceButton = PushButton("程序源代码", self, FluentIcon.GITHUB)
         self.themeButton = ToolButton(FluentIcon.CONSTRACT, self)
         self.separator = SeparatorWidget(self)
         self.supportButton = ToolButton(FluentIcon.HEART, self)
@@ -75,7 +75,7 @@ class ToolBar(QWidget):
         self.supportButton.installEventFilter(ToolTipFilter(self.supportButton))
         self.feedbackButton.installEventFilter(
             ToolTipFilter(self.feedbackButton))
-        self.themeButton.setToolTip(self.tr('Toggle theme'))
+        self.themeButton.setToolTip("切换主题")
         self.supportButton.setToolTip(self.tr('Support me'))
         self.feedbackButton.setToolTip("提交反馈")
 

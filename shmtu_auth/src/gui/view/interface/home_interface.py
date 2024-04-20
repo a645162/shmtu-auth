@@ -1,7 +1,7 @@
 # coding:utf-8
 import json
 
-from PySide6.QtCore import Qt, Signal, QRectF
+from PySide6.QtCore import Qt, Signal, QRectF, QSize
 from PySide6.QtGui import QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
@@ -12,6 +12,7 @@ from ...components.link_card import LinkCardView
 from ...components.sample_card import SampleCardView
 
 from ...common.style_sheet import StyleSheet
+from ...common import font_confg
 
 
 class BannerWidget(QWidget):
@@ -22,50 +23,58 @@ class BannerWidget(QWidget):
         self.setFixedHeight(336)
 
         self.vBoxLayout = QVBoxLayout(self)
-        self.galleryLabel = QLabel("上海海事大学 校园网自动认证", self)
-        self.banner = QPixmap(':/shmtu/banner1')
-        self.linkCardView = LinkCardView(self)
 
+        self.galleryLabel = QLabel(
+            "ShangHai Maritime University", self
+        )
+        self.galleryLabel.setFont(font_confg.title_font)
         self.galleryLabel.setObjectName('galleryLabel')
+
+        self.banner: QPixmap = QPixmap(':/shmtu/banner1')
+        self.linkCardView = LinkCardView(self)
 
         self.vBoxLayout.setSpacing(0)
         self.vBoxLayout.setContentsMargins(0, 20, 0, 0)
         self.vBoxLayout.addWidget(self.galleryLabel)
         self.vBoxLayout.addWidget(self.linkCardView, 1, Qt.AlignBottom)
+
+        margin_widget = QWidget(self)
+        margin_widget.setFixedHeight(20)
+        self.vBoxLayout.addWidget(margin_widget)
+
         self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
         self.linkCardView.addCard(
             ':/gui/Logo128',
-            self.tr('Getting started'),
-            self.tr('An overview of app development options and samples.'),
-            HELP_URL
+            "快速入门",
+            "查看本程序的在线文档。",
+            "https://a645162.github.io/shmtu-auth/"
         )
 
         self.linkCardView.addCard(
             FluentIcon.GITHUB,
-            self.tr('GitHub repo'),
-            self.tr(
-                'The latest fluent design controls and styles for your applications.'),
-            REPO_URL
+            "Github主页",
+            "查看本程序的源代码。",
+            "https://github.com/a645162/shmtu-auth"
         )
 
         self.linkCardView.addCard(
-            FluentIcon.CODE,
-            self.tr('Code samples'),
-            self.tr(
-                'Find samples that demonstrate specific tasks, features and APIs.'),
-            EXAMPLE_URL
+            FluentIcon.HOME_FILL,
+            "孔昊旻的主页",
+            "查看作者的其他项目",
+            "https://github.com/a645162"
         )
 
         self.linkCardView.addCard(
             FluentIcon.FEEDBACK,
-            self.tr('Send feedback'),
-            self.tr('Help us improve PyQt-Fluent-Widgets by providing feedback.'),
-            FEEDBACK_URL
+            "问题反馈",
+            "反馈问题或建议(需要Github账户)。",
+            "https://github.com/a645162/shmtu-auth/issues"
         )
 
     def paintEvent(self, e):
         super().paintEvent(e)
+
         painter = QPainter(self)
         painter.setRenderHints(
             QPainter.SmoothPixmapTransform | QPainter.Antialiasing)
@@ -80,6 +89,57 @@ class BannerWidget(QWidget):
         path.addRect(QRectF(w - 50, h - 50, 50, 50))
         path = path.simplified()
 
+        # 绘图逻辑
+        pixmap = self.banner.scaled(
+            self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # painter.fillPath(path, QBrush(pixmap))
+
+        # painter.drawPixmap(self.rect(), pixmap)
+
+        width_origin = self.banner.width()
+        height_origin = self.banner.height()
+        wh_ratio = width_origin / height_origin
+
+        width_target = self.width()
+        height_target = self.height()
+
+        height_new = height_target
+        width_new = height_new * wh_ratio
+        if width_new < width_target:
+            width_new = width_target
+            height_new = width_new / wh_ratio
+
+        scaled_pixmap = self.banner.scaled(QSize(width_new, height_new), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+
+        # 计算裁剪坐标(水平全部，垂直是中心部分)
+        crop_x = 0
+        crop_y = (height_new - height_target) / 2
+        crop_width = width_target
+        crop_height = height_target
+
+        # 裁剪图片
+        croped_pixmap = scaled_pixmap.copy(
+            int(crop_x),
+            int(crop_y),
+            int(crop_width),
+            int(crop_height)
+        )
+
+        # print(width_target, height_target)
+        # print(croped_pixmap.width(), croped_pixmap.height())
+        # print()
+
+        # 在路径内部绘制缩放并裁剪后的图像
+        painter.drawPixmap(
+            path.boundingRect(),
+            croped_pixmap,
+            QRectF(
+                0, 0,
+                width_target,
+                height_target
+            )
+        )
+
         # init linear gradient effect
         gradient = QLinearGradient(0, 0, 0, h)
 
@@ -93,11 +153,6 @@ class BannerWidget(QWidget):
 
         painter.fillPath(path, QBrush(gradient))
 
-        # draw banner image
-        pixmap = self.banner.scaled(
-            self.size(), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        painter.fillPath(path, QBrush(pixmap))
-
 
 class HomeInterface(ScrollArea):
     """ Home interface """
@@ -109,7 +164,7 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout = QVBoxLayout(self.view)
 
         self.__initWidget()
-        self.loadSamples()
+        self.loadCard()
 
     def __initWidget(self):
         self.view.setObjectName('view')
@@ -125,29 +180,55 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.addWidget(self.banner)
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
-    def loadSamples(self):
-        """ load samples """
-        # basic input samples
-        basicInputView = SampleCardView(
-            self.tr("Basic input samples"), self.view)
-        basicInputView.addSampleCard(
-            icon=":/gallery/images/controls/ToggleButton.png",
-            title="ToggleButton",
-            content=self.tr(
-                "A button that can be switched between two states like a CheckBox."),
+    def loadCard(self):
+        current_application_view_group = SampleCardView(
+            "本程序功能", self.view)
+        current_application_view_group.addSampleCard(
+            icon=":/gui/Logo128",
+            title="校园网自动认证",
+            content="监控网络状况，自动认证校园网，\n"
+                    "避免因各种因素导致断网。",
             routeKey="basicInputInterface",
             index=26
         )
-        self.vBoxLayout.addWidget(basicInputView)
+        self.vBoxLayout.addWidget(current_application_view_group)
 
-        # date time samples
-        dateTimeView = SampleCardView(self.tr('Date & time samples'), self.view)
-        dateTimeView.addSampleCard(
+        # 为上海海事大学开发的项目
+        shmtu_project_view_group = (
+            SampleCardView("数字海大系列(非官方,个人学习使用)", self.view))
+        shmtu_project_view_group.addSampleCard(
             icon=":/gallery/images/controls/TimePicker.png",
-            title="TimePicker",
-            content=self.tr(
-                "A configurable control that lets a user pick a time value."),
+            title="用户终端(非官方)",
+            content="数字海大的用户终端(第三方)\n"
+                    "主要包括账单获取、账单分析等功能。",
+            routeKey="dateTimeInterface",
+            index=3
+        )
+        shmtu_project_view_group.addSampleCard(
+            icon=":/gallery/images/controls/TimePicker.png",
+            title="验证码识别",
+            content="自动识别统一认证平台的验证码。",
             routeKey="dateTimeInterface",
             index=4
         )
-        self.vBoxLayout.addWidget(dateTimeView)
+        shmtu_project_view_group.addSampleCard(
+            icon=":/gallery/images/controls/TimePicker.png",
+            title="登录流程",
+            content="统一认证平台的登录流程\n"
+                    "包括调用识别验证码接口。",
+            routeKey="dateTimeInterface",
+            index=5
+        )
+        self.vBoxLayout.addWidget(shmtu_project_view_group)
+
+        # 为课题组开发的项目
+        group_project_view_group = SampleCardView("为课题组开发的项目", self.view)
+        group_project_view_group.addSampleCard(
+            icon=":/gallery/images/controls/TimePicker.png",
+            title="GPU任务通知工具",
+            content="我与师兄合作开发的一款GPU任务监控工具，\n"
+                    "GPU训练任务结束自动推送消息。",
+            routeKey="dateTimeInterface",
+            index=4
+        )
+        self.vBoxLayout.addWidget(group_project_view_group)

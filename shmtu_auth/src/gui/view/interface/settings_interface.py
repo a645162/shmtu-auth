@@ -43,15 +43,33 @@ class SettingInterface(ScrollArea):
             self.shmtuAuthGroup
         )
 
-        # personalization
-        self.personalGroup = SettingCardGroup(
-            self.tr('Personalization'), self.scrollWidget)
+        # 通用设置
+        self.generalGroup = SettingCardGroup(
+            "通用设置", self.scrollWidget)
+        self.autoStartupCard = SwitchSettingCard(
+            FIF.PLAY,
+            "开机自动启动",
+            "计算机开机后自动启动",
+            cfg.autoStartup,
+            self.generalGroup
+        )
+        self.autoMinimizeCard = SwitchSettingCard(
+            FIF.MINIMIZE,
+            "自动最小化",
+            "程序启动后自动最小化到系统托盘",
+            cfg.autoMinimize,
+            self.generalGroup
+        )
+
+        # 个性化设置
+        self.personalizationGroup = SettingCardGroup(
+            "个性化设置", self.scrollWidget)
         self.micaCard = SwitchSettingCard(
             FIF.TRANSPARENT,
-            self.tr('Mica effect'),
+            "Windows 11 云母(Mica)特效",
             self.tr('Apply semi transparent to windows and surfaces'),
             cfg.micaEnabled,
-            self.personalGroup
+            self.personalizationGroup
         )
         self.themeCard = OptionsSettingCard(
             cfg.themeMode,
@@ -62,14 +80,14 @@ class SettingInterface(ScrollArea):
                 "亮色", "暗色",
                 "跟随系统设置"
             ],
-            parent=self.personalGroup
+            parent=self.personalizationGroup
         )
         self.themeColorCard = CustomColorSettingCard(
             cfg.themeColor,
             FIF.PALETTE,
-            self.tr('Theme color'),
-            self.tr('Change the theme color of you application'),
-            self.personalGroup
+            "主题颜色",
+            "改变主题颜色",
+            self.personalizationGroup
         )
         self.zoomCard = OptionsSettingCard(
             cfg.dpiScale,
@@ -80,7 +98,7 @@ class SettingInterface(ScrollArea):
                 "100%", "125%", "150%", "175%", "200%",
                 "跟随系统设置"
             ],
-            parent=self.personalGroup
+            parent=self.personalizationGroup
         )
 
         # material
@@ -96,11 +114,11 @@ class SettingInterface(ScrollArea):
 
         # update software
         self.updateSoftwareGroup = SettingCardGroup(
-            self.tr("Software update"), self.scrollWidget)
+            "软件更新", self.scrollWidget)
         self.updateOnStartUpCard = SwitchSettingCard(
             FIF.UPDATE,
-            self.tr('Check for updates when the application starts'),
-            self.tr('The new version will be more stable and have more features'),
+            "自动检查更新",
+            "程序将在启动时自动联网检测是否存在新版本。",
             configItem=cfg.checkUpdateAtStartUp,
             parent=self.updateSoftwareGroup
         )
@@ -157,13 +175,19 @@ class SettingInterface(ScrollArea):
         self.settingLabel.move(36, 30)
 
         # add cards to group
+        # shmtu-auth
         self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
         self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
 
-        self.personalGroup.addSettingCard(self.micaCard)
-        self.personalGroup.addSettingCard(self.themeCard)
-        self.personalGroup.addSettingCard(self.themeColorCard)
-        self.personalGroup.addSettingCard(self.zoomCard)
+        # 通用设置
+        self.generalGroup.addSettingCard(self.autoStartupCard)
+        self.generalGroup.addSettingCard(self.autoMinimizeCard)
+
+        # 界面个性化设置
+        self.personalizationGroup.addSettingCard(self.micaCard)
+        self.personalizationGroup.addSettingCard(self.themeCard)
+        self.personalizationGroup.addSettingCard(self.themeColorCard)
+        self.personalizationGroup.addSettingCard(self.zoomCard)
         # self.personalGroup.addSettingCard(self.languageCard)
 
         self.materialGroup.addSettingCard(self.blurRadiusCard)
@@ -178,7 +202,8 @@ class SettingInterface(ScrollArea):
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.shmtuAuthGroup)
-        self.expandLayout.addWidget(self.personalGroup)
+        self.expandLayout.addWidget(self.generalGroup)
+        self.expandLayout.addWidget(self.personalizationGroup)
         self.expandLayout.addWidget(self.materialGroup)
         self.expandLayout.addWidget(self.updateSoftwareGroup)
         self.expandLayout.addWidget(self.aboutGroup)
@@ -186,8 +211,8 @@ class SettingInterface(ScrollArea):
     def __showRestartTooltip(self):
         """ show restart tooltip """
         InfoBar.success(
-            self.tr('Updated successfully'),
-            self.tr('Configuration takes effect after restart'),
+            "更新成功",
+            "设置已经保存，重启程序后生效。",
             duration=1500,
             parent=self
         )

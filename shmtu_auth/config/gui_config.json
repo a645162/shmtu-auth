@@ -1,4 +1,8 @@
 {
+    "General": {
+        "AutoMinimize": false,
+        "AutoStartup": false
+    },
     "Material": {
         "AcrylicBlurRadius": 15
     },
@@ -15,6 +19,6 @@
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Auto"
+        "ThemeMode": "Light"
     }
 }

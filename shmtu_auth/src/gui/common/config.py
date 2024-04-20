@@ -7,6 +7,7 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__)
 
+
 def isWin11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
@@ -14,11 +15,21 @@ def isWin11():
 class Config(QConfig):
     """ Config of application """
 
-    # folders
+    # shmtu-auth
     musicFolders = ConfigItem(
         "Folders", "LocalMusic", [], FolderListValidator())
     downloadFolder = ConfigItem(
         "Folders", "Download", "app/download", FolderValidator())
+
+    # 通用设置
+    autoStartup = ConfigItem(
+        "General", "AutoStartup", False, BoolValidator()
+    )
+    autoMinimize = ConfigItem(
+        "General", "AutoMinimize", False, BoolValidator()
+    )
+
+    # 界面个性化
 
     # main window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
@@ -28,7 +39,7 @@ class Config(QConfig):
     #     "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), LanguageSerializer(), restart=True)
 
     # Material
-    blurRadius  = RangeConfigItem("Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40))
+    blurRadius = RangeConfigItem("Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40))
 
     # software update
     checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
@@ -45,7 +56,6 @@ FEEDBACK_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/issues"
 RELEASE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/releases/latest"
 ZH_SUPPORT_URL = "https://qfluentwidgets.com/zh/price/"
 EN_SUPPORT_URL = "https://qfluentwidgets.com/price/"
-
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO

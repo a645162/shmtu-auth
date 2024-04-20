@@ -60,10 +60,25 @@ class MainWindow(FluentWindow):
 
         # add custom widget to bottom
         self.navigationInterface.addItem(
-            routeKey='price',
+            routeKey='github.io',
+            icon=FIF.DOCUMENT,
+            text="项目文档",
+            onClick=
+            lambda: QDesktopServices.openUrl(
+                QUrl("https://a645162.github.io/shmtu-auth/")
+            ),
+            selectable=False,
+            tooltip="项目文档",
+            position=NavigationItemPosition.BOTTOM
+        )
+        self.navigationInterface.addItem(
+            routeKey='github',
             icon=FIF.GITHUB,
-            text="官方网站",
-            onClick=self.onGithubPage,
+            text="项目源代码仓库",
+            onClick=
+            lambda: QDesktopServices.openUrl(
+                QUrl("https://github.com/a645162/shmtu-auth")
+            ),
             selectable=False,
             tooltip="官方网站",
             position=NavigationItemPosition.BOTTOM
