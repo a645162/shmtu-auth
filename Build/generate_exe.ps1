@@ -1,3 +1,5 @@
+# https://pyinstaller.org/en/stable/usage.html
+
 # Check requirements.txt is exist
 if (-not (Test-Path "requirements.txt"))
 {
