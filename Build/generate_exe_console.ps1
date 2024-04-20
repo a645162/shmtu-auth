@@ -17,14 +17,24 @@ if (-not (Test-Path "requirements.txt"))
 # Save Current Loaction
 $baseLocation = Get-Location
 
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+Write-Host "Installing requirements..."
+
+pip install -r requirements.txt > $null
+pip install -r dev-requirements.txt > $null
 
 $project_name = "shmtu_auth"
+$profile_name = "windows_console"
+$project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
 $srcLocation = "$baseLocation\$project_name"
-$outputLocation = "$baseLocation\Build\$project_name"
+$outputLocation = "$baseLocation\Build\$project_name_with_profile"
 $tmpLocation = "$outputLocation\tmp"
+
+Write-Host "src Location: $srcLocation"
+Write-Host "output Location: $outputLocation"
+Write-Host "tmp Location: $tmpLocation"
+
+Write-Host "Building the executable..."
 
 Set-Location $srcLocation
 
@@ -32,8 +42,9 @@ pyinstaller `
     -F `
     -c `
     -s `
+    --noupx `
     -i ..\Assets\Icon\icons\Icon.ico `
-    -n $project_name `
+    -n $project_name_with_profile `
     --distpath $outputLocation `
     --workpath $tmpLocation `
     .\main_pyinstaller.py

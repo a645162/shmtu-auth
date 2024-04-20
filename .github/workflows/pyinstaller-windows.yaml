@@ -2,6 +2,8 @@ name: PyInstaller Build exe on Windows
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -38,25 +40,27 @@ jobs:
         run: pip install pyinstaller
 
       - name: Build EXE with PyInstaller
-        run: . .\Build\generate_exe.ps1
+        run: . .\Build\generate_exe_console.ps1
 
       - name: Make logs directory
         run:
-          mkdir ".\Build\shmtu_auth\logs"
+          mkdir ".\Build\shmtu_auth_windows_console\logs"
 
       - name: Copy Config File
         run:
-          cp ".\shmtu_auth\config\config.note.toml" ".\Build\shmtu_auth\config.toml"
+          cp `
+          ".\shmtu_auth\config\config.note.toml" `
+          ".\Build\shmtu_auth_windows_console\config.toml"
 
       - name: Compress Directory to ZIP
         run:
           Compress-Archive `
-          -Path ".\Build\shmtu_auth" `
-          -DestinationPath ".\Build\shmtu_auth_windows.zip"
+          -Path ".\Build\shmtu_auth_windows_console" `
+          -DestinationPath ".\Build\shmtu_auth_windows_console.zip"
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./Build/shmtu_auth_windows.zip
+          files: ./Build/shmtu_auth_windows_console.zip
