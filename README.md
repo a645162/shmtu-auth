@@ -15,9 +15,18 @@
 
 </div>
 
+## 支持平台
+
+- Windows命令行(exe、pip)
+- macOS命令行(二进制文件、pip)
+- Linux命令行(pip)
+- Docker镜像
+
+GUI Coming Soon...
+
 ## Features
 
-- [x] 自动登录
+- [x] 自动认证
 - [x] 程序记录日志
 
 ## Usage
@@ -58,3 +67,11 @@ chmod +x start.sh
 - `SHMTU_AUTH_WEBHOOK_WEWORK`: 企业微信机器人WebHook
 - `SHMTU_WEBHOOK_SLEEP_TIME_START`: WebHook免打扰-开始时间
 - `SHMTU_WEBHOOK_SLEEP_TIME_END`: WebHook免打扰-结束时间
+
+## License
+
+本程序使用[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)协议开源。
+
+GPLv3协议是我非常喜欢的一个协议，我的大部分程序均基于GPLv3协议开源。
+
+此外，本程序使用到的QFluentWidgets库恰好也是基于GPLv3协议开源的。

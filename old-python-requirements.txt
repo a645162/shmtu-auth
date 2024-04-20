@@ -1,0 +1,8 @@
+urllib3
+requests
+
+chardet
+PyYaml
+toml
+
+loguru
