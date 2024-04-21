@@ -164,7 +164,7 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout = QVBoxLayout(self.view)
 
         self.__initWidget()
-        self.loadCard()
+        self.load_card_content()
 
     def __initWidget(self):
         self.view.setObjectName('view')
@@ -180,7 +180,7 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.addWidget(self.banner)
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
-    def loadCard(self):
+    def load_card_content(self):
         current_application_view_group = SampleCardView(
             "本程序功能", self.view)
         current_application_view_group.addSampleCard(
@@ -188,8 +188,9 @@ class HomeInterface(ScrollArea):
             title="校园网自动认证",
             content="监控网络状况，自动认证校园网，\n"
                     "避免因各种因素导致断网。",
-            routeKey="basicInputInterface",
-            index=26
+            index=26,
+            url="https://a645162.github.io/shmtu-auth/"
+                "1.Guide/0.Quick%20Start/1.Quick%20Start.html"
         )
         self.vBoxLayout.addWidget(current_application_view_group)
 
@@ -197,38 +198,54 @@ class HomeInterface(ScrollArea):
         shmtu_project_view_group = (
             SampleCardView("数字海大系列(非官方,个人学习使用)", self.view))
         shmtu_project_view_group.addSampleCard(
-            icon=":/gallery/images/controls/TimePicker.png",
+            icon=":/project/logo_terminal",
             title="用户终端(非官方)",
             content="数字海大的用户终端(第三方)\n"
                     "主要包括账单获取、账单分析等功能。",
-            routeKey="dateTimeInterface",
-            index=3
+            index=3,
+            url="https://github.com/a645162/SHMTU-Terminal-Wails"
         )
         shmtu_project_view_group.addSampleCard(
-            icon=":/gallery/images/controls/TimePicker.png",
-            title="验证码识别",
+            icon=":/project/logo_shmtu",
+            title="验证码识别服务器(C++)",
             content="自动识别统一认证平台的验证码。",
-            routeKey="dateTimeInterface",
-            index=4
+            index=4,
+            url="https://github.com/a645162/shmtu-cas-ocr-server"
         )
         shmtu_project_view_group.addSampleCard(
-            icon=":/gallery/images/controls/TimePicker.png",
-            title="登录流程",
+            icon=":/project/logo_golang",
+            title="登录流程(Golang)",
             content="统一认证平台的登录流程\n"
                     "包括调用识别验证码接口。",
-            routeKey="dateTimeInterface",
-            index=5
+            index=5,
+            url="https://github.com/a645162/shmtu-cas-go"
+        )
+        shmtu_project_view_group.addSampleCard(
+            icon=":/project/logo_kotlin",
+            title="登录流程(Kotlin)",
+            content="统一认证平台的登录流程\n"
+                    "包括调用识别验证码接口。",
+            index=5,
+            url="https://github.com/a645162/shmtu-cas-kotlin"
         )
         self.vBoxLayout.addWidget(shmtu_project_view_group)
 
         # 为课题组开发的项目
         group_project_view_group = SampleCardView("为课题组开发的项目", self.view)
         group_project_view_group.addSampleCard(
-            icon=":/gallery/images/controls/TimePicker.png",
+            icon=":/project/logo_gpu_dashboard",
             title="GPU任务通知工具",
             content="我与师兄合作开发的一款GPU任务监控工具，\n"
                     "GPU训练任务结束自动推送消息。",
-            routeKey="dateTimeInterface",
-            index=4
+            index=4,
+            url="https://github.com/a645162/nvi-notify"
+        )
+        group_project_view_group.addSampleCard(
+            icon=":/project/logo_gpu_dashboard",
+            title="GPU看板",
+            content="GPU任务面板基于Vue3+Element Plus开发，\n"
+                    "后端为显卡监控脚本的Flask。",
+            index=4,
+            url="https://github.com/a645162/nvi-notify"
         )
         self.vBoxLayout.addWidget(group_project_view_group)

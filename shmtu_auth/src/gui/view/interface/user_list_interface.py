@@ -11,16 +11,16 @@ from .gallery_interface import GalleryInterface
 from ...common.config import cfg
 
 
-class AuthInterface(GalleryInterface):
+class UserListInterface(GalleryInterface):
     """ Auth interface """
 
     def __init__(self, parent=None):
         super().__init__(
-            title="上海海事大学校园网自动认证",
+            title="校园网(统一认证平台)账号列表",
             subtitle="Author:Haomin Kong",
             parent=parent
         )
-        self.setObjectName('authInterface')
+        self.setObjectName('userListInterface')
 
         # self.iconView = IconCardView(self)
         # self.vBoxLayout.addWidget(self.iconView)

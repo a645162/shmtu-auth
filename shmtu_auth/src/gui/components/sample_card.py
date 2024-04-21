@@ -1,6 +1,6 @@
 # coding:utf-8
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt, Signal, QUrl
+from PySide6.QtGui import QPixmap, QDesktopServices
 from PySide6.QtWidgets import QWidget, QFrame, QLabel, QVBoxLayout, QHBoxLayout
 
 from qfluentwidgets import IconWidget, TextWrap, FlowLayout, CardWidget
@@ -11,10 +11,12 @@ from ..common.style_sheet import StyleSheet
 class SampleCard(CardWidget):
     """ Sample card """
 
-    def __init__(self, icon, title, content, routeKey, index, parent=None):
+    def __init__(self, icon, title, content, index, url="", parent=None):
         super().__init__(parent=parent)
         self.index = index
-        self.routekey = routeKey
+        # self.routekey = routeKey
+
+        self.url = url.strip()
 
         self.iconWidget = IconWidget(icon, self)
         self.titleLabel = QLabel(title, self)
@@ -45,6 +47,10 @@ class SampleCard(CardWidget):
 
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
+
+        if len(self.url) > 0:
+            QDesktopServices.openUrl(QUrl(self.url))
+
         # signalBus.switchToSampleCard.emit(self.routekey, self.index)
 
 
@@ -69,7 +75,7 @@ class SampleCardView(QWidget):
         self.titleLabel.setObjectName('viewTitleLabel')
         StyleSheet.SAMPLE_CARD.apply(self)
 
-    def addSampleCard(self, icon, title, content, routeKey, index):
+    def addSampleCard(self, icon, title, content, index, url=""):
         """ add sample card """
-        card = SampleCard(icon, title, content, routeKey, index, self)
+        card = SampleCard(icon, title, content, index, url, self)
         self.flowLayout.addWidget(card)

@@ -9,6 +9,7 @@ from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, Mess
 from qfluentwidgets import FluentIcon as FIF
 
 from .interface.gallery_interface import GalleryInterface
+from .interface.user_list_interface import UserListInterface
 from ..common.config import cfg
 
 from .interface.home_interface import HomeInterface
@@ -28,6 +29,7 @@ class MainWindow(FluentWindow):
         # create sub interface
         self.homeInterface = HomeInterface(self)
         self.authInterface = AuthInterface(self)
+        self.userListInterface = UserListInterface(self)
         self.settingInterface = SettingInterface(self)
 
         # enable acrylic effect
@@ -37,7 +39,7 @@ class MainWindow(FluentWindow):
         # self.connectSignalToSlot()
 
         # add items to navigation interface
-        self.initNavigation()
+        self.init_left_navigation_item()
         self.splashScreen.finish()
 
     # def connectSignalToSlot(self):
@@ -45,9 +47,11 @@ class MainWindow(FluentWindow):
     #     signalBus.switchToSampleCard.connect(self.switchToSample)
     #     signalBus.supportSignal.connect(self.onGithubPage)
 
-    def initNavigation(self):
+    def init_left_navigation_item(self):
         # add navigation items
         self.addSubInterface(self.homeInterface, FIF.HOME, "主页")
+
+        # 分隔线
         self.navigationInterface.addSeparator()
 
         pos = NavigationItemPosition.SCROLL
@@ -55,6 +59,12 @@ class MainWindow(FluentWindow):
             self.authInterface,
             FIF.FINGERPRINT,
             "校园网认证",
+            pos
+        )
+        self.addSubInterface(
+            self.userListInterface,
+            FIF.PEOPLE,
+            "用户列表",
             pos
         )
 
