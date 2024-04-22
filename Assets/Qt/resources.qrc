@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/gui">
         <file alias="Logo128">Logo128.png</file>
+        <file alias="Logo32">icon/Logo32.png</file>
     </qresource>
 
     <qresource prefix="/shmtu">

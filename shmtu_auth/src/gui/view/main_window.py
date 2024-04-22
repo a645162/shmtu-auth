@@ -20,6 +20,8 @@ from .interface.settings_interface import SettingInterface
 # 加载资源文件,虽然表面上没有调用
 from ..resource import resources
 
+from .system_tray import SystemTray
+
 
 class MainWindow(FluentWindow):
 
@@ -127,6 +129,9 @@ class MainWindow(FluentWindow):
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
         self.show()
+
+        SystemTray(self)
+
         QApplication.processEvents()
 
     def onGithubPage(self):
