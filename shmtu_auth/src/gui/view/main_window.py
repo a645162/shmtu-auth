@@ -8,6 +8,7 @@ from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, Mess
                             SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
 
+from .interface.about_interface import AboutInterface
 from .interface.gallery_interface import GalleryInterface
 from .interface.user_list_interface import UserListInterface
 from ..common.config import cfg
@@ -31,6 +32,7 @@ class MainWindow(FluentWindow):
         self.authInterface = AuthInterface(self)
         self.userListInterface = UserListInterface(self)
         self.settingInterface = SettingInterface(self)
+        self.aboutInterface = AboutInterface(self)
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
@@ -97,6 +99,12 @@ class MainWindow(FluentWindow):
             self.settingInterface,
             FIF.SETTING,
             "设置",
+            NavigationItemPosition.BOTTOM
+        )
+        self.addSubInterface(
+            self.aboutInterface,
+            FIF.INFO,
+            "关于",
             NavigationItemPosition.BOTTOM
         )
 

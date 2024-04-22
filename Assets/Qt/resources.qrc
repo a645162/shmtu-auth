@@ -15,6 +15,11 @@
         <file alias="logo_gpu_dashboard">image/Project/gpu-dashboard.png</file>
     </qresource>
 
+    <qresource prefix="/about">
+        <file alias="flip/current/1">image/Flip/Current/QQ截图20240421225340.png</file>
+        <file alias="flip/current/2">image/Flip/Current/QQ截图20240421225446.png</file>
+    </qresource>
+
     <qresource prefix="/gallery">
         <file>qss/dark/gallery_interface.qss</file>
         <file>qss/dark/home_interface.qss</file>
