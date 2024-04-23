@@ -68,7 +68,12 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '-e', '--exe',
-        help='Exe build',
+        help='Binary build',
+        action="store_true"
+    )
+    parser.add_argument(
+        '-g', '--gui',
+        help='Binary GUI Build',
         action="store_true"
     )
     parser.add_argument(
@@ -104,6 +109,23 @@ if __name__ == "__main__":
         src = set_build_config(src, {
             "exe_build_time": formatted_now
         })
+    if hasattr(args, 'gui') and args.exe:
+        file_path = os.path.join(
+            base_dir, "shmtu_auth", "src",
+            "utils", "logs.py"
+        )
+
+        if not os.path.exists(file_path):
+            print("logs.py is not found:", file_path)
+            exit(1)
+
+        with open(
+                file_path,
+                "rw", encoding="utf-8"
+        ) as f:
+            text = f.read()
+            text = text.replace("shmtu_auth_", "shmtu_auth_gui_")
+            f.write(text)
 
     if hasattr(args, 'wheel') and args.wheel:
         src = set_build_config(src, {

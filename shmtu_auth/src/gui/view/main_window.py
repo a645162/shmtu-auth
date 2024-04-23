@@ -10,6 +10,7 @@ from qfluentwidgets import FluentIcon as FIF
 
 from .interface.about_interface import AboutInterface
 from .interface.gallery_interface import GalleryInterface
+from .interface.log_interface import LogInterface
 from .interface.user_list_interface import UserListInterface
 from ..common.config import cfg
 
@@ -33,6 +34,7 @@ class MainWindow(FluentWindow):
         self.homeInterface = HomeInterface(self)
         self.authInterface = AuthInterface(self)
         self.userListInterface = UserListInterface(self)
+        self.logInterface = LogInterface(self)
         self.settingInterface = SettingInterface(self)
         self.aboutInterface = AboutInterface(self)
 
@@ -69,6 +71,12 @@ class MainWindow(FluentWindow):
             self.userListInterface,
             FIF.PEOPLE,
             "用户列表",
+            pos
+        )
+        self.addSubInterface(
+            self.logInterface,
+            FIF.DATE_TIME,
+            "工作日志",
             pos
         )
 

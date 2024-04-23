@@ -10,7 +10,7 @@
         "CheckUpdateAtStartUp": false
     },
     "Folders": {
-        "Download": "H:/SHMTU/shmtu-auth/shmtu_auth/app/download",
+        "Download": "/Users/konghaomin/SHMTU/shmtu-auth/shmtu_auth/H:/SHMTU/shmtu-auth/shmtu_auth/app/download",
         "LocalMusic": []
     },
     "MainWindow": {

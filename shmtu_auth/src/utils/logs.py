@@ -7,7 +7,7 @@ logger = loguru.logger
 
 log_directory_path = get_env_str("LOGS_PATH", "./logs")
 
-# Convert to absolute path
+# Convert to an absolute path
 log_directory_path = os.path.abspath(log_directory_path)
 
 print("Log:\n" + log_directory_path)

@@ -1,4 +1,5 @@
 # coding:utf-8
+import datetime
 from typing import List
 
 from PySide6.QtCore import Qt, Signal
@@ -22,12 +23,97 @@ class UserListInterface(GalleryInterface):
         )
         self.setObjectName('userListInterface')
 
-        table_widget = TableFrame(self)
+        table_widget = UserListTableFrame(self)
 
         self.vBoxLayout.addWidget(table_widget)
 
 
-class TableFrame(TableWidget):
+class NetworkType:
+    # 0001
+    ChinaEdu: int = 1 << 0
+
+    # 0010
+    ChinaMobile: int = 1 << 1
+
+    # 0100
+    ChinaUnicom: int = 1 << 2
+
+    @staticmethod
+    def to_binary(support_types: List[int]):
+        return sum(support_type for support_type in support_types)
+
+    @staticmethod
+    def from_binary(binary_code) -> List[int]:
+        selected_types = []
+        if binary_code & NetworkType.ChinaEdu:
+            selected_types.append(NetworkType.ChinaEdu)
+        if binary_code & NetworkType.ChinaMobile:
+            selected_types.append(NetworkType.ChinaMobile)
+        if binary_code & NetworkType.ChinaUnicom:
+            selected_types.append(NetworkType.ChinaUnicom)
+        return selected_types
+
+
+class UserItem:
+    userId: str
+    userName: str
+    password: str
+    supportType: List[int]
+    expireTime: str
+    expireDataTime: datetime.datetime
+
+    def __init__(
+            self,
+            userId: str = "",
+            userName: str = "",
+            password: str = "",
+            supportType=None,
+            expireDataTime: datetime.datetime = datetime.datetime.now(),
+    ):
+        self.userId = userId
+        self.userName = userName
+        self.password = password
+
+        self.supportType = supportType
+        if self.supportType is None:
+            self.supportType = [NetworkType.ChinaEdu]
+
+        self.expireDataTime = expireDataTime
+
+        self.convert_datetime_to_str()
+
+    def convert_datetime_to_str(self):
+        self.expireTime = self.expireDataTime.strftime("%Y-%m-%d %H:%M:%S")
+
+    def to_list(self) -> List[str]:
+        return [self.userId, self.userName, self.password, self.supportType, self.expireTime]
+
+    def __iter__(self):
+        return iter(self.to_list())
+
+
+def gengerate_test_user_list(count: int = 10) -> List[UserItem]:
+    user_list: List[UserItem] = []
+
+    for i in range(count):
+        user = UserItem()
+        user.userId = "2024123{:05d}".format(i)
+        user.userName = f"User_{i}"
+        user.password = f"password_{i}"
+        user.supportType = "校园网"
+        user.expireDataTime = datetime.datetime.now()
+        user.convert_datetime_to_str()
+        user_list.append(user)
+
+    return user_list
+
+
+def convert_to_list_list(user_list: List[UserItem]) -> List[List[str]]:
+    return [list(user) for user in user_list]
+
+
+class UserListTableFrame(TableWidget):
+    user_list: List[UserItem]
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -37,51 +123,32 @@ class TableFrame(TableWidget):
         self.setBorderVisible(True)
 
         self.setColumnCount(5)
-        self.setRowCount(60)
+        # self.setRowCount(60)
         self.setHorizontalHeaderLabels([
-            self.tr('Title'),
-            self.tr('Artist'),
-            self.tr('Album'),
-            self.tr('Year'),
-            self.tr('Duration')
+            self.tr("学号"),
+            self.tr("姓名"),
+            self.tr("密码"),
+            self.tr("支持类型"),
+            self.tr("过期时间")
         ])
 
-        songInfos = [
-            ['かばん', 'aiko', 'かばん', '2004', '5:04'],
-            ['爱你', '王心凌', '爱你', '2004', '3:39'],
-            ['星のない世界', 'aiko', '星のない世界/横顔', '2007', '5:30'],
-            ['横顔', 'aiko', '星のない世界/横顔', '2007', '5:06'],
-            ['秘密', 'aiko', '秘密', '2008', '6:27'],
-            ['シアワセ', 'aiko', '秘密', '2008', '5:25'],
-            ['二人', 'aiko', '二人', '2008', '5:00'],
-            ['スパークル', 'RADWIMPS', '君の名は。', '2016', '8:54'],
-            ['なんでもないや', 'RADWIMPS', '君の名は。', '2016', '3:16'],
-            ['前前前世', 'RADWIMPS', '人間開花', '2016', '4:35'],
-            ['恋をしたのは', 'aiko', '恋をしたのは', '2016', '6:02'],
-            ['夏バテ', 'aiko', '恋をしたのは', '2016', '4:41'],
-            ['もっと', 'aiko', 'もっと', '2016', '4:50'],
-            ['問題集', 'aiko', 'もっと', '2016', '4:18'],
-            ['半袖', 'aiko', 'もっと', '2016', '5:50'],
-            ['ひねくれ', '鎖那', 'Hush a by little girl', '2017', '3:54'],
-            ['シュテルン', '鎖那', 'Hush a by little girl', '2017', '3:16'],
-            ['愛は勝手', 'aiko', '湿った夏の始まり', '2018', '5:31'],
-            ['ドライブモード', 'aiko', '湿った夏の始まり', '2018', '3:37'],
-            ['うん。', 'aiko', '湿った夏の始まり', '2018', '5:48'],
-            ['キラキラ', 'aikoの詩。', '2019', '5:08', 'aiko'],
-            ['恋のスーパーボール', 'aiko', 'aikoの詩。', '2019', '4:31'],
-            ['磁石', 'aiko', 'どうしたって伝えられないから', '2021', '4:24'],
-            ['食べた愛', 'aiko', '食べた愛/あたしたち', '2021', '5:17'],
-            ['列車', 'aiko', '食べた愛/あたしたち', '2021', '4:18'],
-            ['花の塔', 'さユり', '花の塔', '2022', '4:35'],
-            ['夏恋のライフ', 'aiko', '夏恋のライフ', '2022', '5:03'],
-            ['あかときリロード', 'aiko', 'あかときリロード', '2023', '4:04'],
-            ['荒れた唇は恋を失くす', 'aiko', '今の二人をお互いが見てる', '2023', '4:07'],
-            ['ワンツースリー', 'aiko', '今の二人をお互いが見てる', '2023', '4:47'],
-        ]
-        songInfos += songInfos
-        for i, songInfo in enumerate(songInfos):
-            for j in range(5):
-                self.setItem(i, j, QTableWidgetItem(songInfo[j]))
+        self.user_list = gengerate_test_user_list(10)
 
-        self.setFixedSize(625, 440)
+        self.update_user_list()
+
         self.resizeColumnsToContents()
+
+    def update_user_list(self):
+        user_count = self.user_list.__len__()
+
+        self.setRowCount(user_count)
+
+        user_list: List[List[str]] = \
+            convert_to_list_list(self.user_list)
+
+        for i, user_info_str_list in enumerate(user_list):
+            for j in range(user_info_str_list.__len__()):
+                self.setItem(
+                    i, j,
+                    QTableWidgetItem(user_info_str_list[j])
+                )
