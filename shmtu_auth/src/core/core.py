@@ -86,9 +86,8 @@ class ShmtuNetAuthCore:
         import urllib3
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        # if self.isLogin is True:
+        # 执行登录前再进行一次状态检测
         self.test_net()
-        # self.isLogin = False
         if not self.isLogin:
             if user == "" or pwd == "":
                 return False, "用户名或密码为空"
@@ -105,10 +104,10 @@ class ShmtuNetAuthCore:
 
             try:
                 if len(current_query_string) == 0:
-                    logger.exception("Query String Error!")
-                    return False, "Query String Error!"
+                    logger.exception("Query String is Invalid!")
+                    return False, "Query String is Invalid!"
 
-                logger.debug("Query String: ", current_query_string)
+                logger.debug("Query String: " + current_query_string)
                 logger.info("Get Query String Success!")
 
                 self.data["queryString"] = current_query_string
