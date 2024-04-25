@@ -1,11 +1,14 @@
 import os.path
 
-from .data_directory import get_data_path
+from data_directory import get_data_path
 
 project_name = "shmtu_auth"
 
 py_mode = True
 gui_mode = False
+
+print("Py Mode:", py_mode)
+print("GUI Mode:", gui_mode)
 
 
 def get_current_py_path() -> str:
@@ -33,17 +36,29 @@ def get_directory_base_path() -> str:
         return get_pyfile_base_path()
 
 
-def get_directory_config_path():
+def get_directory_child(child_name: str) -> str:
     base_path = get_directory_base_path()
-    return os.path.join(base_path, "config")
+    final_path = os.path.join(base_path, child_name)
+
+    os.makedirs(final_path, exist_ok=True)
+
+    return final_path
+
+
+def get_directory_config_path():
+    return get_directory_child("config")
+
+
+def get_directory_data_path():
+    return get_directory_child("data")
 
 
 def get_directory_log_path():
-    base_path = get_directory_base_path()
-    return os.path.join(base_path, "log")
+    return get_directory_child("logs")
 
 
 if __name__ == '__main__':
     print(get_directory_base_path())
     print(get_directory_config_path())
+    print(get_directory_data_path())
     print(get_directory_log_path())

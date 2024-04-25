@@ -2,13 +2,16 @@
 from typing import List
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QTableWidgetItem
+from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QTableWidgetItem, \
+    QTableWidget
 from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
                             Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
-                            BodyLabel, TableWidget)
+                            BodyLabel, TableWidget, InfoBar, InfoBarIcon, InfoBarPosition, PushButton)
 
 from .gallery_interface import GalleryInterface
 from ...common.config import cfg
+
+import pickle
 
 
 class LogInterface(GalleryInterface):
@@ -21,8 +24,23 @@ class LogInterface(GalleryInterface):
         )
         self.setObjectName('logInterface')
 
-        self.logTable = LogTableFrame(self)
+        infoBar = InfoBar(
+            icon=InfoBarIcon.INFORMATION,
+            title="提示",
+            content="这里是程序的工作日志，仅用于反馈。非专业人员请忽略~",
+            orient=Qt.Horizontal,
+            isClosable=True,
+            duration=-1,
+            position=InfoBarPosition.NONE,
+            parent=self
+        )
+        self.vBoxLayout.addWidget(infoBar)
 
+        button_save_log = PushButton("导出日志")
+        button_save_log.setFixedWidth(100)
+        self.vBoxLayout.addWidget(button_save_log)
+
+        self.logTable = LogTableFrame(self)
         self.vBoxLayout.addWidget(self.logTable)
 
 
@@ -46,6 +64,9 @@ class LogTableFrame(TableWidget):
         self.add_record("2024年01月01日 12:34:56", "检测到网络断开", "成功")
 
         self.resizeColumnsToContents()
+
+        # 禁止直接编辑
+        self.setEditTriggers(TableWidget.NoEditTriggers)
 
     def add_record(self, time: str = "", event: str = "", status: str = ""):
         self.setRowCount(self.record_count + 1)
