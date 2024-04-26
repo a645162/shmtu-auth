@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os.path
 import loguru
 
-from ..utils.env import get_env_str
+from ..config.project_directory import get_directory_log_path
 
 logger = loguru.logger
 
-log_directory_path = get_env_str("LOGS_PATH", "./logs")
+# log_directory_path = get_env_str("LOGS_PATH", "./logs")
+log_directory_path = get_directory_log_path()
 
 # Convert to an absolute path
-log_directory_path = os.path.abspath(log_directory_path)
+# log_directory_path = os.path.abspath(log_directory_path)
 
 print("Log:\n" + log_directory_path)
 log_file_name = "shmtu_auth_{time}.log"

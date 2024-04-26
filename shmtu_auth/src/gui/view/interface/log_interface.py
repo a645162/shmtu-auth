@@ -20,7 +20,7 @@ from ....config.project_directory import (
     get_directory_log_path
 )
 
-pickle_log_path = "log.pickle"
+pickle_log_path = "logs.pickle"
 pickle_log_path = os.path.join(
     get_directory_data_path(),
     pickle_log_path
@@ -87,7 +87,7 @@ class LogTableFrame(TableWidget):
             "状态",
         ])
 
-        self.add_record("2024年01月01日 12:34:56", "检测到网络断开", "成功")
+        # self.add_record("2024年01月01日 12:34:56", "检测到网络断开", "成功")
 
         self.resizeColumnsToContents()
 
@@ -97,12 +97,14 @@ class LogTableFrame(TableWidget):
         if os.path.exists(pickle_log_path):
             self.read_status()
 
-        if self.record_list is not None:
-            self.update_by_list()
-
     def read_status(self):
+        if not os.path.exists(pickle_log_path):
+            return
         with open(pickle_log_path, 'rb') as f:
             self.record_list = pickle.load(f)
+
+        if self.record_list is not None:
+            self.update_by_list()
 
     def save_status(self):
         with open(pickle_log_path, 'wb') as f:
@@ -114,9 +116,10 @@ class LogTableFrame(TableWidget):
             current_record: List[str]
     ):
         for j in range(min(current_record.__len__(), self.column_count)):
+            current_text = current_record[j]
             self.setItem(
                 index, j,
-                QTableWidgetItem(current_record[j])
+                QTableWidgetItem(current_text)
             )
 
     def update_by_list(self, record_list: List[List[str]] = None):
@@ -127,9 +130,10 @@ class LogTableFrame(TableWidget):
 
         self.setRowCount(self.record_count)
 
-        for i, record_item in self.record_list:
+        for i, record_item in enumerate(self.record_list):
             self.update_record(i, record_item)
 
+        self.resizeColumnsToContents()
         self.save_status()
 
     def add_record(self, time: str = "", event: str = "", status: str = ""):
@@ -146,4 +150,5 @@ class LogTableFrame(TableWidget):
 
         self.record_count += 1
 
+        self.resizeColumnsToContents()
         self.save_status()

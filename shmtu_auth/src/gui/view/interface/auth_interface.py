@@ -70,9 +70,9 @@ class AuthSettingWidget(ScrollArea):
             self.shmtuAuthGroup
         )
 
-        self.__initWidget()
+        self.__init_widget()
 
-    def __initWidget(self):
+    def __init_widget(self):
         # self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setViewportMargins(0, 80, 0, 20)
@@ -86,10 +86,10 @@ class AuthSettingWidget(ScrollArea):
         StyleSheet.SETTING_INTERFACE.apply(self)
 
         # initialize layout
-        self.__initLayout()
+        self.__init_layout()
         self.__connectSignalToSlot()
 
-    def __initLayout(self):
+    def __init_layout(self):
         self.settingLabel.move(36, 30)
 
         # add cards to group

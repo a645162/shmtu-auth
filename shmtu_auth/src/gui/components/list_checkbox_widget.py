@@ -2,20 +2,20 @@
 from typing import List
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout
+from qfluentwidgets import CheckBox
 
 
 class ListCheckboxWidgets(QWidget):
     checkbox_data: dict = {}
+    layout: QVBoxLayout
 
     def __init__(self, parent=None, data_list: List = None):
         super().__init__(parent)
-        self.init_data(data_list)
 
-        layout = QVBoxLayout()
+        self._init_data(data_list)
+        self._init_checkbox()
 
-        self.setLayout(layout)
-
-    def init_data(self, data_list: List = None):
+    def _init_data(self, data_list: List = None):
         if data_list is None:
             raise "List Checkbox Widget data must be a list"
 
@@ -39,10 +39,23 @@ class ListCheckboxWidgets(QWidget):
                     "status": default_value,
                 }
 
-    def create_checkbox(self):
+    def _init_checkbox(self):
+        self.layout = QVBoxLayout()
+
+        def _update_checkbox_data(self, state, key):
+            self.checkbox_data[key]["status"] = state
+
         for key in self.checkbox_data.keys():
-            pass
-            # current_checkbox= self.checkbox_data[key]
+            current_checkbox = CheckBox()
+            current_checkbox.setText(key)
+            current_checkbox.setChecked(self.checkbox_data[key]["default"])
+            current_checkbox.stateChanged.connect(
+                lambda state: _update_checkbox_data(self, state, key)
+            )
+
+            self.layout.addWidget(current_checkbox)
+
+        self.setLayout(self.layout)
 
     def get_status(self) -> dict:
         return_data = {}

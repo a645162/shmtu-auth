@@ -2,7 +2,7 @@
 
 import os.path
 
-from data_directory import get_data_path
+from .data_directory import get_data_path
 
 project_name = "shmtu_auth"
 
