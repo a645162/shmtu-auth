@@ -1,4 +1,5 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+
 from PySide6.QtCore import Qt, Signal, QUrl, QEvent
 from PySide6.QtGui import QDesktopServices, QPainter, QPen, QColor
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame

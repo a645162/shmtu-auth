@@ -1,4 +1,5 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+
 import sys
 from enum import Enum
 
@@ -20,6 +21,11 @@ class Config(QConfig):
         "Folders", "LocalMusic", [], FolderListValidator())
     downloadFolder = ConfigItem(
         "Folders", "Download", "app/download", FolderValidator())
+    auth_advanced_feature = ConfigItem(
+        "Auth", "AdvancedFeature", False, BoolValidator()
+    )
+    auth_docker_save_folder = ConfigItem(
+        "Auth", "DockerSaveFolder", "", FolderValidator())
 
     # 通用设置
     autoStartup = ConfigItem(
@@ -31,18 +37,27 @@ class Config(QConfig):
 
     # 界面个性化
 
-    # main window
+    # Main Window
     micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
     dpiScale = OptionsConfigItem(
-        "MainWindow", "DpiScale", "Auto", OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]), restart=True)
-    # language = OptionsConfigItem(
-    #     "MainWindow", "Language", Language.AUTO, OptionsValidator(Language), LanguageSerializer(), restart=True)
+        "MainWindow", "DpiScale", "Auto",
+        OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]),
+        restart=True
+    )
 
     # Material
-    blurRadius = RangeConfigItem("Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40))
+    blurRadius = RangeConfigItem(
+        "Material", "AcrylicBlurRadius", 15,
+        RangeValidator(0, 40)
+    )
 
     # software update
-    checkUpdateAtStartUp = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
+    checkUpdateAtStartUp = ConfigItem(
+        "Update",
+        "CheckUpdateAtStartUp",
+        True,
+        BoolValidator()
+    )
 
 
 YEAR = 2024

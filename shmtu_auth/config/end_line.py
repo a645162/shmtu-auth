@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def convert_to_crlf(file_path):
     # 读取文件
     with open(file_path, 'r', newline='') as file:

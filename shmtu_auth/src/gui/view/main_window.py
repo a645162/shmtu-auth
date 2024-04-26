@@ -1,4 +1,5 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
+
 from typing import List
 from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices, QColor

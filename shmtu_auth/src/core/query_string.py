@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os.path
 from ..utils.logs import get_logger
 

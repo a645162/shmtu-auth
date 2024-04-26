@@ -1,4 +1,5 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+
 import json
 
 from PySide6.QtCore import Qt, Signal, QRectF, QSize

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from time import sleep as time_sleep
 
 from .get_query_string_requests import is_connect_by_google, get_query_string_by_url

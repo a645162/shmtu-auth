@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from src.gui.gui_main_application import gui_main_application
 
 

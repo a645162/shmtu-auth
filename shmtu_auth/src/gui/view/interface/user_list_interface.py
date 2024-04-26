@@ -1,4 +1,5 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+
 import datetime
 from typing import List
 
@@ -39,9 +40,10 @@ class UserListInterface(GalleryInterface):
         if w.exec():
             print(w.countLineEdit.text())
 
-            w = Dialog("提示", "处理完毕！", self.window())
+            w = Dialog("提示", "生成成功，您是否需要打开目录？", self.window())
             w.setContentCopyable(True)
-            w.exec()
+            if w.exec():
+                pass
 
 
 class NetworkType:
@@ -141,11 +143,11 @@ class UserListTableFrame(TableWidget):
         self.setColumnCount(5)
         # self.setRowCount(60)
         self.setHorizontalHeaderLabels([
-            self.tr("学号"),
-            self.tr("姓名"),
-            self.tr("密码"),
-            self.tr("支持类型"),
-            self.tr("过期时间")
+            "学号",
+            "姓名",
+            "密码",
+            "支持类型",
+            "过期时间"
         ])
 
         self.user_list = generate_test_user_list(10)
@@ -180,8 +182,8 @@ class UserListTableFrame(TableWidget):
 
 
 class UserInfoEditWidget(QWidget):
-    input_user_name: LineEdit
     input_user_id: LineEdit
+    input_user_name: LineEdit
     input_password: PasswordLineEdit
 
     # support_type:
@@ -193,13 +195,13 @@ class UserInfoEditWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.input_user_name = LineEdit(self)
-        self.input_user_name.setText(self.tr("请输入姓名"))
-        self.input_user_name.setClearButtonEnabled(True)
-
         self.input_user_id = LineEdit(self)
-        self.input_user_id.setText(self.tr("请输入学号"))
+        self.input_user_id.setText("请输入学号")
         self.input_user_id.setClearButtonEnabled(True)
+
+        self.input_user_name = LineEdit(self)
+        self.input_user_name.setText("请输入姓名")
+        self.input_user_name.setClearButtonEnabled(True)
 
         self.input_password = PasswordLineEdit(self)
         self.input_password.setFixedWidth(230)
@@ -230,9 +232,9 @@ class ServerCountMessageBox(MessageBoxBase):
         self.widget.setMinimumWidth(360)
         self.yesButton.setDisabled(True)
 
-        self.countLineEdit.textChanged.connect(self._validateCount)
+        self.countLineEdit.textChanged.connect(self._validate_count)
 
-    def _validateCount(self, text: str):
+    def _validate_count(self, text: str):
         text = text.strip()
 
         is_valid = text.__len__() > 0

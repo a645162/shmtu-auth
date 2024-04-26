@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import threading
 from time import sleep as time_sleep
 

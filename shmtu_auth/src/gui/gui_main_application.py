@@ -1,4 +1,5 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 
@@ -19,7 +20,7 @@ def gui_main_application():
     app = QApplication(sys.argv)
     app.setAttribute(Qt.AA_DontCreateNativeWidgetSiblings)
 
-    # create main window
+    # create Main Window
     w = MainWindow()
     w.show()
 

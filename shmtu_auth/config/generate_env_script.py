@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import yaml
 import toml
 from end_line import convert_to_crlf, convert_to_lf

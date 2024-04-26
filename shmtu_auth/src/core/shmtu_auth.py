@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from ..core.core import ShmtuNetAuthCore
 
 from ..utils.logs import get_logger

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os.path
 
 from data_directory import get_data_path
