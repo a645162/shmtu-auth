@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import os.path
 from typing import List
 
 from PySide6.QtCore import Qt, Signal
@@ -13,6 +14,19 @@ from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
 
 from .gallery_interface import GalleryInterface
 from ...common.config import cfg
+
+import pickle
+
+from ....config.project_directory import (
+    get_directory_config_path,
+    get_directory_data_path
+)
+
+pickle_user_list_path = "user_list.pickle"
+pickle_user_list_path = os.path.join(
+    get_directory_data_path(),
+    pickle_user_list_path
+)
 
 
 class UserListInterface(GalleryInterface):

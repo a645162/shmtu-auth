@@ -15,11 +15,19 @@ from ...common.config import cfg
 
 import pickle
 
+from ....config.project_directory import (
+    get_directory_data_path,
+    get_directory_log_path
+)
+
+pickle_log_path = "log.pickle"
+pickle_log_path = os.path.join(
+    get_directory_data_path(),
+    pickle_log_path
+)
+
 
 class LogInterface(GalleryInterface):
-    record_list: Optional[List[List[str]]]
-
-    pickle_log_path = "data.pickle"
 
     def __init__(self, parent=None):
         super().__init__(
@@ -46,31 +54,14 @@ class LogInterface(GalleryInterface):
         button_save_log.clicked.connect(self.export_logs)
         self.vBoxLayout.addWidget(button_save_log)
 
-        # Load status
-        self.record_list = None
-        if os.path.exists(self.pickle_log_path):
-            self.read_status()
-
-        self.logTable = LogTableFrame(self, record_list=self.record_list)
+        self.logTable = LogTableFrame(self)
         self.vBoxLayout.addWidget(self.logTable)
-
-    def set_pickle_path(self):
-        pass
-
-    def save_status(self, record_list: List[List[str]]):
-        with open(self.pickle_log_path, 'wb') as f:
-            pickle.dump(record_list, f)
-
-    def read_status(self):
-        with open(self.pickle_log_path, 'rb') as f:
-            self.record_list = pickle.load(f)
 
     def add_new_record(
             self,
             time: str = "", event: str = "", status: str = ""
     ):
         self.logTable.add_record(time=time, event=event, status=status)
-        self.save_status(self.logTable.record_list)
 
     def export_logs(self):
         pass
@@ -82,7 +73,7 @@ class LogTableFrame(TableWidget):
     record_count = 0
     record_list: List[List[str]] = []
 
-    def __init__(self, parent=None, record_list: List[List[str]] = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.verticalHeader().hide()
@@ -103,9 +94,19 @@ class LogTableFrame(TableWidget):
         # 禁止直接编辑
         self.setEditTriggers(TableWidget.NoEditTriggers)
 
-        if record_list is not None:
-            self.record_list = record_list
+        if os.path.exists(pickle_log_path):
+            self.read_status()
+
+        if self.record_list is not None:
             self.update_by_list()
+
+    def read_status(self):
+        with open(pickle_log_path, 'rb') as f:
+            self.record_list = pickle.load(f)
+
+    def save_status(self):
+        with open(pickle_log_path, 'wb') as f:
+            pickle.dump(self.record_list, f)
 
     def update_record(
             self,
@@ -129,16 +130,20 @@ class LogTableFrame(TableWidget):
         for i, record_item in self.record_list:
             self.update_record(i, record_item)
 
+        self.save_status()
+
     def add_record(self, time: str = "", event: str = "", status: str = ""):
         self.setRowCount(self.record_count + 1)
 
+        # 生成结构化数据
         current_record = [time, event, status]
+
+        # 添加到记录列表
         self.record_list.append(current_record)
 
-        for j in range(min(current_record.__len__(), self.column_count)):
-            self.setItem(
-                self.record_count, j,
-                QTableWidgetItem(current_record[j])
-            )
+        # 更新UI
+        self.update_record(self.record_count, current_record)
 
         self.record_count += 1
+
+        self.save_status()

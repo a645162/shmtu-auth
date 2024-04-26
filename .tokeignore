@@ -1,0 +1,3 @@
+shmtu_auth/src/gui/resource/resources.py
+*.svg
+*.json
