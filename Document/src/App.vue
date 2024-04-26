@@ -8,7 +8,12 @@ import GithubVersion from "./components/GithubVersion.vue";
   <h1>shmtu-auth Doc Test</h1>
 
   <!--  <HelloWorld msg="Vite + Vue" />-->
-  <GithubVersion branch="main"/>
+
+  <div class="version-list">
+    <GithubVersion branch="main"/>
+    <GithubVersion branch="beta"/>
+    <GithubVersion branch="dev"/>
+  </div>
 
 </template>
 
