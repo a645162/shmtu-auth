@@ -42,16 +42,18 @@ class ListCheckboxWidgets(QWidget):
     def _init_checkbox(self):
         self.layout = QVBoxLayout()
 
-        def _update_checkbox_data(self, state, key):
-            self.checkbox_data[key]["status"] = state
+        def _update_checkbox_data(state: bool, dict_key: str):
+            self.checkbox_data[dict_key]["status"] = state
 
         for key in self.checkbox_data.keys():
             current_checkbox = CheckBox()
             current_checkbox.setText(key)
             current_checkbox.setChecked(self.checkbox_data[key]["default"])
             current_checkbox.stateChanged.connect(
-                lambda state: _update_checkbox_data(self, state, key)
+                lambda state: _update_checkbox_data(state=state, dict_key=key)
             )
+
+            self.checkbox_data[key]["widget"] = current_checkbox
 
             self.layout.addWidget(current_checkbox)
 
@@ -68,6 +70,16 @@ class ListCheckboxWidgets(QWidget):
                 return_data[key] = current_value
 
         return return_data
+
+    def set_status(self, key: str, status: bool) -> bool:
+        if key in self.checkbox_data:
+            if "widget" in self.checkbox_data[key]:
+                self.checkbox_data[key]["status"] = status
+                self.checkbox_data[key]["widget"].setChecked(status)
+                return True
+            return False
+        else:
+            return False
 
     def get_selected_list(self) -> List[str]:
         checkbox_status = self.get_status()

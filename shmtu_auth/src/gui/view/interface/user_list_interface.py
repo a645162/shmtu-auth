@@ -5,12 +5,14 @@ import os.path
 from typing import List
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QTreeWidgetItem, \
     QTreeWidgetItemIterator, QTableWidgetItem, QPushButton, QLineEdit, QSizePolicy
 from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
                             Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
                             BodyLabel, TreeWidget, TableWidget, PasswordLineEdit, LineEdit, DateEdit, ZhDatePicker,
-                            PushButton, MessageBoxBase, SubtitleLabel, Dialog)
+                            PushButton, MessageBoxBase, SubtitleLabel, Dialog, RoundMenu, Action)
+from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
 from ...common.config import cfg
@@ -30,54 +32,24 @@ pickle_user_list_path = os.path.join(
 )
 
 
-class UserListInterface(GalleryInterface):
-
-    def __init__(self, parent=None):
-        super().__init__(
-            title="校园网(统一认证平台)账号列表",
-            subtitle="Author:Haomin Kong",
-            parent=parent
-        )
-        self.setObjectName('userListInterface')
-
-        user_info_widget = QWidget(self)
-        user_info_layout = QHBoxLayout()
-
-        table_widget = UserListTableFrame(self)
-        user_info_layout.addWidget(table_widget)
-
-        user_info_edit_widget = UserInfoEditWidget(self)
-        user_info_layout.addWidget(user_info_edit_widget)
-
-        user_info_widget.setLayout(user_info_layout)
-        self.vBoxLayout.addWidget(user_info_widget)
-
-        button_generate_docker_config = PushButton("为服务器生成Docker配置")
-        button_generate_docker_config.setFixedWidth(300)
-        button_generate_docker_config.clicked.connect(self.generate_docker_config)
-        self.vBoxLayout.addWidget(button_generate_docker_config)
-
-    def generate_docker_config(self):
-        w = ServerCountMessageBox(self.window())
-
-        if w.exec():
-            print(w.countLineEdit.text())
-
-            w = Dialog("提示", "生成成功，您是否需要打开目录？", self.window())
-            w.setContentCopyable(True)
-            if w.exec():
-                pass
-
-
 class NetworkType:
+    # One Hot Coded Network Type
+
     # 0001
-    ChinaEdu: int = 1 << 0
+    ChinaEdu: int = \
+        1 << 0
 
     # 0010
-    ChinaMobile: int = 1 << 1
+    iSMU: int = \
+        1 << 1
 
     # 0100
-    ChinaUnicom: int = 1 << 2
+    ChinaMobile: int = \
+        1 << 2
+
+    # 1000
+    ChinaUnicom: int = \
+        1 << 3
 
     @staticmethod
     def to_binary(support_types: List[int]):
@@ -154,6 +126,8 @@ def convert_to_list_list(user_list: List[UserItem]) -> List[List[str]]:
 
 
 class UserListTableFrame(TableWidget):
+    column_count: int = 5
+
     user_list: List[UserItem]
 
     def __init__(self, parent=None):
@@ -163,7 +137,7 @@ class UserListTableFrame(TableWidget):
         self.setBorderRadius(8)
         self.setBorderVisible(True)
 
-        self.setColumnCount(5)
+        self.setColumnCount(self.column_count)
         # self.setRowCount(60)
         self.setHorizontalHeaderLabels([
             "学号",
@@ -308,3 +282,112 @@ class ServerCountMessageBox(MessageBoxBase):
         is_valid = is_valid and text.isdigit()
 
         self.yesButton.setEnabled(is_valid)
+
+
+class UserListInterface(GalleryInterface):
+    table_widget: UserListTableFrame
+    user_info_edit_widget: UserInfoEditWidget
+
+    def __init__(self, parent=None):
+        super().__init__(
+            title="校园网(统一认证平台)账号列表",
+            subtitle="Author:Haomin Kong",
+            parent=parent
+        )
+        self.setObjectName('userListInterface')
+
+        user_info_widget = QWidget(self)
+        user_info_layout = QHBoxLayout()
+
+        self.table_widget = UserListTableFrame(self)
+        self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.table_widget.customContextMenuRequested.connect(self._show_context_menu)
+        user_info_layout.addWidget(self.table_widget)
+
+        self.user_info_edit_widget = UserInfoEditWidget(self)
+        user_info_layout.addWidget(self.user_info_edit_widget)
+
+        user_info_widget.setLayout(user_info_layout)
+        self.vBoxLayout.addWidget(user_info_widget)
+
+        button_generate_docker_config = PushButton("为服务器生成Docker配置")
+        button_generate_docker_config.setFixedWidth(300)
+        button_generate_docker_config.clicked.connect(self.generate_docker_config)
+        self.vBoxLayout.addWidget(button_generate_docker_config)
+
+        self.table_widget.itemSelectionChanged.connect(self._table_item_selected)
+        self._table_item_selected()
+
+    def _table_item_selected(self):
+        selected_items = self.table_widget.selectedItems()
+        column_count: int = self.table_widget.column_count
+        # 因为有5列，因此len为5的倍数
+        selected_items_count: int = int(selected_items.__len__() / column_count)
+
+        self.user_info_edit_widget.setEnabled(selected_items_count == 1)
+
+        if selected_items_count == 0:
+            return
+
+        if selected_items_count > 1:
+            return
+
+        # 此时仅有一行被选中
+        # index=0即该行的第一个单元格
+        selected_item = selected_items[0]
+        row_index = selected_item.row()
+
+        print(row_index)
+
+    def _show_context_menu(self, pos):
+        menu = RoundMenu(parent=self)
+
+        # add actions
+        menu.addAction(Action(FIF.COPY, self.tr('Copy')))
+        menu.addAction(Action(FIF.CUT, self.tr('Cut')))
+
+        # add sub menu
+        submenu = RoundMenu(self.tr("Add to"), self)
+        submenu.setIcon(FIF.ADD)
+        submenu.addActions([
+            Action(FIF.VIDEO, self.tr('Video')),
+            Action(FIF.MUSIC, self.tr('Music')),
+        ])
+        menu.addMenu(submenu)
+
+        # add actions
+        menu.addActions([
+            Action(FIF.PASTE, self.tr('Paste')),
+            Action(FIF.CANCEL, self.tr('Undo'))
+        ])
+
+        # add separator
+        menu.addSeparator()
+        menu.addAction(QAction(self.tr('Select all')))
+
+        # insert actions
+        menu.insertAction(
+            menu.actions()[-1], Action(FIF.SETTING, self.tr('Settings')))
+        menu.insertActions(
+            menu.actions()[-1],
+            [
+                Action(FIF.HELP, self.tr('Help')),
+                Action(FIF.FEEDBACK, self.tr('Feedback'))
+            ]
+        )
+
+        # pos.setX(pos.x() - int(menu.width() / 2))
+        # pos.setY(pos.y() - int(menu.height() / 2))
+
+        menu.exec(self.mapToGlobal(pos), ani=True)
+
+    def generate_docker_config(self):
+        w = ServerCountMessageBox(self.window())
+
+        if w.exec():
+            print(w.countLineEdit.text())
+
+            w = Dialog("提示", "生成成功，您是否需要打开目录？", self.window())
+            w.setContentCopyable(True)
+            if w.exec():
+                pass
