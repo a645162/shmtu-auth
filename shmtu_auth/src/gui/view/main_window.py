@@ -64,7 +64,7 @@ class MainWindow(FluentWindow):
         pos = NavigationItemPosition.SCROLL
         self.addSubInterface(
             self.authInterface,
-            FIF.FINGERPRINT,
+            FIF.VPN,
             "校园网认证",
             pos
         )
