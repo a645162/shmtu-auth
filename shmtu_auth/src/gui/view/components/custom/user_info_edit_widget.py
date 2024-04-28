@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from typing import List
 
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import ZhDatePicker, PushButton, PasswordLineEdit, LineEdit
 
-from ...common.components.list_checkbox_widget import ListCheckboxWidgets
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.gui.common.components.list_checkbox_widget import ListCheckboxWidgets
 
 
 class UserInfoEditWidget(QWidget):
@@ -23,8 +25,19 @@ class UserInfoEditWidget(QWidget):
 
     button_save: PushButton
 
-    def __init__(self, parent=None):
+    # Data
+    user_list: List[UserItem]
+    selected_index: List[int]
+
+    def __init__(
+            self, parent=None,
+            user_list: List[UserItem] = None,
+            selected_index: List[int] = None
+    ):
         super().__init__(parent)
+
+        self.user_list = user_list
+        self.selected_index = selected_index
 
         self.setFixedWidth(250)
 
@@ -63,6 +76,8 @@ class UserInfoEditWidget(QWidget):
     def _button_save(self):
         support_type = self.checkbox_support_type.get_selected_list()
         print(support_type)
+
+        print(self.selected_index)
 
         self.onModifyButtonClick.emit()
 

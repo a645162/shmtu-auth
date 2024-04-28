@@ -9,13 +9,14 @@ from qfluentwidgets import (PushButton, Dialog, RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
-from ..components.custom_message_box import ServerCountMessageBox
+from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 
-from ..components.user_info_edit_widget import UserInfoEditWidget
-from ..components.user_list_table import UserListTableFrame
+from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
+from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableFrame
 from ....config.project_directory import (
     get_directory_data_path
 )
+from ....datatype.shmtu.auth.auth_user import generate_test_user_list, UserItem
 
 from ....utils.logs import get_logger
 
@@ -32,6 +33,9 @@ class UserListInterface(GalleryInterface):
     table_widget: UserListTableFrame
     user_info_edit_widget: UserInfoEditWidget
 
+    user_list: List[UserItem]
+    selected_index: List[int] = []
+
     def __init__(self, parent=None):
         super().__init__(
             title="校园网(统一认证平台)账号列表",
@@ -40,18 +44,26 @@ class UserListInterface(GalleryInterface):
         )
         self.setObjectName('userListInterface')
 
+        self.user_list = generate_test_user_list(20)
+
         self._init_widget()
 
     def _init_widget(self):
         user_info_widget = QWidget(self)
         user_info_layout = QHBoxLayout()
 
-        self.table_widget = UserListTableFrame(self)
+        # 表格
+        self.table_widget = UserListTableFrame(self, user_list=self.user_list)
         self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_widget.customContextMenuRequested.connect(self._show_context_menu)
         user_info_layout.addWidget(self.table_widget)
 
-        self.user_info_edit_widget = UserInfoEditWidget(self)
+        # 编辑
+        self.user_info_edit_widget = UserInfoEditWidget(
+            parent=self,
+            user_list=self.user_list,
+            selected_index=self.selected_index
+        )
         user_info_layout.addWidget(self.user_info_edit_widget)
 
         user_info_widget.setLayout(user_info_layout)
@@ -59,33 +71,16 @@ class UserListInterface(GalleryInterface):
 
         button_generate_docker_config = PushButton("为服务器生成Docker配置")
         button_generate_docker_config.setFixedWidth(300)
-        button_generate_docker_config.clicked.connect(self.generate_docker_config)
+        button_generate_docker_config.clicked.connect(self._start_docker_generate)
         self.vBoxLayout.addWidget(button_generate_docker_config)
 
         self.table_widget.itemSelectionChanged.connect(self._table_item_selected)
         self._table_item_selected()
 
     def _table_item_selected(self):
-        selected_items = self.table_widget.selectedItems()
-        column_count: int = self.table_widget.column_count
-        # 因为有5列，因此len为5的倍数
-        selected_items_count: int = \
-            int(selected_items.__len__() / column_count)
-
-        self.user_info_edit_widget.setEnabled(selected_items_count == 1)
-
-        if selected_items_count == 0:
-            return
-
-        if selected_items_count > 1:
-            return
-
-        # 此时仅有一行被选中
-        # index=0即该行的第一个单元格
-        selected_item = selected_items[0]
-        row_index = selected_item.row()
-
-        print(row_index)
+        print("Table Item Selected")
+        print(self.table_widget.selected_items_count)
+        print(self.table_widget.selected_index)
 
     def _show_context_menu(self, pos):
         # 获取选中的行数
@@ -150,15 +145,35 @@ class UserListInterface(GalleryInterface):
         # 显示右键菜单
         menu.exec(self.mapToGlobal(pos), ani=True)
 
-    def generate_docker_config(self):
+    def _start_docker_generate(self):
         w = ServerCountMessageBox(self.window())
 
         if w.exec():
 
-            file_path=w.countLineEdit.text()
+            save_path = w.pathLineEdit.text()
 
+            # machine
+
+            machine_count = w.get_count()
+
+            self._generate_docker_config(
+                save_path=save_path,
+                machine_count=machine_count
+            )
 
             w = Dialog("提示", "生成成功~\n您是否需要打开目录？", self.window())
             w.setContentCopyable(True)
             if w.exec():
                 pass
+
+    def _generate_docker_config(self, save_path: str = "", machine_count: int = 1):
+
+        # Init machine list
+        user_for_each_machine: List[List[str]] = []
+        for i in range(machine_count):
+            user_for_each_machine.append([])
+
+        user_list_valid: List[UserItem] = []
+        for user_item in self.user_list:
+            if user_item.is_valid():
+                user_list_valid.append(user_item)

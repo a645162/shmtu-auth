@@ -1,6 +1,6 @@
 # 上海海事大学-校园网-自动认证
 
-<div style="text-align: center;">
+<div align="center" style="text-align: center;">
 <img 
     src="Assets/Images/Logo/Logo128.png" 
     alt="Logo"

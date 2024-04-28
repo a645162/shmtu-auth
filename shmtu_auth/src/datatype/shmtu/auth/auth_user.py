@@ -38,12 +38,12 @@ class NetworkType:
 
 
 class UserItem:
-    userId: str
-    userName: str
+    user_id: str
+    user_name: str
     password: str
-    supportType: List[int]
-    expireTime: str
-    expireDataTime: datetime.datetime
+    support_type: List[int]
+    expire_date_str: str
+    expire_data_time: datetime.datetime
 
     def __init__(
             self,
@@ -53,26 +53,40 @@ class UserItem:
             supportType=None,
             expireDataTime: datetime.datetime = datetime.datetime.now(),
     ):
-        self.userId = userId
-        self.userName = userName
+        self.user_id = userId
+        self.user_name = userName
         self.password = password
 
-        self.supportType = supportType
-        if self.supportType is None:
-            self.supportType = [NetworkType.ChinaEdu]
+        self.support_type = supportType
+        if self.support_type is None:
+            self.support_type = [NetworkType.ChinaEdu]
 
-        self.expireDataTime = expireDataTime
+        self.expire_data_time = expireDataTime
 
         self.convert_datetime_to_str()
 
     def convert_datetime_to_str(self):
-        self.expireTime = self.expireDataTime.strftime("%Y-%m-%d %H:%M:%S")
+        self.expire_date_str = self.expire_data_time.strftime("%Y-%m-%d %H:%M:%S")
 
     def to_list(self) -> List[str]:
-        return [self.userId, self.userName, self.password, self.supportType, self.expireTime]
+        return [
+            self.user_id, self.user_name, self.password,
+            self.support_type, self.expire_date_str, str(self.is_valid())
+        ]
 
     def __iter__(self):
         return iter(self.to_list())
+
+    def is_valid(self) -> bool:
+        self.user_id = self.user_id.strip()
+        self.user_name = self.user_name.strip()
+        self.password = self.password.strip()
+
+        valid = self.user_id != "" and self.user_name != "" and self.password != ""
+
+        valid = valid and self.user_id.isdigit() and len(self.user_id) == 12
+
+        return valid
 
 
 def generate_test_user_list(count: int = 10) -> List[UserItem]:
@@ -80,11 +94,11 @@ def generate_test_user_list(count: int = 10) -> List[UserItem]:
 
     for i in range(count):
         user = UserItem()
-        user.userId = "2024123{:05d}".format(i)
-        user.userName = f"User_{i}"
+        user.user_id = "2024123{:05d}".format(i)
+        user.user_name = f"User_{i}"
         user.password = f"password_{i}"
-        user.supportType = "校园网"
-        user.expireDataTime = datetime.datetime.now()
+        user.support_type = "校园网"
+        user.expire_data_time = datetime.datetime.now()
         user.convert_datetime_to_str()
         user_list.append(user)
 

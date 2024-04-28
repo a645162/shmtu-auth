@@ -1,23 +1,33 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
+from typing import List, Optional
 
 from PySide6.QtWidgets import QTableWidgetItem
 from qfluentwidgets import TableWidget
 
-from ....datatype.shmtu.auth.auth_user import (
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
     UserItem,
     convert_to_list_list,
     generate_test_user_list
 )
+from shmtu_auth.src.gui.view.components.fluent.widget_table import QFluentTableWidget
+
+table_header = [
+    "学号",
+    "姓名",
+    "密码",
+    "支持类型",
+    "过期时间",
+    "有效"
+]
 
 
-class UserListTableFrame(TableWidget):
-    column_count: int = 5
+class UserListTableFrame(QFluentTableWidget):
+    column_count: int = len(table_header)
 
-    user_list: List[UserItem]
+    user_list: Optional[List[UserItem]]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, user_list=None):
         super().__init__(parent)
 
         self.verticalHeader().hide()
@@ -25,16 +35,11 @@ class UserListTableFrame(TableWidget):
         self.setBorderVisible(True)
 
         self.setColumnCount(self.column_count)
-        # self.setRowCount(60)
-        self.setHorizontalHeaderLabels([
-            "学号",
-            "姓名",
-            "密码",
-            "支持类型",
-            "过期时间"
-        ])
+        self.setHorizontalHeaderLabels(table_header)
 
-        self.user_list = generate_test_user_list(20)
+        self.user_list = user_list
+        if self.user_list is None:
+            self.user_list = generate_test_user_list(20)
 
         self.update_user_list()
 
