@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget, QFrame, QLabel, QVBoxLayout, QHBoxLayout
 
 from qfluentwidgets import IconWidget, TextWrap, FlowLayout, CardWidget
 # from ..common.signal_bus import signalBus
-from ..common.style_sheet import StyleSheet
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 
 
 class SampleCard(CardWidget):

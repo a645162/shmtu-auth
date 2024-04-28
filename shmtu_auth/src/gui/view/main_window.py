@@ -74,6 +74,9 @@ class MainWindow(FluentWindow):
             "用户列表",
             pos
         )
+
+        self.navigationInterface.addSeparator(pos)
+
         self.addSubInterface(
             self.logInterface,
             FIF.DATE_TIME,
@@ -106,6 +109,11 @@ class MainWindow(FluentWindow):
             tooltip="官方网站",
             position=NavigationItemPosition.BOTTOM
         )
+
+        self.navigationInterface.addSeparator(
+            position=NavigationItemPosition.BOTTOM
+        )
+
         self.addSubInterface(
             self.settingInterface,
             FIF.SETTING,

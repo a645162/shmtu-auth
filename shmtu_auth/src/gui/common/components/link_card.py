@@ -5,7 +5,7 @@ from PySide6.QtGui import QPixmap, QDesktopServices
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget, QHBoxLayout
 
 from qfluentwidgets import IconWidget, FluentIcon, TextWrap, SingleDirectionScrollArea
-from ..common.style_sheet import StyleSheet
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 
 
 class LinkCard(QFrame):

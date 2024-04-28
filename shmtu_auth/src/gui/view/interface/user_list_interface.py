@@ -1,27 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import datetime
 import os.path
 from typing import List
 
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QTreeWidgetItem, \
-    QTreeWidgetItemIterator, QTableWidgetItem, QPushButton, QLineEdit, QSizePolicy
-from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
-                            Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
-                            BodyLabel, TreeWidget, TableWidget, PasswordLineEdit, LineEdit, DateEdit, ZhDatePicker,
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QTableWidgetItem
+from qfluentwidgets import (TableWidget, PasswordLineEdit, LineEdit, ZhDatePicker,
                             PushButton, MessageBoxBase, SubtitleLabel, Dialog, RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
-from ...common.config import cfg
 
-import pickle
-
-from ...components.list_checkbox_widget import ListCheckboxWidgets
+from ..components.user_info_edit_widget import UserInfoEditWidget
+from ..components.user_list_table import UserListTableFrame
 from ....config.project_directory import (
-    get_directory_config_path,
     get_directory_data_path
 )
 from ....datatype.shmtu.auth.auth_user import UserItem, generate_test_user_list, convert_to_list_list
@@ -31,137 +23,6 @@ pickle_user_list_path = os.path.join(
     get_directory_data_path(),
     pickle_user_list_path
 )
-
-
-class UserListTableFrame(TableWidget):
-    column_count: int = 5
-
-    user_list: List[UserItem]
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.verticalHeader().hide()
-        self.setBorderRadius(8)
-        self.setBorderVisible(True)
-
-        self.setColumnCount(self.column_count)
-        # self.setRowCount(60)
-        self.setHorizontalHeaderLabels([
-            "学号",
-            "姓名",
-            "密码",
-            "支持类型",
-            "过期时间"
-        ])
-
-        self.user_list = generate_test_user_list(10)
-
-        self.update_user_list()
-
-        self.resizeColumnsToContents()
-
-        # 禁止直接编辑
-        self.setEditTriggers(TableWidget.NoEditTriggers)
-
-    def update_user_list(self):
-        user_count = self.user_list.__len__()
-
-        self.setRowCount(user_count)
-
-        user_list: List[List[str]] = \
-            convert_to_list_list(self.user_list)
-
-        for i, user_info_str_list in enumerate(user_list):
-            for j in range(user_info_str_list.__len__()):
-                text = user_info_str_list[j]
-
-                # 密码用星号展示
-                if j == 2:
-                    text = "*" * len(text)
-
-                self.setItem(
-                    i, j,
-                    QTableWidgetItem(text)
-                )
-
-
-class UserInfoEditWidget(QWidget):
-    # Signal Slot
-    onModifyButtonClick = Signal()
-
-    layout: QVBoxLayout
-
-    input_user_id: LineEdit
-    input_user_name: LineEdit
-    input_password: PasswordLineEdit
-
-    checkbox_support_type: ListCheckboxWidgets
-
-    expire_date: ZhDatePicker
-
-    button_save: PushButton
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.setFixedWidth(250)
-
-        self._init_widget()
-        self._init_layout()
-
-    def _init_widget(self):
-        self.input_user_id = LineEdit(self)
-        self.input_user_id.setText("")
-        self.input_user_id.setPlaceholderText("请输入学号")
-        self.input_user_id.setClearButtonEnabled(True)
-
-        self.input_user_name = LineEdit(self)
-        self.input_user_name.setText("")
-        self.input_user_name.setPlaceholderText("请输入姓名")
-        self.input_user_name.setClearButtonEnabled(True)
-
-        self.input_password = PasswordLineEdit(self)
-        self.input_password.setFixedWidth(230)
-        self.input_password.setPlaceholderText("请输入密码")
-
-        self.checkbox_support_type = \
-            ListCheckboxWidgets(
-                self,
-                [
-                    {"name": "校园网", "default": True},
-                    {"name": "iSMU", "default": False},
-                ]
-            )
-
-        self.expire_date = ZhDatePicker(self)
-
-        self.button_save = PushButton("保存")
-        self.button_save.clicked.connect(self._button_save)
-
-    def _button_save(self):
-        support_type = self.checkbox_support_type.get_selected_list()
-        print(support_type)
-
-        self.onModifyButtonClick.emit()
-
-    def _init_layout(self):
-        self.layout = QVBoxLayout(self)
-
-        self.layout.addWidget(self.input_user_id)
-        self.layout.addWidget(self.input_user_name)
-        self.layout.addWidget(self.input_password)
-
-        self.layout.addWidget(self.checkbox_support_type)
-
-        self.layout.addWidget(self.expire_date)
-
-        self.layout.addWidget(self.button_save)
-
-        self.layout.setAlignment(Qt.AlignTop)
-        self.layout.setContentsMargins(2, 0, 0, 0)
-
-        self.setLayout(self.layout)
 
 
 class ServerCountMessageBox(MessageBoxBase):

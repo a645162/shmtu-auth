@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import json
-
-from PySide6.QtCore import Qt, Signal, QRectF, QSize
+from PySide6.QtCore import Qt, QRectF, QSize
 from PySide6.QtGui import QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
 
-from ...common.config import cfg, HELP_URL, REPO_URL, EXAMPLE_URL, FEEDBACK_URL
-from ...components.link_card import LinkCardView
-from ...components.sample_card import SampleCardView
+from shmtu_auth.src.gui.common.components.link_card import LinkCardView
+from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
 
 from ...common.style_sheet import StyleSheet
 from ...common import font_confg
