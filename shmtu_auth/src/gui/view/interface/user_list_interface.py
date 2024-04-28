@@ -12,7 +12,7 @@ from .gallery_interface import GalleryInterface
 from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 
 from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
-from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableFrame
+from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableWidget
 from ....config.project_directory import (
     get_directory_data_path
 )
@@ -30,7 +30,7 @@ pickle_user_list_path = os.path.join(
 
 
 class UserListInterface(GalleryInterface):
-    table_widget: UserListTableFrame
+    table_widget: UserListTableWidget
     user_info_edit_widget: UserInfoEditWidget
 
     user_list: List[UserItem]
@@ -53,7 +53,7 @@ class UserListInterface(GalleryInterface):
         user_info_layout = QHBoxLayout()
 
         # 表格
-        self.table_widget = UserListTableFrame(self, user_list=self.user_list)
+        self.table_widget = UserListTableWidget(self, user_list=self.user_list)
         self.table_widget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.table_widget.customContextMenuRequested.connect(self._show_context_menu)
         user_info_layout.addWidget(self.table_widget)
@@ -77,10 +77,16 @@ class UserListInterface(GalleryInterface):
         self.table_widget.itemSelectionChanged.connect(self._table_item_selected)
         self._table_item_selected()
 
+        self.user_info_edit_widget.onModifyButtonClick.connect(
+            lambda: self.table_widget.update_user_list()
+        )
+
     def _table_item_selected(self):
-        print("Table Item Selected")
-        print(self.table_widget.selected_items_count)
-        print(self.table_widget.selected_index)
+        self.selected_index.clear()
+        self.selected_index.extend(self.table_widget.selected_index)
+
+        # 向编辑组件发送信号
+        self.user_info_edit_widget.onSelectedItemChanged.emit()
 
     def _show_context_menu(self, pos):
         # 获取选中的行数

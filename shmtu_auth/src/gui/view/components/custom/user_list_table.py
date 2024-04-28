@@ -22,7 +22,7 @@ table_header = [
 ]
 
 
-class UserListTableFrame(QFluentTableWidget):
+class UserListTableWidget(QFluentTableWidget):
     column_count: int = len(table_header)
 
     user_list: Optional[List[UserItem]]

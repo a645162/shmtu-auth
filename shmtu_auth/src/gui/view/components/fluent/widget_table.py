@@ -21,10 +21,13 @@ class QFluentTableWidget(TableWidget):
         selected_items_obj = self.selectedItems()
 
         selected_index = []
+
         for item_obj in selected_items_obj:
             row_index = item_obj.row()
             if row_index not in selected_index:
                 selected_index.append(row_index)
 
         self.selected_items_count = len(selected_index)
-        self.selected_index = selected_index
+
+        self.selected_index.clear()
+        self.selected_index.extend(selected_index)
