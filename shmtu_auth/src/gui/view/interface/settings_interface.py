@@ -11,8 +11,12 @@ from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, is_windows11
 from ...common.style_sheet import StyleSheet
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 
 class SettingInterface(ScrollArea):

@@ -4,58 +4,28 @@ import os.path
 from typing import List
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout, QTableWidgetItem
-from qfluentwidgets import (TableWidget, PasswordLineEdit, LineEdit, ZhDatePicker,
-                            PushButton, MessageBoxBase, SubtitleLabel, Dialog, RoundMenu, Action)
+from PySide6.QtWidgets import QWidget, QHBoxLayout
+from qfluentwidgets import (PushButton, Dialog, RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
+from ..components.custom_message_box import ServerCountMessageBox
 
 from ..components.user_info_edit_widget import UserInfoEditWidget
 from ..components.user_list_table import UserListTableFrame
 from ....config.project_directory import (
     get_directory_data_path
 )
-from ....datatype.shmtu.auth.auth_user import UserItem, generate_test_user_list, convert_to_list_list
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 pickle_user_list_path = "user_list.pickle"
 pickle_user_list_path = os.path.join(
     get_directory_data_path(),
     pickle_user_list_path
 )
-
-
-class ServerCountMessageBox(MessageBoxBase):
-    """ Custom message box """
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.titleLabel = SubtitleLabel("生成服务器配置", self)
-        self.countLineEdit = LineEdit(self)
-
-        self.countLineEdit.setPlaceholderText("请输入服务器的个数")
-        self.countLineEdit.setClearButtonEnabled(True)
-
-        # add widget to view layout
-        self.viewLayout.addWidget(self.titleLabel)
-        self.viewLayout.addWidget(self.countLineEdit)
-
-        # change the text of button
-        self.yesButton.setText("生成")
-        self.cancelButton.setText("取消")
-
-        self.widget.setMinimumWidth(360)
-        self.yesButton.setDisabled(True)
-
-        self.countLineEdit.textChanged.connect(self._validate_count)
-
-    def _validate_count(self, text: str):
-        text = text.strip()
-
-        is_valid = text.__len__() > 0
-        is_valid = is_valid and text.isdigit()
-
-        self.yesButton.setEnabled(is_valid)
 
 
 class UserListInterface(GalleryInterface):
@@ -70,6 +40,9 @@ class UserListInterface(GalleryInterface):
         )
         self.setObjectName('userListInterface')
 
+        self._init_widget()
+
+    def _init_widget(self):
         user_info_widget = QWidget(self)
         user_info_layout = QHBoxLayout()
 
@@ -181,9 +154,11 @@ class UserListInterface(GalleryInterface):
         w = ServerCountMessageBox(self.window())
 
         if w.exec():
-            print(w.countLineEdit.text())
 
-            w = Dialog("提示", "生成成功，您是否需要打开目录？", self.window())
+            file_path=w.countLineEdit.text()
+
+
+            w = Dialog("提示", "生成成功~\n您是否需要打开目录？", self.window())
             w.setContentCopyable(True)
             if w.exec():
                 pass

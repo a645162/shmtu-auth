@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os.path
-from typing import List, Optional
+from typing import List
 
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout, QTableWidgetItem, \
-    QTableWidget
-from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
-                            Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
-                            BodyLabel, TableWidget, InfoBar, InfoBarIcon, InfoBarPosition, PushButton)
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QTableWidgetItem
+from qfluentwidgets import (TableWidget, InfoBar, InfoBarIcon, InfoBarPosition, PushButton)
 
 from .gallery_interface import GalleryInterface
 from ...common.config import cfg
@@ -19,6 +16,10 @@ from ....config.project_directory import (
     get_directory_data_path,
     get_directory_log_path
 )
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 pickle_log_path = "logs.pickle"
 pickle_log_path = os.path.join(
@@ -144,6 +145,7 @@ class LogTableFrame(TableWidget):
 
         # 添加到记录列表
         self.record_list.append(current_record)
+        logger.info(f"添加日志记录：{str(current_record)}")
 
         # 更新UI
         self.update_record(self.record_count, current_record)

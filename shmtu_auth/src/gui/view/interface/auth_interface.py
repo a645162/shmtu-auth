@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
-
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout
-from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
-                            Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
-                            BodyLabel)
-
 from .gallery_interface import GalleryInterface
-from ...common.config import cfg
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
-                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
+
+from qfluentwidgets import (SettingCardGroup, FolderListSettingCard,
+                            PushSettingCard, ScrollArea, ExpandLayout)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
-from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import Qt, QStandardPaths
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, isWin11
+from ...common.config import cfg
 from ...common.style_sheet import StyleSheet
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 
 class AuthInterface(GalleryInterface):

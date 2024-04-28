@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from enum import Enum
 
-from PySide6.QtCore import QLocale
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, ConfigSerializer, __version__)
 
+from ...utils.logs import get_logger
 
-def isWin11():
+logger = get_logger()
+
+
+def is_windows11():
     return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
 
@@ -38,7 +40,7 @@ class Config(QConfig):
     # 界面个性化
 
     # Main Window
-    micaEnabled = ConfigItem("MainWindow", "MicaEnabled", isWin11(), BoolValidator())
+    micaEnabled = ConfigItem("MainWindow", "MicaEnabled", is_windows11(), BoolValidator())
     dpiScale = OptionsConfigItem(
         "MainWindow", "DpiScale", "Auto",
         OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]),
@@ -64,13 +66,15 @@ YEAR = 2024
 AUTHOR = "Haomin Kong"
 VERSION = __version__
 
-HELP_URL = "https://qfluentwidgets.com"
-REPO_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets"
-EXAMPLE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/tree/PySide6/examples"
-FEEDBACK_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/issues"
-RELEASE_URL = "https://github.com/zhiyiYo/PyQt-Fluent-Widgets/releases/latest"
-ZH_SUPPORT_URL = "https://qfluentwidgets.com/zh/price/"
-EN_SUPPORT_URL = "https://qfluentwidgets.com/price/"
+HELP_URL = "https://a645162.github.io/shmtu-auth/"
+REPO_URL = "https://github.com/a645162/shmtu-auth"
+AUTHOR_MAIN_PAGE_URL = "https://github.com/a645162"
+
+FEEDBACK_URL = f"{REPO_URL}/issues"
+RELEASE_URL = f"{REPO_URL}/releases/latest"
+
+ZH_SUPPORT_URL = "https://a645162.github.io/shmtu-auth/"
+EN_SUPPORT_URL = "https://a645162.github.io/shmtu-auth/"
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO

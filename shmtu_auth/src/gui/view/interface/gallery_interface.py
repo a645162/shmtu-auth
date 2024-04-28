@@ -7,8 +7,12 @@ from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame
 from qfluentwidgets import (ScrollArea, PushButton, ToolButton, FluentIcon,
                             isDarkTheme, IconWidget, Theme, ToolTipFilter, TitleLabel, CaptionLabel,
                             StrongBodyLabel, BodyLabel, toggleTheme)
-from ...common.config import cfg, FEEDBACK_URL, HELP_URL, EXAMPLE_URL
+from ...common.config import cfg, FEEDBACK_URL, HELP_URL, REPO_URL
 from ...common.style_sheet import StyleSheet
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 
 class SeparatorWidget(QWidget):
@@ -86,7 +90,7 @@ class ToolBar(QWidget):
         self.documentButton.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(HELP_URL)))
         self.sourceButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(EXAMPLE_URL)))
+            lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
         self.feedbackButton.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
 

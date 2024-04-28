@@ -11,6 +11,11 @@ from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
 
 from ...common.style_sheet import StyleSheet
 from ...common import font_confg
+from ...common.config import cfg, FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 
 class BannerWidget(QWidget):
@@ -46,28 +51,28 @@ class BannerWidget(QWidget):
             ':/gui/Logo128',
             "快速入门",
             "查看本程序的在线文档。",
-            "https://a645162.github.io/shmtu-auth/"
+            HELP_URL
         )
 
         self.linkCardView.addCard(
             FluentIcon.GITHUB,
             "Github主页",
             "查看本程序的源代码。",
-            "https://github.com/a645162/shmtu-auth"
+            REPO_URL
         )
 
         self.linkCardView.addCard(
             FluentIcon.HOME_FILL,
             "孔昊旻的主页",
             "查看作者的其他项目",
-            "https://github.com/a645162"
+            AUTHOR_MAIN_PAGE_URL
         )
 
         self.linkCardView.addCard(
             FluentIcon.FEEDBACK,
             "问题反馈",
             "反馈问题或建议(需要Github账户)。",
-            "https://github.com/a645162/shmtu-auth/issues"
+            FEEDBACK_URL
         )
 
     def paintEvent(self, e):

@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
-
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QLabel, QWidget, QHBoxLayout
-from qfluentwidgets import (FluentIcon, IconWidget, FlowLayout, isDarkTheme,
-                            Theme, applyThemeColor, SmoothScrollArea, SearchLineEdit, StrongBodyLabel,
-                            BodyLabel, HorizontalFlipView)
+from qfluentwidgets import (HorizontalFlipView)
 
 from .gallery_interface import GalleryInterface
 from ...common.config import cfg
+
+from ....utils.logs import get_logger
+
+logger = get_logger()
 
 
 class AboutInterface(GalleryInterface):

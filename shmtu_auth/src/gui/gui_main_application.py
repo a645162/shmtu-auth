@@ -9,8 +9,14 @@ from PySide6.QtWidgets import QApplication
 from .common.config import cfg
 from .view.main_window import MainWindow
 
+from ..utils.logs import get_logger
+
+logger = get_logger()
+
 
 def gui_main_application():
+    logger.info("GUI Main Application is initializing...")
+
     # enable dpi scale
     if cfg.get(cfg.dpiScale) != "Auto":
         os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"

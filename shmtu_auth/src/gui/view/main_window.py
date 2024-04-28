@@ -19,17 +19,24 @@ from .interface.home_interface import HomeInterface
 from .interface.auth_interface import AuthInterface
 from .interface.settings_interface import SettingInterface
 
-# 加载资源文件,虽然表面上没有调用
+# 加载资源文件,虽然表面上没有调用(不可以移除!)
 from ..resource import resources
 
 from .system_tray import SystemTray
+
+from ...utils.logs import get_logger
+
+logger = get_logger()
 
 
 class MainWindow(FluentWindow):
 
     def __init__(self):
         super().__init__()
-        self.initWindow()
+
+        logger.info("MainWindow initializing...")
+
+        self._init_window()
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
@@ -127,7 +134,7 @@ class MainWindow(FluentWindow):
             NavigationItemPosition.BOTTOM
         )
 
-    def initWindow(self):
+    def _init_window(self):
         self.resize(960, 780)
         self.setMinimumWidth(600)
         self.setMinimumWidth(400)

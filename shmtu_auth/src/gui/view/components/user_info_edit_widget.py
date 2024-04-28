@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import ZhDatePicker, PushButton, PasswordLineEdit, LineEdit
