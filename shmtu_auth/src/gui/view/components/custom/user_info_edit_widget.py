@@ -1,12 +1,28 @@
 # -*- coding: utf-8 -*-
+
 from typing import List
+import datetime
 
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QDate
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-from qfluentwidgets import ZhDatePicker, PushButton, PasswordLineEdit, LineEdit
+from qfluentwidgets import (
+    PushButton, LineEdit, PasswordLineEdit,
+    ZhDatePicker,
+    TeachingTip, TeachingTipTailPosition, InfoBarIcon,
+)
 
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, NetworkType
 from shmtu_auth.src.gui.common.components.list_checkbox_widget import ListCheckboxWidgets
+
+
+# Convert datetime.date to QDate
+def convert_date_to_qdate(date: datetime.date) -> QDate:
+    return QDate(date.year, date.month, date.day)
+
+
+# Convert QDate to datetime.date
+def convert_qdate_to_date(qdate: QDate) -> datetime.date:
+    return datetime.date(qdate.year(), qdate.month(), qdate.day())
 
 
 class UserInfoEditWidget(QWidget):
@@ -24,7 +40,7 @@ class UserInfoEditWidget(QWidget):
 
     checkbox_support_type: ListCheckboxWidgets
 
-    expire_date: ZhDatePicker
+    widget_expire_date: ZhDatePicker
 
     button_save: PushButton
 
@@ -71,7 +87,7 @@ class UserInfoEditWidget(QWidget):
                 ]
             )
 
-        self.expire_date = ZhDatePicker(self)
+        self.widget_expire_date = ZhDatePicker(self)
 
         self.button_save = PushButton("保存修改")
         self.button_save.clicked.connect(self._button_save)
@@ -89,7 +105,7 @@ class UserInfoEditWidget(QWidget):
 
         self.layout.addWidget(self.checkbox_support_type)
 
-        self.layout.addWidget(self.expire_date)
+        self.layout.addWidget(self.widget_expire_date)
 
         self.layout.addWidget(self.button_save)
 
@@ -111,7 +127,33 @@ class UserInfoEditWidget(QWidget):
         index = self.selected_index[0]
         self._update_input_box_data(index=index)
 
+    def _before_save_blocker(self) -> bool:
+        self.input_user_id.setText(self.input_user_id.text().strip())
+        self.input_user_name.setText(self.input_user_name.text().strip())
+        self.input_password.setText(self.input_password.text().strip())
+
+        if (
+                not self.input_user_id.text().isdigit() or
+                len(self.input_user_id.text()) != 12
+        ):
+            TeachingTip.create(
+                target=self.input_user_id,
+                icon=InfoBarIcon.ERROR,
+                title="错误",
+                content="学号应该为12位！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=-1,
+                parent=self
+            )
+            return False
+
+        return True
+
     def _button_save(self):
+        if not self._before_save_blocker():
+            return
+
         support_type = \
             self.checkbox_support_type.get_selected_list()
         print(support_type)
@@ -132,6 +174,15 @@ class UserInfoEditWidget(QWidget):
         current_item.user_name = self.input_user_name.text()
         current_item.password = self.input_password.text()
 
+        current_item.support_type_list = \
+            NetworkType.to_binary_list_by_name_list(
+                self.checkbox_support_type.get_selected_list()
+            )
+
+        current_item.expire_date = \
+            convert_qdate_to_date(self.widget_expire_date.getDate())
+        current_item.update_auto_generate_info()
+
     def _update_input_box_data(self, index: int = 0):
         if index >= len(self.user_list):
             return
@@ -141,5 +192,10 @@ class UserInfoEditWidget(QWidget):
         self.input_user_id.setText(current_item.user_id)
         self.input_user_name.setText(current_item.user_name)
         self.input_password.setText(current_item.password)
-        # self.checkbox_support_type.set_selected_list(current_item.support_type)
-        # self.expire_date.setDate(current_item.expire_date)
+
+        self.checkbox_support_type.set_selected_list(
+            current_item.support_type_str_list
+        )
+
+        qDate = convert_date_to_qdate(current_item.expire_date)
+        self.widget_expire_date.setDate(qDate)

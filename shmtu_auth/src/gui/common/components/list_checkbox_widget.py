@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from typing import List
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout
@@ -89,3 +90,19 @@ class ListCheckboxWidgets(QWidget):
                 return_list.append(key)
 
         return return_list
+
+    def set_selected_list_to_true(self, list_data: List[str]) -> None:
+        for key in list_data:
+            if key in self.checkbox_data:
+                self.set_status(key=key, status=True)
+            else:
+                print(f"{key} not in checkbox data")
+                return
+
+    def set_selected_list(self, list_data: List[str]) -> None:
+        for key in list_data:
+            if key not in self.checkbox_data.keys():
+                print(f"{key} not in checkbox data")
+
+        for key in self.checkbox_data.keys():
+            self.set_status(key=key, status=(key in list_data))
