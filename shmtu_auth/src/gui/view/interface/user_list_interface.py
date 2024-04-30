@@ -141,8 +141,13 @@ class UserListInterface(GalleryInterface):
         menu.addSeparator()
 
         action_move_up = Action(FIF.UP, "上移")
+        action_move_up.setEnabled(selected_items_count > 0)
+        action_move_up.triggered.connect(lambda: self.table_widget.move_up())
         menu.addAction(action_move_up)
+
         action_move_down = Action(FIF.DOWN, "下移")
+        action_move_down.setEnabled(selected_items_count > 0)
+        action_move_down.triggered.connect(lambda: self.table_widget.move_down())
         menu.addAction(action_move_down)
 
         menu.addSeparator()
@@ -151,10 +156,11 @@ class UserListInterface(GalleryInterface):
         action_select_all.setEnabled(
             selected_items_count != self.table_widget.rowCount()
         )
-        # action_select_all.triggered.connect(lambda: self.table_widget.selectAll())
+        action_select_all.triggered.connect(lambda: self.table_widget.selectAll())
         menu.addAction(action_select_all)
 
         action_select_cancel = Action(FIF.CANCEL, "取消选择")
+        action_select_cancel.triggered.connect(lambda: self.table_widget.clearSelection())
         menu.addAction(action_select_cancel)
 
         menu.addSeparator()
