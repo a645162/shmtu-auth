@@ -30,6 +30,9 @@ from ....datatype.shmtu.auth.auth_user import (
 
     user_list_move_up,
     user_list_move_down,
+
+    user_list_select_list_by_index,
+    user_is_exist_in_list,
 )
 
 from ...common.signal_bus import log_new
@@ -136,13 +139,17 @@ class UserListInterface(GalleryInterface):
         # 生成右键菜单
         menu = RoundMenu(parent=self)
 
-        menu.addAction(Action(FIF.ADD, "新建"))
+        action_create = Action(FIF.ADD, "新建")
+        action_create.triggered.connect(self._menu_action_create)
+        menu.addAction(action_create)
 
         menu.addSeparator()
 
         action_clone = Action(FIF.COPY, "克隆")
+        action_clone.triggered.connect(self._menu_action_clone)
         menu.addAction(action_clone)
         action_del = Action(FIF.CLOSE, "删除")
+        action_del.triggered.connect(self._menu_action_del)
         menu.addAction(action_del)
 
         menu.addSeparator()
@@ -185,6 +192,7 @@ class UserListInterface(GalleryInterface):
         menu.addSeparator()
 
         action_export_docker = Action(FIF.SEND_FILL, "导出Docker配置")
+        action_export_docker.triggered.connect(self._start_docker_generate)
         menu.addAction(action_export_docker)
 
         # 设置是否可用
@@ -238,6 +246,76 @@ class UserListInterface(GalleryInterface):
         for user_item in self.user_list:
             if user_item.is_valid():
                 user_list_valid.append(user_item)
+
+    def _add_item(
+            self,
+            user_item: List[UserItem],
+            insert_index: int = -1
+    ):
+        if len(user_item) == 0:
+            return
+
+        new_item_list: List[UserItem] = []
+        for item in user_item:
+            current_item = item.copy()
+            if user_is_exist_in_list(
+                    user_list=self.user_list,
+                    user_id=current_item.user_id,
+                    excluded_indexes=[]
+            ):
+                current_item.user_id = ""
+
+            new_item_list.append(current_item)
+
+        if insert_index == -1:
+            self.user_list.extend(new_item_list)
+        else:
+            # new_item_list.reverse()
+            for item in new_item_list:
+                self.user_list.insert(insert_index, item)
+                insert_index += 1
+        self.table_widget.update_user_list()
+
+    def _menu_action_create(self):
+        insert_index = -1
+        if self.table_widget.selected_items_count > 0:
+            insert_index = \
+                self.table_widget.selected_index[
+                    self.table_widget.selected_items_count - 1
+                    ] + 1
+
+        self._add_item(
+            [UserItem()],
+            insert_index=insert_index
+        )
+
+    def _menu_action_clone(self):
+        selected_list = \
+            user_list_select_list_by_index(
+                user_list=self.user_list,
+                index=self.table_widget.selected_index
+            )
+
+        insert_index = -1
+        if self.table_widget.selected_items_count > 0:
+            insert_index = \
+                self.table_widget.selected_index[
+                    self.table_widget.selected_items_count - 1
+                    ] + 1
+
+        self._add_item(
+            selected_list,
+            insert_index=insert_index
+        )
+
+    def _menu_action_del(self):
+        selected_index: List[int] = \
+            self.selected_index.copy()
+        selected_index.sort(reverse=True)
+        for i in selected_index:
+            self.user_list.pop(i)
+
+        self.table_widget.update_user_list()
 
     def _menu_action_move_to_top(self):
         final_selection_index: List[int] = \

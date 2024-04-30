@@ -111,6 +111,29 @@ class UserItem:
 
         self.update_auto_generate_info()
 
+    def __copy__(self):
+        # 创建一个新的实例，并复制所有属性
+        new_instance = self.__class__()
+
+        new_instance.in_use = self.in_use
+
+        new_instance.user_name = self.user_name
+
+        new_instance.user_id = self.user_id
+        new_instance.password = self.password
+        new_instance.is_encrypted = self.is_encrypted
+
+        new_instance.support_type_list = self.support_type_list.copy()
+
+        new_instance.expire_date = self.expire_date
+
+        new_instance.update_auto_generate_info()
+
+        return new_instance
+
+    def copy(self):
+        return self.__copy__()
+
     def update_auto_generate_info(self) -> None:
         self.expire_date_str = self.expire_date.strftime("%Y-%m-%d")
         self.expire_date_int = (
@@ -244,6 +267,16 @@ def print_user_list_id(user_list: List[UserItem]) -> None:
         result_str += "{} ".format(user.user_id)
 
     print(result_str)
+
+
+def user_list_select_list_by_index(
+        user_list: List[UserItem],
+        index: List[int]
+) -> List[UserItem]:
+    result_list = []
+    for i in index:
+        result_list.append(user_list[i])
+    return result_list
 
 
 def user_list_swap_item(
