@@ -21,6 +21,8 @@ from ....config.project_directory import (
 )
 from ....datatype.shmtu.auth.auth_user import generate_test_user_list, UserItem
 
+from ...common.signal_bus import log_new
+
 from ....utils.logs import get_logger
 
 logger = get_logger()

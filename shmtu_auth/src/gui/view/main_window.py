@@ -25,6 +25,8 @@ from ..resource import resources
 from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
+from ..common.signal_bus import log_new
+
 from ...utils.logs import get_logger
 
 logger = get_logger()
@@ -57,6 +59,8 @@ class MainWindow(FluentWindow):
         # add items to navigation interface
         self.init_left_navigation_item()
         self.splashScreen.finish()
+
+        log_new("MainWindow initialized.", "Info")
 
     # def connectSignalToSlot(self):
     #     signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)

@@ -54,7 +54,8 @@ class AuthSettingWidget(ScrollArea):
 
         # shmtu-auth
         self.shmtuAuthGroup = SettingCardGroup(
-            self.tr("校园网自动认证"), self.scrollWidget)
+            "校园网自动认证", self.scrollWidget)
+
         self.musicFolderCard = FolderListSettingCard(
             cfg.musicFolders,
             self.tr("Local music library"),

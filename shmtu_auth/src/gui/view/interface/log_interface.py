@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import os.path
 from typing import List
+import os.path
+import datetime
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem
@@ -17,6 +18,8 @@ from ....config.project_directory import (
     get_directory_data_path,
     get_directory_log_path
 )
+
+from ...common.signal_bus import signal_bus
 
 from ....utils.logs import get_logger
 
@@ -99,6 +102,17 @@ class LogTableFrame(TableWidget):
         if os.path.exists(pickle_log_path):
             self.read_status()
 
+        signal_bus.signal_log_new.connect(self.add_new_record)
+
+    def add_new_record(self, event: str, status: str):
+        now = datetime.datetime.now()
+        time = now.strftime('%Y-%m-%d %H:%M:%S')
+        self.add_record(
+            time=time,
+            event=event,
+            status=status
+        )
+
     def read_status(self):
         if not os.path.exists(pickle_log_path):
             return
@@ -159,3 +173,5 @@ class LogTableFrame(TableWidget):
 
         self.resizeColumnsToContents()
         self.save_status()
+
+        self.resizeColumnsToContents()
