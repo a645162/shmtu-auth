@@ -174,9 +174,6 @@ class UserItem:
 
         return valid
 
-    def get_support_type(self):
-        pass
-
 
 def user_is_exist_in_list(
         user_list: List[UserItem],
@@ -239,3 +236,184 @@ def generate_test_user_list(count: int = 10) -> List[UserItem]:
 
 def convert_to_list_list(user_list: List[UserItem]) -> List[List[str]]:
     return [list(user) for user in user_list]
+
+
+def print_user_list_id(user_list: List[UserItem]) -> None:
+    result_str = ""
+    for user in user_list:
+        result_str += "{} ".format(user.user_id)
+
+    print(result_str)
+
+
+def user_list_swap_item(
+        user_list: List[UserItem],
+        index1: int,
+        index2: int
+) -> None:
+    user_list[index1], user_list[index2] = user_list[index2], user_list[index1]
+
+
+def user_list_move_up(
+        user_list: List[UserItem],
+        index: List[int],
+        step: int = 1
+) -> List[int]:
+    selected_items_count = len(index)
+
+    selection_index = index.copy()
+    selection_index.sort(reverse=False)
+
+    if selected_items_count == 0:
+        return []
+
+    target_start_index = selection_index[0] - step
+    if target_start_index < 0:
+        target_start_index = 0
+
+    for i in range(selected_items_count):
+        ori_index = selection_index[i]
+
+        for j in range(ori_index, target_start_index, -1):
+            user_list_swap_item(
+                user_list=user_list,
+                index1=j,
+                index2=j - 1
+            )
+
+        target_start_index += 1
+
+    final_selection_index = []
+    target_start_index -= selected_items_count
+    for i in range(selected_items_count):
+        final_selection_index.append(target_start_index + i)
+
+    final_selection_index.sort(reverse=False)
+
+    return final_selection_index
+
+
+def user_list_move_down(
+        user_list: List[UserItem],
+        index: List[int],
+        step: int = 1
+) -> List[int]:
+    selected_items_count = len(index)
+    total_count = len(user_list)
+
+    selection_index = index.copy()
+    selection_index.sort(reverse=True)
+
+    if selected_items_count == 0:
+        return []
+
+    target_end_index = selection_index[0] + step
+    if target_end_index >= total_count:
+        target_end_index = total_count - 1
+
+    for i in range(selected_items_count):
+        ori_index = selection_index[i]
+
+        for j in range(ori_index, target_end_index, 1):
+            user_list_swap_item(
+                user_list=user_list,
+                index1=j,
+                index2=j + 1
+            )
+
+        target_end_index -= 1
+
+    final_selection_index = []
+    target_end_index += selected_items_count
+    for i in range(selected_items_count):
+        final_selection_index.append(target_end_index - i)
+
+    final_selection_index.sort(reverse=False)
+
+    return final_selection_index
+
+
+def user_list_move_to_top(
+        user_list: List[UserItem],
+        index: List[int]
+) -> List[int]:
+    selected_items_count = len(index)
+
+    selection_index = index.copy()
+    selection_index.sort(reverse=False)
+
+    if selected_items_count == 0:
+        return []
+
+    return user_list_move_up(
+        user_list=user_list,
+        index=selection_index,
+        step=selection_index[0]
+    )
+
+
+def user_list_move_to_bottom(
+        user_list: List[UserItem],
+        index: List[int]
+) -> List[int]:
+    selected_items_count = len(index)
+    total_count = len(user_list)
+
+    selection_index = index.copy()
+    selection_index.sort(reverse=True)
+
+    if selected_items_count == 0:
+        return []
+
+    return user_list_move_down(
+        user_list=user_list,
+        index=selection_index,
+        step=total_count - selection_index[0] - 1
+    )
+
+
+if __name__ == '__main__':
+    user_list = generate_test_user_list(5)
+    print_user_list_id(user_list)
+
+    # Swap Test
+    print("Swap")
+    user_list_swap_item(user_list, 0, 1)
+    print_user_list_id(user_list)
+    user_list_swap_item(user_list, 0, 1)
+    print_user_list_id(user_list)
+
+    # Move Up Test
+    print("Move Up")
+    user_list = generate_test_user_list(5)
+    print(user_list_move_up(user_list, [0, 1, 2], 1))
+    print_user_list_id(user_list)
+    user_list = generate_test_user_list(5)
+    print(user_list_move_up(user_list, [1, 2], 1))
+    print_user_list_id(user_list)
+    user_list = generate_test_user_list(5)
+    print(user_list_move_up(user_list, [1, 3], 1))
+    print_user_list_id(user_list)
+
+    # Move Down Test
+    print("Move Down")
+    print(user_list_move_down(user_list, [0, 1, 2], 1))
+    print_user_list_id(user_list)
+    user_list = generate_test_user_list(5)
+    print(user_list_move_down(user_list, [1, 3], 1))
+    print_user_list_id(user_list)
+    user_list = generate_test_user_list(5)
+    print(user_list_move_down(user_list, [3, 4], 1))
+    print_user_list_id(user_list)
+
+    # Move To Top Test
+    print("Move To Top")
+    user_list = generate_test_user_list(5)
+    print(user_list_move_to_top(user_list, [2, 4]))
+    print_user_list_id(user_list)
+
+    # Move To Bottom Test
+    print("Move To Bottom")
+    user_list = generate_test_user_list(5)
+    print(user_list_move_to_bottom(user_list, [0, 2]))
+    print_user_list_id(user_list)

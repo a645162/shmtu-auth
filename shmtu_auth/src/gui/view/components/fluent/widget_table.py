@@ -40,6 +40,11 @@ class QFluentTableWidget(TableWidget):
             self.setItem(row1, col, item2)
             self.setItem(row2, col, item1)
 
+    def set_select_index_list(self, index: List[int]):
+        self.clearSelection()
+        for i in index:
+            self.selectRow(i)
+
     def move_up(self, step: int = 1):
         selection_index = self.selected_index.copy()
         selection_index.sort()
@@ -52,7 +57,7 @@ class QFluentTableWidget(TableWidget):
             target_start_index = 0
 
         for i in range(self.selected_items_count):
-            ori_index = self.selected_index[i]
+            ori_index = selection_index[i]
 
             for j in range(ori_index, target_start_index, -1):
                 self.swap_row(j, j - 1)
@@ -63,10 +68,8 @@ class QFluentTableWidget(TableWidget):
         target_start_index -= self.selected_items_count
         for i in range(self.selected_items_count):
             final_selection_index.append(target_start_index + i)
-        # Set selection
-        self.clearSelection()
-        for i in final_selection_index:
-            self.selectRow(i)
+
+        self.set_select_index_list(final_selection_index)
 
     def move_down(self, step: int = 1):
         selection_index = self.selected_index.copy()
@@ -91,7 +94,5 @@ class QFluentTableWidget(TableWidget):
         target_end_index += self.selected_items_count
         for i in range(self.selected_items_count):
             final_selection_index.append(target_end_index - i)
-        # Set selection
-        self.clearSelection()
-        for i in final_selection_index:
-            self.selectRow(i)
+
+        self.set_select_index_list(final_selection_index)

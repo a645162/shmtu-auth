@@ -7,7 +7,7 @@ import pickle
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QHBoxLayout
-from qfluentwidgets import (PushButton, Dialog, RoundMenu, Action)
+from qfluentwidgets import (Dialog, RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
@@ -15,11 +15,22 @@ from .gallery_interface import GalleryInterface
 from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
 from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableWidget
+from ..components.fluent.widget_push_button import FPushButton
 
 from ....config.project_directory import (
     get_directory_data_path
 )
-from ....datatype.shmtu.auth.auth_user import generate_test_user_list, UserItem
+from ....datatype.shmtu.auth.auth_user import (
+    UserItem,
+
+    generate_test_user_list,
+
+    user_list_move_to_top,
+    user_list_move_to_bottom,
+
+    user_list_move_up,
+    user_list_move_down,
+)
 
 from ...common.signal_bus import log_new
 
@@ -82,7 +93,7 @@ class UserListInterface(GalleryInterface):
         user_info_widget.setLayout(user_info_layout)
         self.vBoxLayout.addWidget(user_info_widget)
 
-        button_generate_docker_config = PushButton("为服务器生成Docker配置")
+        button_generate_docker_config = FPushButton(self, "为服务器生成Docker配置")
         button_generate_docker_config.setFixedWidth(300)
         button_generate_docker_config.clicked.connect(self._start_docker_generate)
         self.vBoxLayout.addWidget(button_generate_docker_config)
@@ -119,12 +130,8 @@ class UserListInterface(GalleryInterface):
         self.user_info_edit_widget.onSelectedItemChanged.emit()
 
     def _show_context_menu(self, pos):
-        # 获取选中的行数
-        selected_items = self.table_widget.selectedItems()
-        column_count: int = self.table_widget.column_count
-        # 因为有5列，因此len为5的倍数
         selected_items_count: int = \
-            int(selected_items.__len__() / column_count)
+            self.table_widget.selected_items_count
 
         # 生成右键菜单
         menu = RoundMenu(parent=self)
@@ -140,14 +147,26 @@ class UserListInterface(GalleryInterface):
 
         menu.addSeparator()
 
+        action_move_to_top = Action(FIF.CARE_UP_SOLID, "移动到顶部")
+        action_move_to_top.setEnabled(selected_items_count > 0)
+        action_move_to_top.triggered.connect(self._menu_action_move_to_top)
+        menu.addAction(action_move_to_top)
+
+        action_move_to_bottom = Action(FIF.CARE_DOWN_SOLID, "移动到底部")
+        action_move_to_bottom.setEnabled(selected_items_count > 0)
+        action_move_to_bottom.triggered.connect(self._menu_action_move_to_bottom)
+        menu.addAction(action_move_to_bottom)
+
+        menu.addSeparator()
+
         action_move_up = Action(FIF.UP, "上移")
         action_move_up.setEnabled(selected_items_count > 0)
-        action_move_up.triggered.connect(lambda: self.table_widget.move_up())
+        action_move_up.triggered.connect(self._menu_action_move_up)
         menu.addAction(action_move_up)
 
         action_move_down = Action(FIF.DOWN, "下移")
         action_move_down.setEnabled(selected_items_count > 0)
-        action_move_down.triggered.connect(lambda: self.table_widget.move_down())
+        action_move_down.triggered.connect(self._menu_action_move_down)
         menu.addAction(action_move_down)
 
         menu.addSeparator()
@@ -219,3 +238,41 @@ class UserListInterface(GalleryInterface):
         for user_item in self.user_list:
             if user_item.is_valid():
                 user_list_valid.append(user_item)
+
+    def _menu_action_move_to_top(self):
+        final_selection_index: List[int] = \
+            user_list_move_to_top(
+                user_list=self.user_list,
+                index=self.selected_index
+            )
+        self.table_widget.update_user_list()
+        self.table_widget.set_select_index_list(final_selection_index)
+
+    def _menu_action_move_to_bottom(self):
+        final_selection_index: List[int] = \
+            user_list_move_to_bottom(
+                user_list=self.user_list,
+                index=self.selected_index
+            )
+        self.table_widget.update_user_list()
+        self.table_widget.set_select_index_list(final_selection_index)
+
+    def _menu_action_move_up(self):
+        final_selection_index: List[int] = \
+            user_list_move_up(
+                user_list=self.user_list,
+                index=self.selected_index,
+                step=1
+            )
+        self.table_widget.update_user_list()
+        self.table_widget.set_select_index_list(final_selection_index)
+
+    def _menu_action_move_down(self):
+        final_selection_index: List[int] = \
+            user_list_move_down(
+                user_list=self.user_list,
+                index=self.selected_index,
+                step=1
+            )
+        self.table_widget.update_user_list()
+        self.table_widget.set_select_index_list(final_selection_index)
