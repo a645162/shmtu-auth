@@ -164,7 +164,6 @@ class UserItem:
 
         valid = valid and (
                 self.user_id != "" and
-                self.user_name != "" and
                 self.password != ""
         )
 
@@ -177,6 +176,20 @@ class UserItem:
 
     def get_support_type(self):
         pass
+
+
+def user_is_exist_in_list(
+        user_list: List[UserItem],
+        user_id: str,
+        excluded_indexes: List[int]
+) -> bool:
+    for i, user in enumerate(user_list):
+        if (
+                i not in excluded_indexes and
+                user.user_id == user_id
+        ):
+            return True
+    return False
 
 
 def generate_test_user_list(count: int = 10) -> List[UserItem]:

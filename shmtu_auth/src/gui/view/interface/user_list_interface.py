@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import os.path
 from typing import List
+import os.path
+
+import pickle
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QHBoxLayout
@@ -9,10 +11,11 @@ from qfluentwidgets import (PushButton, Dialog, RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
 from .gallery_interface import GalleryInterface
-from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 
+from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
 from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableWidget
+
 from ....config.project_directory import (
     get_directory_data_path
 )
@@ -36,7 +39,7 @@ class UserListInterface(GalleryInterface):
     user_list: List[UserItem]
     selected_index: List[int] = []
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, user_list: List[UserItem] = None):
         super().__init__(
             title="校园网(统一认证平台)账号列表",
             subtitle="Author:Haomin Kong",
@@ -44,9 +47,17 @@ class UserListInterface(GalleryInterface):
         )
         self.setObjectName('userListInterface')
 
-        self.user_list = generate_test_user_list(20)
+        if user_list is None:
+            raise Exception("user_list is None")
+
+        self.user_list = user_list
 
         self._init_widget()
+
+        # 生成测试数据
+        self.user_list.clear()
+        self.user_list.extend(generate_test_user_list(20))
+        self.table_widget.update_user_list()
 
     def _init_widget(self):
         user_info_widget = QWidget(self)
@@ -80,6 +91,23 @@ class UserListInterface(GalleryInterface):
         self.user_info_edit_widget.onModifyButtonClick.connect(
             lambda: self.table_widget.update_user_list()
         )
+
+    def read_status(self):
+        if not os.path.exists(pickle_user_list_path):
+            return
+
+        try:
+            with open(pickle_user_list_path, 'rb') as f:
+                self.user_list = pickle.load(f)
+        except Exception:
+            return
+
+        if self.user_list is not None:
+            self.table_widget.update_user_list()
+
+    def save_status(self):
+        with open(pickle_user_list_path, 'wb') as f:
+            pickle.dump(self.user_list, f)
 
     def _table_item_selected(self):
         self.selected_index.clear()

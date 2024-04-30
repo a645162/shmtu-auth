@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-import datetime
 
-from PySide6.QtCore import Signal, Qt, QDate
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import (
     PushButton, LineEdit, PasswordLineEdit,
@@ -11,18 +10,13 @@ from qfluentwidgets import (
     TeachingTip, TeachingTipTailPosition, InfoBarIcon,
 )
 
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, NetworkType
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, NetworkType, user_is_exist_in_list
 from shmtu_auth.src.gui.common.components.list_checkbox_widget import ListCheckboxWidgets
 
-
-# Convert datetime.date to QDate
-def convert_date_to_qdate(date: datetime.date) -> QDate:
-    return QDate(date.year, date.month, date.day)
-
-
-# Convert QDate to datetime.date
-def convert_qdate_to_date(qdate: QDate) -> datetime.date:
-    return datetime.date(qdate.year(), qdate.month(), qdate.day())
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.gui.view.components.fluent.widget_date_picker import (
+    FDatePicker, convert_date_to_qdate, convert_qdate_to_date
+)
 
 
 class UserInfoEditWidget(QWidget):
@@ -68,6 +62,9 @@ class UserInfoEditWidget(QWidget):
         self.input_user_id.setText("")
         self.input_user_id.setPlaceholderText("请输入学号")
         self.input_user_id.setClearButtonEnabled(True)
+        # 只允许数字
+        self.input_user_id.setInputMask("0" * 12)
+        self.input_user_id.setMaxLength(12)
 
         self.input_user_name = LineEdit(self)
         self.input_user_name.setText("")
@@ -87,9 +84,9 @@ class UserInfoEditWidget(QWidget):
                 ]
             )
 
-        self.widget_expire_date = ZhDatePicker(self)
+        self.widget_expire_date = FDatePicker(self)
 
-        self.button_save = PushButton("保存修改")
+        self.button_save = FPushButton(self, "保存修改")
         self.button_save.clicked.connect(self._button_save)
 
         # 连接接收的信号槽
@@ -109,14 +106,12 @@ class UserInfoEditWidget(QWidget):
 
         self.layout.addWidget(self.button_save)
 
-        self.layout.setAlignment(Qt.AlignTop)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.layout.setContentsMargins(2, 0, 0, 0)
 
         self.setLayout(self.layout)
 
     def _selection_changed(self):
-        print(self.selected_index)
-
         selection_count = len(self.selected_index)
 
         self.setEnabled(selection_count == 1)
@@ -148,20 +143,58 @@ class UserInfoEditWidget(QWidget):
             )
             return False
 
+        if user_is_exist_in_list(
+                user_list=self.user_list,
+                user_id=self.input_user_id.text(),
+                excluded_indexes=self.selected_index
+        ):
+            TeachingTip.create(
+                target=self.input_user_id,
+                icon=InfoBarIcon.ERROR,
+                title="错误",
+                content="与该学号相同的用户已存在！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=-1,
+                parent=self
+            )
+            return False
+
+        if len(self.input_password.text()) == 0:
+            TeachingTip.create(
+                target=self.input_password,
+                icon=InfoBarIcon.ERROR,
+                title="错误",
+                content="密码不能为空！",
+                isClosable=True,
+                tailPosition=TeachingTipTailPosition.BOTTOM,
+                duration=-1,
+                parent=self
+            )
+            return False
+
         return True
 
     def _button_save(self):
+        # 先经过拦截器进行数据校验
         if not self._before_save_blocker():
             return
 
-        support_type = \
-            self.checkbox_support_type.get_selected_list()
-        print(support_type)
-
-        print(self.selected_index)
-
+        # 修改数据
         self._modify_user_data(index=self.selected_index[0])
 
+        TeachingTip.create(
+            target=self.button_save,
+            icon=InfoBarIcon.SUCCESS,
+            title="成功",
+            content="保存成功！",
+            isClosable=True,
+            tailPosition=TeachingTipTailPosition.BOTTOM,
+            duration=3000,
+            parent=self
+        )
+
+        # 发送信号
         self.onModifyButtonClick.emit()
 
     def _modify_user_data(self, index: int = 0):

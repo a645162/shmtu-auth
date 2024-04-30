@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import List
 
 from .gallery_interface import GalleryInterface
 
@@ -11,6 +12,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
 from ...common.config import cfg
 from ...common.style_sheet import StyleSheet
+from ....datatype.shmtu.auth.auth_user import UserItem
 
 from ....utils.logs import get_logger
 
@@ -20,13 +22,19 @@ logger = get_logger()
 class AuthInterface(GalleryInterface):
     """ Auth interface """
 
-    def __init__(self, parent=None):
+    user_list: List[UserItem]
+
+    def __init__(self, parent=None, user_list: List[UserItem] = None):
         super().__init__(
             title="上海海事大学校园网自动认证",
             subtitle="Author:Haomin Kong",
             parent=parent
         )
         self.setObjectName('authInterface')
+
+        if user_list is None:
+            raise Exception("user_list is None")
+        self.user_list = user_list
 
         self.authSettingsWidget = AuthSettingWidget(self)
 

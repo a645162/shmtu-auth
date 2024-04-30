@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QTableWidgetItem
 from qfluentwidgets import (TableWidget, InfoBar, InfoBarIcon, InfoBarPosition, PushButton)
 
 from .gallery_interface import GalleryInterface
+from ..components.fluent.widget_push_button import FPushButton
 from ...common.config import cfg
 
 import pickle
@@ -42,7 +43,7 @@ class LogInterface(GalleryInterface):
             icon=InfoBarIcon.INFORMATION,
             title="提示",
             content="这里是程序的工作日志，仅用于反馈。非专业人员请忽略~",
-            orient=Qt.Horizontal,
+            orient=Qt.Orientation.Horizontal,
             isClosable=True,
             duration=-1,
             position=InfoBarPosition.NONE,
@@ -50,7 +51,7 @@ class LogInterface(GalleryInterface):
         )
         self.vBoxLayout.addWidget(info_bar)
 
-        button_save_log = PushButton("导出日志")
+        button_save_log = FPushButton(self, "导出日志")
         button_save_log.setFixedWidth(100)
         button_save_log.clicked.connect(self.export_logs)
         self.vBoxLayout.addWidget(button_save_log)
@@ -93,7 +94,7 @@ class LogTableFrame(TableWidget):
         self.resizeColumnsToContents()
 
         # 禁止直接编辑
-        self.setEditTriggers(TableWidget.NoEditTriggers)
+        self.setEditTriggers(TableWidget.EditTrigger.NoEditTriggers)
 
         if os.path.exists(pickle_log_path):
             self.read_status()
@@ -101,8 +102,12 @@ class LogTableFrame(TableWidget):
     def read_status(self):
         if not os.path.exists(pickle_log_path):
             return
-        with open(pickle_log_path, 'rb') as f:
-            self.record_list = pickle.load(f)
+
+        try:
+            with open(pickle_log_path, 'rb') as f:
+                self.record_list = pickle.load(f)
+        except Exception:
+            return
 
         if self.record_list is not None:
             self.update_by_list()

@@ -23,6 +23,7 @@ from .interface.settings_interface import SettingInterface
 from ..resource import resources
 
 from .system_tray import SystemTray
+from ...datatype.shmtu.auth.auth_user import UserItem
 
 from ...utils.logs import get_logger
 
@@ -30,6 +31,7 @@ logger = get_logger()
 
 
 class MainWindow(FluentWindow):
+    user_list: List[UserItem] = []
 
     def __init__(self):
         super().__init__()
@@ -40,8 +42,8 @@ class MainWindow(FluentWindow):
 
         # create sub interface
         self.homeInterface = HomeInterface(self)
-        self.authInterface = AuthInterface(self)
-        self.userListInterface = UserListInterface(self)
+        self.authInterface = AuthInterface(self, self.user_list)
+        self.userListInterface = UserListInterface(self, self.user_list)
         self.logInterface = LogInterface(self)
         self.settingInterface = SettingInterface(self)
         self.aboutInterface = AboutInterface(self)

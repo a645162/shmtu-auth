@@ -46,7 +46,7 @@ class UserListTableWidget(QFluentTableWidget):
         self.resizeColumnsToContents()
 
         # 禁止直接编辑
-        self.setEditTriggers(TableWidget.NoEditTriggers)
+        self.setEditTriggers(TableWidget.EditTrigger.NoEditTriggers)
 
     def update_user_list(self):
         user_count = self.user_list.__len__()
@@ -68,3 +68,5 @@ class UserListTableWidget(QFluentTableWidget):
                     i, j,
                     QTableWidgetItem(text)
                 )
+
+        self.resizeColumnsToContents()
