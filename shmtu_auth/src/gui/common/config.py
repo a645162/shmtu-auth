@@ -6,6 +6,8 @@ from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, Boo
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, __version__)
 
+from qfluentwidgets import __version__ as q_fluent_widgets_version
+
 from ...utils.logs import get_logger
 
 logger = get_logger()
@@ -79,3 +81,5 @@ EN_SUPPORT_URL = "https://a645162.github.io/shmtu-auth/"
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
 qconfig.load('config/gui_config.json', cfg)
+
+logger.info(f"QFluentWidgets Version: {q_fluent_widgets_version}")

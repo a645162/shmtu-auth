@@ -27,6 +27,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install -r r-gui-requirements.txt
+          pip install -r r-dev-requirements.txt
 
       - name: Lint with flake8
         run: |

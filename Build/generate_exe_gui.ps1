@@ -86,7 +86,7 @@ pyinstaller `
     --name $project_name_with_profile `
     --distpath $outputLocation `
     --workpath $tmpLocation `
-    .\main_pyinstaller_gui.py
+    .\main_gui.py
 
 Write-Host "Build Completed"
 
