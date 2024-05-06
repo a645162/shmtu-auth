@@ -21,15 +21,10 @@ class AboutInterface(GalleryInterface):
         self.setObjectName('aboutInterface')
 
         horizontal_flip_view = HorizontalFlipView(self)
+        horizontal_flip_view.setFixedSize(500, 500)
         horizontal_flip_view.addImages([
             ":/about/flip/current/1",
             ":/about/flip/current/2",
         ])
-        self.addExampleCard(
-            title="本项目",
-            widget=horizontal_flip_view,
-            sourcePath=""
-        )
 
-        # self.iconView = IconCardView(self)
-        # self.vBoxLayout.addWidget(self.iconView)
+        self.vBoxLayout.addWidget(horizontal_flip_view)
