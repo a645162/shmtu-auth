@@ -11,6 +11,15 @@ if ($parentProcessName -like "pycharm*.exe")
     $DebugMode = $true
 }
 
+if ($DebugMode)
+{
+    Write-Host "Debug mode is enabled."
+}
+else
+{
+    Write-Host "Debug mode is disabled."
+}
+
 # 获取Python命令的路径
 $pythonCommandPath = (Get-Command -Name "python" -ErrorAction SilentlyContinue).Path
 
@@ -48,21 +57,19 @@ Write-Host "Installing requirements..."
 
 if ($DebugMode)
 {
-    Write-Host "Running in Debug Mode"
+    Write-Host "Debug mode is enabled."
     Write-Host "Passing the requirements installation..."
 }
 else
 {
-    Write-Host "Running in Release Mode"
+    Write-Host "Debug mode is disabled."
     # $null = Read-Host "Press Enter to Continue"
-    Write-Host "Installing requirements..."
     pip install -r requirements.txt > $null
     pip install -r r-dev-requirements.txt > $null
-    pip install -r r-gui-requirements.txt > $null
 }
 
 $project_name = "shmtu_auth"
-$profile_name = "windows_gui"
+$profile_name = "windows_console"
 $project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
 $srcLocation = "$baseLocation\$project_name"
@@ -78,31 +85,33 @@ Write-Host "Building the executable..."
 Set-Location $srcLocation
 
 pyinstaller `
+    --onefile `
+    --console `
     --strip `
-    --hidden-import=qfluentwidgets `
     --noupx `
-    --windowed `
-    --icon ..\Assets\Icon\icons\Icon.ico `
-    --name $project_name_with_profile `
-    --distpath $outputLocation `
-    --workpath $tmpLocation `
-    .\main_gui.py
+    --noconfirm `
+    --clean `
+    --icon "..\Assets\Icon\icons\Icon.ico" `
+    --name "$project_name_with_profile" `
+    --distpath "$outputLocation" `
+    --workpath "$tmpLocation" `
+    .\main_pyinstaller.py
 
 Write-Host "Build Completed"
 
 # Clean up
 Write-Host "Cleaning up..."
 
-# Remove File "shmtu_auth.spec"
+# Remove the PyInstaller spec file
 Remove-Item -Recurse -Force "$srcLocation\$project_name_with_profile.spec"
 
-# Remove Temp Files
+# Remove temporary files
 Remove-Item -Recurse -Force $tmpLocation
 
 Write-Host "Cleanup Completed"
 
 # Restore Location
-Write-Host "Restored Location"
+Write-Host "Restoring Location..."
 Set-Location $baseLocation
 
 Write-Host "Executable is located at $outputLocation"

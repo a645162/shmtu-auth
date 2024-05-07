@@ -17,7 +17,7 @@ UninstallDisplayIcon={uninstallexe}
 SolidCompression=yes
 
 ; Setup EXE output path
-OutputDir=Output\inno
+OutputDir=Output\Windows\INNO
 OutputBaseFilename=setup-shmtu-auth-gui
 
 SetupIconFile=..\Assets\Icon\icons\Icon.ico
