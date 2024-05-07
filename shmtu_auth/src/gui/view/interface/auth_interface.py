@@ -56,20 +56,20 @@ class AuthSettingWidget(ScrollArea):
         self.shmtuAuthGroup = SettingCardGroup(
             "校园网自动认证", self.scrollWidget)
 
-        self.musicFolderCard = FolderListSettingCard(
-            cfg.musicFolders,
-            self.tr("Local music library"),
-            directory=QStandardPaths.writableLocation(
-                QStandardPaths.MusicLocation),
-            parent=self.shmtuAuthGroup
-        )
-        self.downloadFolderCard = PushSettingCard(
-            self.tr('Choose folder'),
-            FIF.DOWNLOAD,
-            self.tr("Download directory"),
-            cfg.get(cfg.downloadFolder),
-            self.shmtuAuthGroup
-        )
+        # self.musicFolderCard = FolderListSettingCard(
+        #     cfg.musicFolders,
+        #     self.tr("Local music library"),
+        #     directory=QStandardPaths.writableLocation(
+        #         QStandardPaths.MusicLocation),
+        #     parent=self.shmtuAuthGroup
+        # )
+        # self.downloadFolderCard = PushSettingCard(
+        #     self.tr('Choose folder'),
+        #     FIF.DOWNLOAD,
+        #     self.tr("Download directory"),
+        #     cfg.get(cfg.downloadFolder),
+        #     self.shmtuAuthGroup
+        # )
 
         self.__init_widget()
 
@@ -95,8 +95,8 @@ class AuthSettingWidget(ScrollArea):
 
         # add cards to group
         # shmtu-auth
-        self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
-        self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
+        # self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
+        # self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)

@@ -33,20 +33,20 @@ class SettingInterface(ScrollArea):
         # shmtu-auth
         self.shmtuAuthGroup = SettingCardGroup(
             self.tr("校园网自动认证"), self.scrollWidget)
-        self.musicFolderCard = FolderListSettingCard(
-            cfg.musicFolders,
-            self.tr("Local music library"),
-            directory=QStandardPaths.writableLocation(
-                QStandardPaths.MusicLocation),
-            parent=self.shmtuAuthGroup
-        )
-        self.downloadFolderCard = PushSettingCard(
-            self.tr('Choose folder'),
-            FIF.DOWNLOAD,
-            self.tr("Download directory"),
-            cfg.get(cfg.downloadFolder),
-            self.shmtuAuthGroup
-        )
+        # self.musicFolderCard = FolderListSettingCard(
+        #     cfg.musicFolders,
+        #     self.tr("Local music library"),
+        #     directory=QStandardPaths.writableLocation(
+        #         QStandardPaths.MusicLocation),
+        #     parent=self.shmtuAuthGroup
+        # )
+        # self.downloadFolderCard = PushSettingCard(
+        #     self.tr('Choose folder'),
+        #     FIF.DOWNLOAD,
+        #     self.tr("Download directory"),
+        #     cfg.get(cfg.downloadFolder),
+        #     self.shmtuAuthGroup
+        # )
 
         # 通用设置
         self.generalGroup = SettingCardGroup(
@@ -181,8 +181,8 @@ class SettingInterface(ScrollArea):
 
         # add cards to group
         # shmtu-auth
-        self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
-        self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
+        # self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
+        # self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
 
         # 通用设置
         self.generalGroup.addSettingCard(self.autoStartupCard)
@@ -222,23 +222,23 @@ class SettingInterface(ScrollArea):
             parent=self
         )
 
-    def __onDownloadFolderCardClicked(self):
-        """ download folder card clicked slot """
-        folder = QFileDialog.getExistingDirectory(
-            self, self.tr("Choose folder"), "./")
-        if not folder or cfg.get(cfg.downloadFolder) == folder:
-            return
-
-        cfg.set(cfg.downloadFolder, folder)
-        self.downloadFolderCard.setContent(folder)
+    # def __onDownloadFolderCardClicked(self):
+    #     """ download folder card clicked slot """
+    #     folder = QFileDialog.getExistingDirectory(
+    #         self, self.tr("Choose folder"), "./")
+    #     if not folder or cfg.get(cfg.downloadFolder) == folder:
+    #         return
+    #
+    #     cfg.set(cfg.downloadFolder, folder)
+    #     self.downloadFolderCard.setContent(folder)
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
         cfg.appRestartSig.connect(self.__showRestartTooltip)
 
         # music in the pc
-        self.downloadFolderCard.clicked.connect(
-            self.__onDownloadFolderCardClicked)
+        # self.downloadFolderCard.clicked.connect(
+        #     self.__onDownloadFolderCardClicked)
 
         # personalization
         self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))

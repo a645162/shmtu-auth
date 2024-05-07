@@ -21,10 +21,10 @@ class Config(QConfig):
     """ Config of application """
 
     # shmtu-auth
-    musicFolders = ConfigItem(
-        "Folders", "LocalMusic", [], FolderListValidator())
-    downloadFolder = ConfigItem(
-        "Folders", "Download", "app/download", FolderValidator())
+    # musicFolders = ConfigItem(
+    #     "Folders", "LocalMusic", [], FolderListValidator())
+    # downloadFolder = ConfigItem(
+    #     "Folders", "Download", "app/download", FolderValidator())
     auth_advanced_feature = ConfigItem(
         "Auth", "AdvancedFeature", False, BoolValidator()
     )

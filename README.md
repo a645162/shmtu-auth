@@ -88,6 +88,12 @@ chmod +x start.sh
 推荐使用`Anaconda`或`Miniconda`创建虚拟环境。
 推荐使用学生认证的Jetbrains PyCharm Professional进行开发。
 
+## GUI说明
+
+Windows下AMD显卡显示Mica云母特效会有问题，因此全局关闭了Mica云母特效。
+
+macOS x64下Python版本必须小于等于3.11，否则无法安装PySide6。
+
 ## License
 
 本程序使用[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)协议开源。

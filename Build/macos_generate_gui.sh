@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+set -e
+
 # 初始化调试模式为关闭
 DebugMode=false
 
@@ -69,71 +71,6 @@ fi
 
 # Save current location
 base_location=$(pwd)
+echo "Base location: $base_location"
 
-# Install dependencies
-echo "Installing requirements..."
-
-if [[ $DebugMode == true ]]; then
-    echo "Debug mode is enabled."
-    Write-Host "Passing the requirements installation..."
-#    pip install -r requirements.txt
-#    pip install -r r-dev-requirements.txt
-fi
-if [[ $DebugMode == false ]]; then
-    echo "Debug mode is disabled."
-    pip install -r requirements.txt > /dev/null
-    pip install -r r-dev-requirements.txt > /dev/null
-fi
-
-# Set project name
-project_name="shmtu_auth"
-profile_name="macos"
-project_name_with_profile="${project_name}_${profile_name}"
-echo "project_name_with_profile: $project_name_with_profile"
-
-# Set source and output directories
-src_location="$base_location/$project_name"
-output_location="$base_location/Build/Output/macOS/$project_name_with_profile"
-tmp_location="$output_location/tmp"
-
-echo "src_location: $src_location"
-echo "output_location: $output_location"
-echo "tmp_location: $tmp_location"
-
-# Set location to the source directory
-cd "$src_location" || exit
-
-# Build the project with PyInstaller
-# https://pyinstaller.org/en/stable/usage.html
-pyinstaller \
-    --strip \
-    --hidden-import=qfluentwidgets \
-    --noupx \
-    --windowed \
-    --noconfirm \
-    --clean \
-    --icon "$base_location/Assets/Icon/macOS/Logo.icns" \
-    --name "$project_name_with_profile" \
-    --distpath "$output_location" \
-    --workpath "$tmp_location" \
-    ./main_gui.py
-
-echo "Build Completed"
-
-# Clean up
-echo "Cleaning up..."
-
-# Remove the PyInstaller spec file
-rm -f "$src_location/$project_name_with_profile.spec"
-
-# Remove temporary files
-rm -rf "$tmp_location"
-
-echo "Cleanup Completed"
-
-# Restore Location
-echo "Restoring Location..."
-cd "$base_location" || exit
-
-echo "Executable is located at $output_location"
 echo "Build Completed!!!"
