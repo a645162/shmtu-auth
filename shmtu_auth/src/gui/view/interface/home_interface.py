@@ -246,7 +246,9 @@ class HomeInterface(ScrollArea):
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU看板",
-            content="GPU任务面板基于Vue3+Element Plus开发，\n"
+            content="GPU任务面板基于"
+                    "Vue3 + Element Plus + Pinia"
+                    "开发，"
                     "后端为显卡监控脚本的Flask。",
             index=4,
             url="https://github.com/a645162/nvi-notify"

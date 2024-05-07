@@ -3,10 +3,14 @@
 import os
 import datetime
 
+from ..config.config_global import env_from_global
 from ..config.config_toml import env_from_toml
 
 
 def get_env_str(key, default=None):
+    if key in env_from_global:
+        return str(env_from_global[key]).strip()
+
     if key in env_from_toml:
         return str(env_from_toml[key]).strip()
 

@@ -21,6 +21,18 @@ class Config(QConfig):
     """ Config of application """
 
     # shmtu-auth
+
+    checkInternetInterval = RangeConfigItem(
+        "Auth", "CheckInternetInterval", 60, RangeValidator(5, 3600)
+    )
+
+    checkInternetRetryTimes = RangeConfigItem(
+        "Auth", "CheckInternetRetryTimes", 3, RangeValidator(1, 10)
+    )
+    checkInternetRetryWaitTime = RangeConfigItem(
+        "Auth", "CheckInternetRetryTimes", 30, RangeValidator(1, 600)
+    )
+
     # musicFolders = ConfigItem(
     #     "Folders", "LocalMusic", [], FolderListValidator())
     # downloadFolder = ConfigItem(
