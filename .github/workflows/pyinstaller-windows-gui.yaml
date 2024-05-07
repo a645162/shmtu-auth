@@ -54,4 +54,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./Build/Output/Windows/INNO/setup-shmtu-auth-gui.exe
+          files: ./Build/Output/Windows/INNO/setup-inno-shmtu-auth-gui.exe

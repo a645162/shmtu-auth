@@ -1,6 +1,9 @@
 /shmtu_auth*/
 
-/INNO/
-/NSIS/
+/INNO/*
+/NSIS/*
+
+!/INNO/.git*
+!/NSIS/.git*
 
 /shmtu_auth_windows_*

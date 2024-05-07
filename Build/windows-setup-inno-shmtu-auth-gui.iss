@@ -1,4 +1,6 @@
-; -- shmtu-auth-gui.iss --
+; -- windows-setup-inno-shmtu-auth-gui.iss --
+; Author: Haomin Kong
+; https://github.com/a645162/shmtu-auth
 
 [Setup]
 AppName=shmtu-auth
@@ -18,7 +20,7 @@ SolidCompression=yes
 
 ; Setup EXE output path
 OutputDir=Output\Windows\INNO
-OutputBaseFilename=setup-shmtu-auth-gui
+OutputBaseFilename=setup-inno-shmtu-auth-gui
 
 SetupIconFile=..\Assets\Icon\icons\Icon.ico
 DisableWelcomePage=False
@@ -38,7 +40,7 @@ VersionInfoProductName=shmtu-auth
 VersionInfoCopyright=Only for study use!
 VersionInfoProductVersion=020000
 VersionInfoProductTextVersion=2.0.0
-VersionInfoOriginalFileName=setup-shmtu-auth-gui.exe
+VersionInfoOriginalFileName=setup-inno-shmtu-auth-gui.exe
 
 WizardSmallImageFile=..\Assets\Icon\32.bmp
 
@@ -70,9 +72,9 @@ Name: "{commondesktop}\shmtu-auth"; \
 	Tasks: DesktopIcon
 
 [Tasks]
-Name: "DesktopIcon"; Description: "创建桌面快捷方式图标"
+Name: "DesktopIcon"; Description: "创建桌面快捷方式"
 
 [Run]
 Filename: "{app}\shmtu_auth_windows_gui.exe"; \
-	Description: "结束后运行程序"; \
+	Description: "直接运行程序"; \
 	Flags: postinstall nowait
