@@ -86,7 +86,9 @@ chmod +x start.sh
 ## 开发指南
 
 推荐使用`Anaconda`或`Miniconda`创建虚拟环境。
-推荐使用学生认证的Jetbrains PyCharm Professional进行开发。
+推荐使用学生认证的`Jetbrains PyCharm Professional`进行开发。
+
+因为许多开发步骤已经在`PyCharm`中配置好，因此推荐使用`PyCharm`进行开发。
 
 ## GUI说明
 

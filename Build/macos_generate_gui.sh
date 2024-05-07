@@ -57,6 +57,8 @@ python_path=$pythonCommandPath
 # 输出Python命令的路径
 echo "Python path: $python_path"
 
+original_path=$(pwd)
+
 # Check if requirements.txt exists
 if [[ ! -f "requirements.txt" ]]; then
     # Go to parent directory
@@ -72,5 +74,14 @@ fi
 # Save current location
 base_location=$(pwd)
 echo "Base location: $base_location"
+
+zsh "Build/macos_generate_gui_app_bundle.sh"
+
+cd "${base_location}/Build" || exit
+
+zsh "./macos_generate_gui_dmg.sh"
+
+# Restore original path
+cd "${original_path}" || exit
 
 echo "Build Completed!!!"

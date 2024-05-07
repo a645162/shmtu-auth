@@ -139,4 +139,4 @@ echo "Restoring Location..."
 cd "$base_location" || exit
 
 echo "Executable is located at $output_location"
-echo "Build Completed!!!"
+echo "PyInstaller Build Completed!!!"
