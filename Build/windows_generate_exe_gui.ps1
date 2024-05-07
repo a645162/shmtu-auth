@@ -75,7 +75,7 @@ $profile_name = "windows_gui"
 $project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
 $srcLocation = "$baseLocation\$project_name"
-$outputLocation = "$baseLocation\Build\$project_name_with_profile"
+$outputLocation = "$baseLocation\Build\Output\Windows\$project_name_with_profile"
 $tmpLocation = "$outputLocation\tmp"
 
 Write-Host "src Location: $srcLocation"

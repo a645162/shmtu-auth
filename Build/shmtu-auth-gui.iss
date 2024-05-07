@@ -48,7 +48,7 @@ ArchitecturesInstallIn64BitMode=x64
 MinVersion=0,6.2
 
 [Files]
-Source: "shmtu_auth_windows_gui\shmtu_auth_windows_gui\*"; \
+Source: "Output\Windows\shmtu_auth_windows_gui\shmtu_auth_windows_gui\*"; \
 	DestDir: "{app}"; \
 	Flags: recursesubdirs
 
