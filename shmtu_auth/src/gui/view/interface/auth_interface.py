@@ -2,6 +2,9 @@
 
 from typing import List
 
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
+
 from qfluentwidgets import (
     SettingCardGroup,
 
@@ -12,12 +15,10 @@ from qfluentwidgets import (
 
     FolderListSettingCard,
     ScrollArea,
-    ExpandLayout, BodyLabel, Slider, PushButton, SwitchButton, IndicatorPosition, RangeConfigItem, QConfig
+    ExpandLayout, Slider, RangeConfigItem, qconfig
 )
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, QStandardPaths
-from PySide6.QtWidgets import QWidget, QLabel, QFileDialog, QHBoxLayout
 
 from .gallery_interface import GalleryInterface
 from ..components.fluent.widget_label import FBodyLabel
@@ -40,7 +41,7 @@ class SliderWithText(QWidget):
 
         self.slider = Slider(Qt.Horizontal, self)
         self.slider.setFixedWidth(200)
-        self.slider.valueChanged.connect(self._on_value_update)
+        self.slider.valueChanged.connect(self.__on_value_update)
 
         self.hBoxLayout = QHBoxLayout(self)
 
@@ -49,7 +50,7 @@ class SliderWithText(QWidget):
 
         self.setLayout(self.hBoxLayout)
 
-    def _on_value_update(self, value):
+    def __on_value_update(self, value):
         self.value_label.setText(str(value))
 
     def set_range(self, min_value, max_value):
@@ -70,13 +71,13 @@ class SettingGroupSliderWithText(SliderWithText):
         value_range: tuple = self.range_config_item.range
         self.set_range(value_range[0], value_range[1])
 
-        self.set_value(self.range_config_item.value)
+        self.set_value(qconfig.get(range_config_item))
+        # self.set_value(self.range_config_item.value)
 
-        self.slider.valueChanged.connect(self._value_change_update_setting)
+        self.slider.valueChanged.connect(self.__value_change_update_setting)
 
-    def _value_change_update_setting(self, value):
-        self.range_config_item.value = value
-        self.range_config_item.serialize()
+    def __value_change_update_setting(self, value):
+        qconfig.set(self.range_config_item, value)
 
     def restore_default_value(self):
         self.set_value(self.range_config_item.defaultValue)
@@ -87,8 +88,8 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
     def __init__(self, cfg: Config, parent=None):
         super().__init__(
             FIF.SPEED_OFF,
-            "状态检测设置",
-            "设置状态检测的具体细节(一般不需要调整)",
+            "网络状态监控设置",
+            "设置网络状态监控的具体细节(一般不需要调整)",
             parent
         )
 
@@ -99,23 +100,32 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
         self.viewLayout.setSpacing(0)
 
         # 加载其他组件
-        self._init_content()
+        self.__init_content()
 
         # 恢复默认按钮
         self.restore_button = FPushButton(self, "恢复默认")
-        self.restore_button.clicked.connect(self._restore_default)
+        self.restore_button.clicked.connect(self.__restore_default)
         self.restore_button.setFixedWidth(135)
         self.restore_label = FBodyLabel("调错了？！恢复缺省值吧~", self)
         self.add(self.restore_label, self.restore_button)
 
-    def _init_content(self):
+    def __init_content(self):
         self.check_internet_interval_slider = \
             SettingGroupSliderWithText(self.cfg.checkInternetInterval, self)
-
         self.add(FBodyLabel("检测间隔", self), self.check_internet_interval_slider)
 
-    def _restore_default(self):
-        pass
+        self.check_internet_retry_times_slider = \
+            SettingGroupSliderWithText(self.cfg.checkInternetRetryTimes, self)
+        self.add(FBodyLabel("联网失败的重试次数", self), self.check_internet_retry_times_slider)
+
+        self.check_internet_retry_wait_time_slider = \
+            SettingGroupSliderWithText(self.cfg.checkInternetRetryWaitTime, self)
+        self.add(FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider)
+
+    def __restore_default(self):
+        self.check_internet_interval_slider.restore_default_value()
+        self.check_internet_retry_times_slider.restore_default_value()
+        self.check_internet_retry_wait_time_slider.restore_default_value()
 
     def add(self, label, widget):
         w = QWidget()
@@ -152,7 +162,7 @@ class AuthSettingWidget(ScrollArea):
             title="启动",
             content="启动或关闭服务"
         )
-        self.start_card.clicked.connect(lambda: print("!@#!@#"))
+        self.start_card.clicked.connect(lambda: self.start_card.iconLabel.setIcon(FIF.PASTE))
         self.auth_group_general.addSettingCard(self.start_card)
 
         self.check_interval_card = \

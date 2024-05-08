@@ -31,8 +31,8 @@ class SettingInterface(ScrollArea):
         self.settingLabel = QLabel("设置", self)
 
         # shmtu-auth
-        self.shmtuAuthGroup = SettingCardGroup(
-            self.tr("校园网自动认证"), self.scrollWidget)
+        self.shmtu_auth_group = \
+            SettingCardGroup("校园网自动认证", self.scrollWidget)
         # self.musicFolderCard = FolderListSettingCard(
         #     cfg.musicFolders,
         #     self.tr("Local music library"),
@@ -49,34 +49,36 @@ class SettingInterface(ScrollArea):
         # )
 
         # 通用设置
-        self.generalGroup = SettingCardGroup(
+        self.general_group = SettingCardGroup(
             "通用设置", self.scrollWidget)
-        self.autoStartupCard = SwitchSettingCard(
+        self.auto_startup_card = SwitchSettingCard(
             FIF.PLAY,
             "开机自动启动",
             "计算机开机后自动启动",
             cfg.autoStartup,
-            self.generalGroup
+            self.general_group
         )
-        self.autoMinimizeCard = SwitchSettingCard(
+        self.auto_startup_card.setEnabled(False)
+        self.auto_minimize_card = SwitchSettingCard(
             FIF.MINIMIZE,
-            "自动最小化",
-            "程序启动后自动最小化到系统托盘",
+            "自动隐藏",
+            "程序启动后自动最小化(隐藏)到系统托盘",
             cfg.autoMinimize,
-            self.generalGroup
+            self.general_group
         )
 
         # 个性化设置
-        self.personalizationGroup = SettingCardGroup(
-            "个性化设置", self.scrollWidget)
-        self.micaCard = SwitchSettingCard(
+        self.personalization_group = \
+            SettingCardGroup("个性化设置", self.scrollWidget)
+        self.mica_card = SwitchSettingCard(
             FIF.TRANSPARENT,
             "Windows 11 云母(Mica)特效",
             self.tr('Apply semi transparent to windows and surfaces'),
             cfg.micaEnabled,
-            self.personalizationGroup
+            self.personalization_group
         )
-        self.themeCard = OptionsSettingCard(
+        self.mica_card.setEnabled(False)
+        self.theme_card = OptionsSettingCard(
             cfg.themeMode,
             FIF.BRUSH,
             "配色方案",
@@ -85,16 +87,16 @@ class SettingInterface(ScrollArea):
                 "亮色", "暗色",
                 "跟随系统设置"
             ],
-            parent=self.personalizationGroup
+            parent=self.personalization_group
         )
-        self.themeColorCard = CustomColorSettingCard(
+        self.theme_color_card = CustomColorSettingCard(
             cfg.themeColor,
             FIF.PALETTE,
             "主题颜色",
             "改变主题颜色",
-            self.personalizationGroup
+            self.personalization_group
         )
-        self.zoomCard = OptionsSettingCard(
+        self.zoom_card = OptionsSettingCard(
             cfg.dpiScale,
             FIF.ZOOM,
             "界面缩放比例",
@@ -103,60 +105,60 @@ class SettingInterface(ScrollArea):
                 "100%", "125%", "150%", "175%", "200%",
                 "跟随系统设置"
             ],
-            parent=self.personalizationGroup
+            parent=self.personalization_group
         )
 
         # material
-        self.materialGroup = SettingCardGroup(
+        self.material_group = SettingCardGroup(
             self.tr('Material'), self.scrollWidget)
         self.blurRadiusCard = RangeSettingCard(
             cfg.blurRadius,
             FIF.ALBUM,
-            self.tr('Acrylic blur radius'),
-            self.tr('The greater the radius, the more blurred the image'),
-            self.materialGroup
+            self.tr('Acrylic模糊半径'),
+            self.tr('半径越大，图片越模糊。'),
+            self.material_group
         )
 
         # update software
-        self.updateSoftwareGroup = SettingCardGroup(
+        self.update_software_group = SettingCardGroup(
             "软件更新", self.scrollWidget)
-        self.updateOnStartUpCard = SwitchSettingCard(
+        self.update_on_start_up_card = SwitchSettingCard(
             FIF.UPDATE,
             "自动检查更新",
             "程序将在启动时自动联网检测是否存在新版本。",
             configItem=cfg.checkUpdateAtStartUp,
-            parent=self.updateSoftwareGroup
+            parent=self.update_software_group
         )
 
         # application
-        self.aboutGroup = SettingCardGroup(self.tr('About'), self.scrollWidget)
-        self.helpCard = HyperlinkCard(
+        self.about_group = SettingCardGroup("关于", self.scrollWidget)
+        self.help_card = HyperlinkCard(
             HELP_URL,
             "打开帮助页面",
             FIF.HELP,
             "帮助",
             "查看帮助信息",
-            self.aboutGroup
+            self.about_group
         )
-        self.feedbackCard = PrimaryPushSettingCard(
+        self.feedback_card = PrimaryPushSettingCard(
             "反馈",
             FIF.FEEDBACK,
             "提供反馈",
             "帮助我们改进程序",
-            self.aboutGroup
+            self.about_group
         )
-        self.aboutCard = PrimaryPushSettingCard(
+        self.about_card = PrimaryPushSettingCard(
             "检查更新",
             FIF.INFO,
             "关于",
             '© ' + self.tr('Copyright') + f" {YEAR}, {AUTHOR}. " +
             self.tr('Version') + " " + VERSION,
-            self.aboutGroup
+            self.about_group
         )
 
-        self.__initWidget()
+        self.__init_widget()
 
-    def __initWidget(self):
+    def __init_widget(self):
         self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setViewportMargins(0, 80, 0, 20)
@@ -170,13 +172,12 @@ class SettingInterface(ScrollArea):
         StyleSheet.SETTING_INTERFACE.apply(self)
 
         # self.micaCard.setEnabled(isWin11())
-        self.micaCard.setEnabled(False)
 
         # initialize layout
-        self.__initLayout()
+        self.__init_layout()
         self.__connectSignalToSlot()
 
-    def __initLayout(self):
+    def __init_layout(self):
         self.settingLabel.move(36, 30)
 
         # add cards to group
@@ -185,35 +186,35 @@ class SettingInterface(ScrollArea):
         # self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
 
         # 通用设置
-        self.generalGroup.addSettingCard(self.autoStartupCard)
-        self.generalGroup.addSettingCard(self.autoMinimizeCard)
+        self.general_group.addSettingCard(self.auto_startup_card)
+        self.general_group.addSettingCard(self.auto_minimize_card)
 
         # 界面个性化设置
-        self.personalizationGroup.addSettingCard(self.micaCard)
-        self.personalizationGroup.addSettingCard(self.themeCard)
-        self.personalizationGroup.addSettingCard(self.themeColorCard)
-        self.personalizationGroup.addSettingCard(self.zoomCard)
+        self.personalization_group.addSettingCard(self.mica_card)
+        self.personalization_group.addSettingCard(self.theme_card)
+        self.personalization_group.addSettingCard(self.theme_color_card)
+        self.personalization_group.addSettingCard(self.zoom_card)
         # self.personalGroup.addSettingCard(self.languageCard)
 
-        self.materialGroup.addSettingCard(self.blurRadiusCard)
+        self.material_group.addSettingCard(self.blurRadiusCard)
 
-        self.updateSoftwareGroup.addSettingCard(self.updateOnStartUpCard)
+        self.update_software_group.addSettingCard(self.update_on_start_up_card)
 
-        self.aboutGroup.addSettingCard(self.helpCard)
-        self.aboutGroup.addSettingCard(self.feedbackCard)
-        self.aboutGroup.addSettingCard(self.aboutCard)
+        self.about_group.addSettingCard(self.help_card)
+        self.about_group.addSettingCard(self.feedback_card)
+        self.about_group.addSettingCard(self.about_card)
 
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
-        self.expandLayout.addWidget(self.shmtuAuthGroup)
-        self.expandLayout.addWidget(self.generalGroup)
-        self.expandLayout.addWidget(self.personalizationGroup)
-        self.expandLayout.addWidget(self.materialGroup)
-        self.expandLayout.addWidget(self.updateSoftwareGroup)
-        self.expandLayout.addWidget(self.aboutGroup)
+        self.expandLayout.addWidget(self.shmtu_auth_group)
+        self.expandLayout.addWidget(self.general_group)
+        self.expandLayout.addWidget(self.personalization_group)
+        self.expandLayout.addWidget(self.material_group)
+        self.expandLayout.addWidget(self.update_software_group)
+        self.expandLayout.addWidget(self.about_group)
 
-    def __showRestartTooltip(self):
+    def __show_restart_tooltip(self):
         """ show restart tooltip """
         InfoBar.success(
             "更新成功",
@@ -234,16 +235,16 @@ class SettingInterface(ScrollArea):
 
     def __connectSignalToSlot(self):
         """ connect signal to slot """
-        cfg.appRestartSig.connect(self.__showRestartTooltip)
+        cfg.appRestartSig.connect(self.__show_restart_tooltip)
 
         # music in the pc
         # self.downloadFolderCard.clicked.connect(
         #     self.__onDownloadFolderCardClicked)
 
         # personalization
-        self.themeCard.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
-        self.themeColorCard.colorChanged.connect(lambda c: setThemeColor(c))
+        self.theme_card.optionChanged.connect(lambda ci: setTheme(cfg.get(ci)))
+        self.theme_color_card.colorChanged.connect(lambda c: setThemeColor(c))
 
         # about
-        self.feedbackCard.clicked.connect(
+        self.feedback_card.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))

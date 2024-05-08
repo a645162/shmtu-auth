@@ -2,6 +2,7 @@
 
 import sys
 
+from PySide6.QtWidgets import QApplication
 from qfluentwidgets import (qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
                             OptionsValidator, RangeConfigItem, RangeValidator,
                             FolderListValidator, Theme, FolderValidator, __version__)
@@ -74,6 +75,17 @@ class Config(QConfig):
         True,
         BoolValidator()
     )
+
+    def get_dpi_ratio(self) -> float:
+        dpi_scale_str = str(self.get(cfg.dpiScale))
+        if dpi_scale_str == "Auto":
+            # Get System Dpi Scale
+            dpi_scale: float = \
+                float(QApplication.primaryScreen().devicePixelRatio())
+        else:
+            dpi_scale: float = float(dpi_scale_str)
+
+        return dpi_scale
 
 
 YEAR = 2024

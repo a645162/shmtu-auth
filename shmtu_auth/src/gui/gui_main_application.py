@@ -28,7 +28,7 @@ def gui_main_application():
 
     # create Main Window
     w = MainWindow()
-    w.show()
+    w.try_to_show()
 
     app.exec()
 

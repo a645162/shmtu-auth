@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from typing import List
-from PySide6.QtCore import Qt, Signal, QEasingCurve, QUrl, QSize
+from PySide6.QtCore import QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices, QColor
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QFrame, QWidget
+from PySide6.QtWidgets import QApplication
 
-from qfluentwidgets import (NavigationAvatarWidget, NavigationItemPosition, MessageBox, FluentWindow,
+from qfluentwidgets import (NavigationItemPosition, FluentWindow,
                             SplashScreen)
 from qfluentwidgets import FluentIcon as FIF
 
 from .interface.about_interface import AboutInterface
-from .interface.gallery_interface import GalleryInterface
 from .interface.log_interface import LogInterface
 from .interface.user_list_interface import UserListInterface
 from ..common.config import cfg
@@ -40,49 +39,57 @@ class MainWindow(FluentWindow):
 
         logger.info("MainWindow initializing...")
 
-        self._init_window()
+        self.__init_window()
 
         # create sub interface
-        self.homeInterface = HomeInterface(self)
-        self.authInterface = AuthInterface(self, self.user_list)
-        self.userListInterface = UserListInterface(self, self.user_list)
-        self.logInterface = LogInterface(self)
-        self.settingInterface = SettingInterface(self)
-        self.aboutInterface = AboutInterface(self)
+        self.home_interface = HomeInterface(self)
+        self.auth_interface = AuthInterface(self, self.user_list)
+        self.user_list_interface = UserListInterface(self, self.user_list)
+        self.log_interface = LogInterface(self)
+        self.setting_interface = SettingInterface(self)
+        self.about_interface = AboutInterface(self)
 
         # enable acrylic effect
         self.navigationInterface.setAcrylicEnabled(True)
         self.setCustomBackgroundColor(QColor(240, 244, 249), QColor(32, 32, 32))
 
-        # self.connectSignalToSlot()
+        self.__connect_signal_to_global_slot()
 
         # add items to navigation interface
-        self.init_left_navigation_item()
-        self.splashScreen.finish()
+        self.__init_left_navigation_item()
+        self.splash_screen.finish()
 
         log_new("MainWindow initialized.", "Info")
 
-    # def connectSignalToSlot(self):
+    def try_to_show(self):
+        if cfg.autoMinimize.value:
+            logger.info("Auto minimize to system tray enabled.")
+            self.hide()
+        else:
+            self.show()
+
+    def __connect_signal_to_global_slot(self):
+        pass
     #     signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
     #     signalBus.switchToSampleCard.connect(self.switchToSample)
     #     signalBus.supportSignal.connect(self.onGithubPage)
 
-    def init_left_navigation_item(self):
+    def __init_left_navigation_item(self):
         # add navigation items
-        self.addSubInterface(self.homeInterface, FIF.HOME, "主页")
+        self.addSubInterface(self.home_interface, FIF.HOME, "主页")
 
         # 分隔线
         self.navigationInterface.addSeparator()
 
         pos = NavigationItemPosition.SCROLL
         self.addSubInterface(
-            self.authInterface,
+            self.auth_interface,
             FIF.VPN,
             "校园网认证",
             pos
         )
         self.addSubInterface(
-            self.userListInterface,
+            self.user_list_interface,
             FIF.PEOPLE,
             "用户列表",
             pos
@@ -91,7 +98,7 @@ class MainWindow(FluentWindow):
         self.navigationInterface.addSeparator(pos)
 
         self.addSubInterface(
-            self.logInterface,
+            self.log_interface,
             FIF.DATE_TIME,
             "工作日志",
             pos
@@ -128,22 +135,35 @@ class MainWindow(FluentWindow):
         )
 
         self.addSubInterface(
-            self.settingInterface,
+            self.setting_interface,
             FIF.SETTING,
             "设置",
             NavigationItemPosition.BOTTOM
         )
         self.addSubInterface(
-            self.aboutInterface,
+            self.about_interface,
             FIF.INFO,
             "关于",
             NavigationItemPosition.BOTTOM
         )
 
-    def _init_window(self):
-        self.resize(960, 780)
-        self.setMinimumWidth(600)
-        self.setMinimumWidth(400)
+    def __init_window(self):
+        dpi_scale = cfg.get_dpi_ratio()
+        logger.info(f"MainWindow DPI Scale: {dpi_scale}")
+
+        default_width: int = int(800 * dpi_scale)
+        default_height: int = int(600 * dpi_scale)
+
+        min_width: int = int(800 * dpi_scale)
+        min_height: int = int(600 * dpi_scale)
+
+        self.setMinimumWidth(min_width)
+        self.setMinimumHeight(min_height)
+        self.resize(
+            default_width,
+            default_height
+        )
+
         self.setWindowIcon(QIcon(':/gui/Logo128'))
         self.setWindowTitle('shmtu-auth')
 
@@ -151,31 +171,23 @@ class MainWindow(FluentWindow):
         self.setMicaEffectEnabled(False)
 
         # create splash screen
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
-        self.splashScreen.raise_()
+        self.splash_screen = SplashScreen(self.windowIcon(), self)
+        self.splash_screen.setIconSize(QSize(106, 106))
+        self.splash_screen.raise_()
 
         desktop = QApplication.screens()[0].availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
-        self.show()
+        self.try_to_show()
 
         SystemTray(self)
 
         QApplication.processEvents()
 
-    def onGithubPage(self):
+    def open_github_page(self):
         QDesktopServices.openUrl(QUrl("https://a645162.github.io/shmtu-auth/"))
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
         if hasattr(self, 'splashScreen'):
-            self.splashScreen.resize(self.size())
-
-    def switchToSample(self, routeKey, index):
-        """ switch to sample """
-        interfaces = self.findChildren(GalleryInterface)
-        for w in interfaces:
-            if w.objectName() == routeKey:
-                self.stackedWidget.setCurrentWidget(w, False)
-                w.scrollToCard(index)
+            self.splash_screen.resize(self.size())

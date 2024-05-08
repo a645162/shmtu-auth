@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from PySide6.QtCore import Qt, Signal, QUrl, QEvent
+from PySide6.QtCore import Qt, QUrl, QEvent
 from PySide6.QtGui import QDesktopServices, QPainter, QPen, QColor
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QFrame
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 
 from qfluentwidgets import (ScrollArea, PushButton, ToolButton, FluentIcon,
                             isDarkTheme, IconWidget, Theme, ToolTipFilter, TitleLabel, CaptionLabel,
@@ -36,6 +36,8 @@ class SeparatorWidget(QWidget):
 
 class ToolBar(QWidget):
     """ Tool bar """
+
+    document_url: str = ""
 
     def __init__(self, title, subtitle, parent=None):
         super().__init__(parent=parent)
@@ -87,8 +89,13 @@ class ToolBar(QWidget):
 
         self.themeButton.clicked.connect(lambda: toggleTheme(True))
         # self.supportButton.clicked.connect(signalBus.supportSignal)
+
+        final_help_url = self.document_url.strip()
+        if len(final_help_url) == 0:
+            final_help_url = HELP_URL
         self.documentButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(HELP_URL)))
+            lambda: QDesktopServices.openUrl(QUrl(final_help_url)))
+
         self.sourceButton.clicked.connect(
             lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
         self.feedbackButton.clicked.connect(
@@ -203,6 +210,14 @@ class GalleryInterface(ScrollArea):
 
         self.view.setObjectName('view')
         StyleSheet.GALLERY_INTERFACE.apply(self)
+
+    def set_document_url(self, url: str):
+        """ set document url """
+        if isinstance(url, str):
+            return
+        url = url.strip()
+
+        self.toolBar.document_url = url
 
     def addExampleCard(self, title, widget, sourcePath: str, stretch=0):
         card = ExampleCard(title, widget, sourcePath, stretch, self.view)
