@@ -159,10 +159,10 @@ class AuthSettingWidget(ScrollArea):
         self.start_card = PrimaryPushSettingCard(
             text="启动",
             icon=FIF.HELP,
-            title="启动",
+            title="运行状态",
             content="启动或关闭服务"
         )
-        self.start_card.clicked.connect(lambda: self.start_card.iconLabel.setIcon(FIF.PASTE))
+
         self.auth_group_general.addSettingCard(self.start_card)
 
         self.check_interval_card = \
@@ -214,6 +214,7 @@ class AuthInterface(GalleryInterface):
     """ Auth interface """
 
     user_list: List[UserItem]
+    current_status: bool
 
     def __init__(self, parent=None, user_list: List[UserItem] = None):
         super().__init__(
@@ -231,3 +232,25 @@ class AuthInterface(GalleryInterface):
 
         # self.iconView = IconCardView(self)
         self.vBoxLayout.addWidget(self.authSettingsWidget)
+
+        self.authSettingsWidget.start_card.clicked.connect(self.__on_work_button_clicked)
+
+        self.current_status = False
+        self.set_auth_work_status(False)
+
+    def __on_work_button_clicked(self):
+        self.current_status = not self.current_status
+        self.set_auth_work_status(self.current_status)
+
+    def set_auth_work_status(self, status: bool):
+        """ set auth work status """
+        if status:
+            # Started
+            self.authSettingsWidget.start_card.iconLabel.setIcon(FIF.PLAY_SOLID)
+            self.authSettingsWidget.start_card.button.setText("停止")
+            self.authSettingsWidget.start_card.setContent("当前服务已经启动")
+        else:
+            # Stopped
+            self.authSettingsWidget.start_card.iconLabel.setIcon(FIF.PAUSE_BOLD)
+            self.authSettingsWidget.start_card.button.setText("启动")
+            self.authSettingsWidget.start_card.setContent("当前服务已经停止")

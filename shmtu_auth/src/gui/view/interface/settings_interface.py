@@ -54,7 +54,7 @@ class SettingInterface(ScrollArea):
         self.auto_startup_card = SwitchSettingCard(
             FIF.PLAY,
             "开机自动启动",
-            "计算机开机后自动启动",
+            "计算机开机后自动启动。(开发中，后续版本将支持~)",
             cfg.autoStartup,
             self.general_group
         )
@@ -73,7 +73,7 @@ class SettingInterface(ScrollArea):
         self.mica_card = SwitchSettingCard(
             FIF.TRANSPARENT,
             "Windows 11 云母(Mica)特效",
-            self.tr('Apply semi transparent to windows and surfaces'),
+            "Windows 11系统下为界面使用Semi半透明。(AMD GPU下有Bug，暂时禁用！)",
             cfg.micaEnabled,
             self.personalization_group
         )
@@ -110,14 +110,15 @@ class SettingInterface(ScrollArea):
 
         # material
         self.material_group = SettingCardGroup(
-            self.tr('Material'), self.scrollWidget)
+            "界面材质", self.scrollWidget)
         self.blurRadiusCard = RangeSettingCard(
             cfg.blurRadius,
             FIF.ALBUM,
             self.tr('Acrylic模糊半径'),
-            self.tr('半径越大，图片越模糊。'),
+            self.tr('模糊半径越大，图片越模糊。'),
             self.material_group
         )
+        self.blurRadiusCard.setEnabled(False)
 
         # update software
         self.update_software_group = SettingCardGroup(
