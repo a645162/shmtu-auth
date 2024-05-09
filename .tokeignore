@@ -1,3 +1,17 @@
+# Github Action
+!.github
+
+# PySide6 Resources
 shmtu_auth/src/gui/resource/resources.py
+
+# Picture
 *.svg
+
+# Configure
 *.json
+
+# Plain Text
+LICENSE
+Build/dmg.txt
+Build/GPLv3.txt
+Build/pyinstaller.txt
