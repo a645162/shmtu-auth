@@ -14,6 +14,8 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
 from ...common.style_sheet import StyleSheet
 
+from ...task.check_update import program_auto_check_update
+
 from ....utils.logs import get_logger
 
 logger = get_logger()
@@ -114,8 +116,8 @@ class SettingInterface(ScrollArea):
         self.blurRadiusCard = RangeSettingCard(
             cfg.blur_radius,
             FIF.ALBUM,
-            self.tr('Acrylic模糊半径'),
-            self.tr('模糊半径越大，图片越模糊。'),
+            'Acrylic模糊半径',
+            '模糊半径越大，图片越模糊。',
             self.material_group
         )
         self.blurRadiusCard.setEnabled(False)
@@ -152,9 +154,15 @@ class SettingInterface(ScrollArea):
             "检查更新",
             FIF.INFO,
             "关于",
-            '© ' + self.tr('Copyright') + f" {YEAR}, {AUTHOR}. " +
-            self.tr('Version') + " " + VERSION,
+            '© ' + "Copyright" + f" {YEAR}, {AUTHOR}. " +
+            "Version: " + " " + VERSION,
             self.about_group
+        )
+        self.about_card.clicked.connect(
+            lambda: program_auto_check_update(
+                parent=self.window(),
+                dialog=True
+            )
         )
 
         self.__init_widget()

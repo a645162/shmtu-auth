@@ -108,6 +108,10 @@ RELEASE_URL = f"{REPO_URL}/releases/latest"
 ZH_SUPPORT_URL = "https://a645162.github.io/shmtu-auth/"
 EN_SUPPORT_URL = "https://a645162.github.io/shmtu-auth/"
 
+INTERFACE_URL_AUTH = ""
+INTERFACE_URL_USER_LIST = ""
+INTERFACE_URL_LOG = ""
+
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
 qconfig.load('config/gui_config.json', cfg)

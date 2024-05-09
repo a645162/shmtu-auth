@@ -25,7 +25,7 @@ from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
 from ..common.signal_bus import log_new
-
+from ..task.check_update import program_auto_check_update
 from ...system.system_info import SystemType
 
 from ...utils.logs import get_logger
@@ -63,12 +63,21 @@ class MainWindow(FluentWindow):
 
         log_new("MainWindow initialized.", "Info")
 
+        logger.info("Start Auto Task.")
+        self.__auto_task()
+        logger.info("Auto Task Finished.")
+
     def try_to_show(self):
         if cfg.auto_minimize.value:
             logger.info("Auto minimize to system tray enabled.")
             self.hide()
         else:
             self.show()
+
+    def __auto_task(self):
+        # Check Update
+        if cfg.get(cfg.check_update_at_start_up):
+            program_auto_check_update(self.window())
 
     def __connect_signal_to_global_slot(self):
         pass
