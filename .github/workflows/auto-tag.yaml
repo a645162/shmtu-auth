@@ -64,4 +64,5 @@ jobs:
           # 打 tag
           git tag $version_tag
           # 推送 tag 到远程仓库
-          git push origin $version_tag
+          # git push origin $version_tag
+          git push
