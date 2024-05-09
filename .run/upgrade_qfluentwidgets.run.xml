@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="install-gui" type="PythonConfigurationType" factoryName="Python" folderName="Dev Tools" nameIsGenerated="true">
+  <configuration default="false" name="upgrade_qfluentwidgets" type="PythonConfigurationType" factoryName="Python" folderName="Dev Tools" nameIsGenerated="true">
     <module name="shmtu-auth" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -23,7 +23,7 @@
         <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
       </ENTRIES>
     </EXTENSION>
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/install-gui.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/upgrade_qfluentwidgets.py" />
     <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />

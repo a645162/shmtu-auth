@@ -2,8 +2,8 @@
 
 from typing import List
 from PySide6.QtCore import QUrl, QSize
-from PySide6.QtGui import QIcon, QDesktopServices, QColor
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QIcon, QDesktopServices, QColor, QAction
+from PySide6.QtWidgets import QApplication, QMenuBar
 
 from qfluentwidgets import (NavigationItemPosition, FluentWindow,
                             SplashScreen)
@@ -25,6 +25,8 @@ from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
 from ..common.signal_bus import log_new
+
+from ...system.system_info import SystemType
 
 from ...utils.logs import get_logger
 
@@ -62,7 +64,7 @@ class MainWindow(FluentWindow):
         log_new("MainWindow initialized.", "Info")
 
     def try_to_show(self):
-        if cfg.autoMinimize.value:
+        if cfg.auto_minimize.value:
             logger.info("Auto minimize to system tray enabled.")
             self.hide()
         else:
@@ -70,6 +72,7 @@ class MainWindow(FluentWindow):
 
     def __connect_signal_to_global_slot(self):
         pass
+
     #     signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
     #     signalBus.switchToSampleCard.connect(self.switchToSample)
     #     signalBus.supportSignal.connect(self.onGithubPage)
@@ -153,6 +156,13 @@ class MainWindow(FluentWindow):
 
         default_width: int = int(800 * dpi_scale)
         default_height: int = int(600 * dpi_scale)
+
+        # 适配MacBook的Retina屏幕
+        # Mac设备的屏幕往往不是16:9且分辨率较高
+        # 因此可以适当增大默认窗口大小，尤其是高度！
+        if SystemType.is_macos():
+            default_width = int(960 * dpi_scale)
+            default_height = int(840 * dpi_scale)
 
         min_width: int = int(800 * dpi_scale)
         min_height: int = int(600 * dpi_scale)

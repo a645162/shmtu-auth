@@ -11,7 +11,7 @@ from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 
-from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR, is_windows11
+from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
 from ...common.style_sheet import StyleSheet
 
 from ....utils.logs import get_logger
@@ -55,7 +55,7 @@ class SettingInterface(ScrollArea):
             FIF.PLAY,
             "开机自动启动",
             "计算机开机后自动启动。(开发中，后续版本将支持~)",
-            cfg.autoStartup,
+            cfg.auto_startup,
             self.general_group
         )
         self.auto_startup_card.setEnabled(False)
@@ -63,7 +63,7 @@ class SettingInterface(ScrollArea):
             FIF.MINIMIZE,
             "自动隐藏",
             "程序启动后自动最小化(隐藏)到系统托盘",
-            cfg.autoMinimize,
+            cfg.auto_minimize,
             self.general_group
         )
 
@@ -74,7 +74,7 @@ class SettingInterface(ScrollArea):
             FIF.TRANSPARENT,
             "Windows 11 云母(Mica)特效",
             "Windows 11系统下为界面使用Semi半透明。(AMD GPU下有Bug，暂时禁用！)",
-            cfg.micaEnabled,
+            cfg.mica_enabled,
             self.personalization_group
         )
         self.mica_card.setEnabled(False)
@@ -97,7 +97,7 @@ class SettingInterface(ScrollArea):
             self.personalization_group
         )
         self.zoom_card = OptionsSettingCard(
-            cfg.dpiScale,
+            cfg.dpi_scale,
             FIF.ZOOM,
             "界面缩放比例",
             "改变程序控件以及字体的大小",
@@ -112,7 +112,7 @@ class SettingInterface(ScrollArea):
         self.material_group = SettingCardGroup(
             "界面材质", self.scrollWidget)
         self.blurRadiusCard = RangeSettingCard(
-            cfg.blurRadius,
+            cfg.blur_radius,
             FIF.ALBUM,
             self.tr('Acrylic模糊半径'),
             self.tr('模糊半径越大，图片越模糊。'),
@@ -127,7 +127,7 @@ class SettingInterface(ScrollArea):
             FIF.UPDATE,
             "自动检查更新",
             "程序将在启动时自动联网检测是否存在新版本。",
-            configItem=cfg.checkUpdateAtStartUp,
+            configItem=cfg.check_update_at_start_up,
             parent=self.update_software_group
         )
 

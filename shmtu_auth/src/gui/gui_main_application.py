@@ -18,9 +18,9 @@ def gui_main_application():
     logger.info("GUI Main Application is initializing...")
 
     # enable dpi scale
-    if cfg.get(cfg.dpiScale) != "Auto":
+    if cfg.get(cfg.dpi_scale) != "Auto":
         os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
-        os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpiScale))
+        os.environ["QT_SCALE_FACTOR"] = str(cfg.get(cfg.dpi_scale))
 
     # create application
     app = QApplication(sys.argv)

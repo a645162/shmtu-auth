@@ -13,7 +13,6 @@ from qfluentwidgets import (
 
     ExpandGroupSettingCard,
 
-    FolderListSettingCard,
     ScrollArea,
     ExpandLayout, Slider, RangeConfigItem, qconfig
 )
@@ -27,6 +26,8 @@ from ..components.fluent.widget_push_button import FPushButton
 from ...common.config import cfg, Config
 from ...common.style_sheet import StyleSheet
 from ....datatype.shmtu.auth.auth_user import UserItem
+
+from ....system.system_info import SystemType
 
 from ....utils.logs import get_logger
 
@@ -72,7 +73,6 @@ class SettingGroupSliderWithText(SliderWithText):
         self.set_range(value_range[0], value_range[1])
 
         self.set_value(qconfig.get(range_config_item))
-        # self.set_value(self.range_config_item.value)
 
         self.slider.valueChanged.connect(self.__value_change_update_setting)
 
@@ -111,15 +111,15 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
 
     def __init_content(self):
         self.check_internet_interval_slider = \
-            SettingGroupSliderWithText(self.cfg.checkInternetInterval, self)
+            SettingGroupSliderWithText(self.cfg.check_internet_interval, self)
         self.add(FBodyLabel("检测间隔", self), self.check_internet_interval_slider)
 
         self.check_internet_retry_times_slider = \
-            SettingGroupSliderWithText(self.cfg.checkInternetRetryTimes, self)
+            SettingGroupSliderWithText(self.cfg.check_internet_retry_times, self)
         self.add(FBodyLabel("联网失败的重试次数", self), self.check_internet_retry_times_slider)
 
         self.check_internet_retry_wait_time_slider = \
-            SettingGroupSliderWithText(self.cfg.checkInternetRetryWaitTime, self)
+            SettingGroupSliderWithText(self.cfg.check_internet_retry_wait_time, self)
         self.add(FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider)
 
     def __restore_default(self):
@@ -146,15 +146,14 @@ class AuthSettingWidget(ScrollArea):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.scrollWidget = QWidget()
-        self.expandLayout = ExpandLayout(self.scrollWidget)
-
-        # setting label
-        self.settingLabel = QLabel("设置", self)
+        self.scroll_widget = QWidget()
+        self.expand_layout = ExpandLayout(self.scroll_widget)
+        self.expand_layout.setSpacing(28)
+        self.expand_layout.setContentsMargins(36, 10, 36, 0)
 
         # shmtu-auth
-        self.auth_group_general = SettingCardGroup(
-            "校园网自动认证", self.scrollWidget)
+        self.auth_group_general = \
+            SettingCardGroup("通用", self.scroll_widget)
 
         self.start_card = PrimaryPushSettingCard(
             text="启动",
@@ -168,37 +167,20 @@ class AuthSettingWidget(ScrollArea):
         self.check_interval_card = \
             InternetCheckSettingCard(cfg=cfg, parent=self.auth_group_general)
         self.auth_group_general.addSettingCard(self.check_interval_card)
+        self.expand_layout.addWidget(self.auth_group_general)
 
         self.__init_widget()
 
     def __init_widget(self):
-        # self.resize(1000, 800)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setViewportMargins(0, 80, 0, 20)
-        self.setWidget(self.scrollWidget)
+        self.setViewportMargins(0, 0, 0, 0)
+        self.setWidget(self.scroll_widget)
         self.setWidgetResizable(True)
         self.setObjectName('settingInterface')
 
         # initialize style sheet
-        self.scrollWidget.setObjectName('scrollWidget')
-        self.settingLabel.setObjectName('settingLabel')
+        self.scroll_widget.setObjectName('scrollWidget')
         StyleSheet.SETTING_INTERFACE.apply(self)
-
-        # initialize layout
-        self.__init_layout()
-
-    def __init_layout(self):
-        self.settingLabel.move(36, 30)
-
-        # add cards to group
-        # shmtu-auth
-        # self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
-        # self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
-
-        # add setting card group to layout
-        self.expandLayout.setSpacing(28)
-        self.expandLayout.setContentsMargins(36, 10, 36, 0)
-        self.expandLayout.addWidget(self.auth_group_general)
 
     def __show_restart_tooltip(self):
         """ show restart tooltip """
