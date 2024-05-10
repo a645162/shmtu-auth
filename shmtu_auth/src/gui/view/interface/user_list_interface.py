@@ -219,7 +219,7 @@ class UserListInterface(GalleryInterface):
 
         if w.exec():
 
-            save_path = w.pathLineEdit.text()
+            save_path = w.path_line_edit.text()
 
             # machine
 
