@@ -11,7 +11,7 @@ from qfluentwidgets import (
 )
 
 from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, NetworkType, user_is_exist_in_list
-from shmtu_auth.src.gui.common.components.list_checkbox_widget import ListCheckboxWidgets
+from shmtu_auth.src.gui.view.components.custom.list_checkbox_widget import ListCheckboxWidgets
 
 from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 from shmtu_auth.src.gui.view.components.fluent.widget_date_picker import (
@@ -54,10 +54,10 @@ class UserInfoEditWidget(QWidget):
 
         self.setFixedWidth(250)
 
-        self._init_widget()
-        self._init_layout()
+        self.__init_widget()
+        self.__init_layout()
 
-    def _init_widget(self):
+    def __init_widget(self):
         self.input_user_id = LineEdit(self)
         self.input_user_id.setText("")
         self.input_user_id.setPlaceholderText("请输入学号")
@@ -87,13 +87,13 @@ class UserInfoEditWidget(QWidget):
         self.widget_expire_date = FDatePicker(self)
 
         self.button_save = FPushButton(self, "保存修改")
-        self.button_save.clicked.connect(self._button_save)
+        self.button_save.clicked.connect(self.__button_save_clicked)
 
         # 连接接收的信号槽
-        self.onSelectedItemChanged.connect(self._selection_changed)
-        self._selection_changed()
+        self.onSelectedItemChanged.connect(self.__selection_changed)
+        self.__selection_changed()
 
-    def _init_layout(self):
+    def __init_layout(self):
         self.layout = QVBoxLayout(self)
 
         self.layout.addWidget(self.input_user_id)
@@ -111,7 +111,7 @@ class UserInfoEditWidget(QWidget):
 
         self.setLayout(self.layout)
 
-    def _selection_changed(self):
+    def __selection_changed(self):
         selection_count = len(self.selected_index)
 
         self.setEnabled(selection_count == 1)
@@ -120,9 +120,9 @@ class UserInfoEditWidget(QWidget):
             return
 
         index = self.selected_index[0]
-        self._update_input_box_data(index=index)
+        self.__update_input_box_data(index=index)
 
-    def _before_save_blocker(self) -> bool:
+    def __before_save_blocker(self) -> bool:
         self.input_user_id.setText(self.input_user_id.text().strip())
         self.input_user_name.setText(self.input_user_name.text().strip())
         self.input_password.setText(self.input_password.text().strip())
@@ -175,13 +175,13 @@ class UserInfoEditWidget(QWidget):
 
         return True
 
-    def _button_save(self):
+    def __button_save_clicked(self):
         # 先经过拦截器进行数据校验
-        if not self._before_save_blocker():
+        if not self.__before_save_blocker():
             return
 
         # 修改数据
-        self._modify_user_data(index=self.selected_index[0])
+        self.__modify_user_data(index=self.selected_index[0])
 
         TeachingTip.create(
             target=self.button_save,
@@ -197,7 +197,7 @@ class UserInfoEditWidget(QWidget):
         # 发送信号
         self.onModifyButtonClick.emit()
 
-    def _modify_user_data(self, index: int = 0):
+    def __modify_user_data(self, index: int = 0):
         if index >= len(self.user_list):
             return
 
@@ -216,7 +216,7 @@ class UserInfoEditWidget(QWidget):
             convert_qdate_to_date(self.widget_expire_date.getDate())
         current_item.update_auto_generate_info()
 
-    def _update_input_box_data(self, index: int = 0):
+    def __update_input_box_data(self, index: int = 0):
         if index >= len(self.user_list):
             return
 
@@ -230,5 +230,5 @@ class UserInfoEditWidget(QWidget):
             current_item.support_type_str_list
         )
 
-        qDate = convert_date_to_qdate(current_item.expire_date)
-        self.widget_expire_date.setDate(qDate)
+        q_date = convert_date_to_qdate(current_item.expire_date)
+        self.widget_expire_date.setDate(q_date)

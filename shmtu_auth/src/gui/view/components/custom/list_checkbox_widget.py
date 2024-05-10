@@ -13,10 +13,10 @@ class ListCheckboxWidgets(QWidget):
     def __init__(self, parent=None, data_list: List = None):
         super().__init__(parent)
 
-        self._init_data(data_list)
-        self._init_checkbox()
+        self.__init_data(data_list)
+        self.__init_checkbox()
 
-    def _init_data(self, data_list: List = None):
+    def __init_data(self, data_list: List = None):
         if data_list is None:
             raise "List Checkbox Widget data must be a list"
 
@@ -40,22 +40,28 @@ class ListCheckboxWidgets(QWidget):
                     "status": default_value,
                 }
 
-    def _init_checkbox(self):
+    def __init_checkbox(self):
         self.layout = QVBoxLayout()
 
-        def _update_checkbox_data(state: bool, dict_key: str):
-            self.checkbox_data[dict_key]["status"] = state
+        def __update_checkbox_data(state: bool, dict_key: str):
+            if isinstance(state, bool):
+                self.checkbox_data[dict_key]["status"] = state
+            if isinstance(state, int):
+                self.checkbox_data[dict_key]["status"] = state == 2
 
         for key in self.checkbox_data.keys():
             current_checkbox = CheckBox()
             current_checkbox.setText(key)
-            current_checkbox.setChecked(self.checkbox_data[key]["default"])
+
+            default_state = self.checkbox_data[key]["default"]
+            current_checkbox.setChecked(default_state)
+            __update_checkbox_data(state=default_state, dict_key=key)
+
             current_checkbox.stateChanged.connect(
-                lambda state: _update_checkbox_data(state=state, dict_key=key)
+                lambda state: __update_checkbox_data(state=state, dict_key=key)
             )
 
             self.checkbox_data[key]["widget"] = current_checkbox
-
             self.layout.addWidget(current_checkbox)
 
         self.setLayout(self.layout)
@@ -64,11 +70,14 @@ class ListCheckboxWidgets(QWidget):
         return_data = {}
 
         for key in self.checkbox_data.keys():
-            current_checkbox = self.checkbox_data[key]
+            current_checkbox_dict: dict = self.checkbox_data[key]
 
-            if "status" in current_checkbox:
-                current_value = current_checkbox["status"]
-                return_data[key] = current_value
+            if "widget" in current_checkbox_dict:
+                current_widget = current_checkbox_dict["widget"]
+                state = current_widget.isChecked()
+                current_checkbox_dict["status"] = state
+
+                return_data[key] = state
 
         return return_data
 
@@ -84,6 +93,7 @@ class ListCheckboxWidgets(QWidget):
 
     def get_selected_list(self) -> List[str]:
         checkbox_status = self.get_status()
+
         return_list = []
         for key in checkbox_status.keys():
             if checkbox_status[key]:

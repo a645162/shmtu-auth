@@ -5,6 +5,7 @@ import requests
 def test_send_https_request_204():
     url_list = [
         "https://www.google.com/generate_204",
+        "http://edge-http.microsoft.com/captiveportal/generate_204",
         "https://connect.rom.miui.com/generate_204",
         "https://www.v2ex.com/generate_204",
         "https://captive.v2ex.co/generate_204",

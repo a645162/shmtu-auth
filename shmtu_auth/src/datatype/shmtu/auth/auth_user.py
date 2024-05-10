@@ -123,7 +123,8 @@ class UserItem:
         new_instance.password = self.password
         new_instance.is_encrypted = self.is_encrypted
 
-        new_instance.support_type_list = self.support_type_list.copy()
+        new_instance.support_type_list = \
+            self.support_type_list.copy()
 
         new_instance.expire_date = self.expire_date
 
@@ -193,6 +194,10 @@ class UserItem:
         valid = valid and (
                 self.user_id.isdigit() and
                 len(self.user_id) == 12
+        )
+
+        valid = valid and (
+                len(self.support_type_list) > 0
         )
 
         return valid
