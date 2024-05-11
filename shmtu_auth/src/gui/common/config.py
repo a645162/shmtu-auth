@@ -21,6 +21,9 @@ class Config(QConfig):
     """ Config of application """
 
     # shmtu-auth
+    auth_auto_start_work_thread = ConfigItem(
+        "Auth", "AutoStartWorkThread", True, BoolValidator()
+    )
 
     check_internet_interval = RangeConfigItem(
         "Auth", "CheckInternetInterval", 60, RangeValidator(5, 3600)

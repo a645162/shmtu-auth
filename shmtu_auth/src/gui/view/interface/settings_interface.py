@@ -35,20 +35,13 @@ class SettingInterface(ScrollArea):
         # shmtu-auth
         self.shmtu_auth_group = \
             SettingCardGroup("校园网自动认证", self.scrollWidget)
-        # self.musicFolderCard = FolderListSettingCard(
-        #     cfg.musicFolders,
-        #     self.tr("Local music library"),
-        #     directory=QStandardPaths.writableLocation(
-        #         QStandardPaths.MusicLocation),
-        #     parent=self.shmtuAuthGroup
-        # )
-        # self.downloadFolderCard = PushSettingCard(
-        #     self.tr('Choose folder'),
-        #     FIF.DOWNLOAD,
-        #     self.tr("Download directory"),
-        #     cfg.get(cfg.downloadFolder),
-        #     self.shmtuAuthGroup
-        # )
+        self.auth_auto_start_work_thread_card = SwitchSettingCard(
+            FIF.PLAY,
+            "自动开始工作",
+            "启动程序后自动开始工作(联网认证)",
+            cfg.auth_auto_start_work_thread,
+            self.shmtu_auth_group
+        )
 
         # 通用设置
         self.general_group = SettingCardGroup(
@@ -186,10 +179,10 @@ class SettingInterface(ScrollArea):
     def __init_layout(self):
         self.settingLabel.move(36, 30)
 
-        # add cards to group
+        # 添加所有Card到Group
+
         # shmtu-auth
-        # self.shmtuAuthGroup.addSettingCard(self.musicFolderCard)
-        # self.shmtuAuthGroup.addSettingCard(self.downloadFolderCard)
+        self.shmtu_auth_group.addSettingCard(self.auth_auto_start_work_thread_card)
 
         # 通用设置
         self.general_group.addSettingCard(self.auto_startup_card)

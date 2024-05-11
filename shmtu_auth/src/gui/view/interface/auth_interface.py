@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import List
-
-import threading
+from typing import List, Optional
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
@@ -11,7 +9,6 @@ from qfluentwidgets import (
     SettingCardGroup,
 
     PrimaryPushSettingCard,
-    PushSettingCard,
 
     ExpandGroupSettingCard,
 
@@ -29,7 +26,7 @@ from ...common.config import cfg, Config
 from ...common.style_sheet import StyleSheet
 from ....datatype.shmtu.auth.auth_user import UserItem
 
-from ....system.system_info import SystemType
+from ...feature.network_auth import AuthThread
 
 from ....utils.logs import get_logger
 
@@ -191,15 +188,13 @@ class AuthSettingWidget(ScrollArea):
         )
 
 
-class AuthThread(threading.Thread):
-    pass
-
-
 class AuthInterface(GalleryInterface):
     """ Auth interface """
 
     user_list: List[UserItem]
     current_status: bool
+
+    work_thread: Optional[AuthThread] = None
 
     def __init__(self, parent=None, user_list: List[UserItem] = None):
         super().__init__(
@@ -215,7 +210,6 @@ class AuthInterface(GalleryInterface):
 
         self.authSettingsWidget = AuthSettingWidget(self)
 
-        # self.iconView = IconCardView(self)
         self.vBoxLayout.addWidget(self.authSettingsWidget)
 
         self.authSettingsWidget.start_card.clicked.connect(self.__on_work_button_clicked)
@@ -223,8 +217,39 @@ class AuthInterface(GalleryInterface):
         self.current_status = False
         self.set_auth_work_status(False)
 
+        if cfg.auth_auto_start_work_thread.value:
+            self.__on_work_button_clicked()
+
     def __on_work_button_clicked(self):
-        self.current_status = not self.current_status
+
+        if not self.current_status:
+            # 当前为False,需要启动
+            if self.work_thread is not None:
+                if self.work_thread.is_alive():
+                    self.work_thread.need_work = False
+                    self.work_thread.join()
+                self.work_thread = None
+
+            self.work_thread = AuthThread(
+                user_list=self.user_list,
+                check_internet_interval=cfg.check_internet_interval.value,
+                check_internet_retry_times=cfg.check_internet_retry_times.value,
+                check_internet_retry_wait_time=cfg.check_internet_retry_wait_time.value
+            )
+
+            self.work_thread.start()
+
+            self.current_status = True
+        else:
+            # 当前为True,需要停止
+            if self.work_thread is not None:
+                if self.work_thread.is_alive():
+                    self.work_thread.need_work = False
+                    self.work_thread.join()
+                self.work_thread = None
+
+            self.current_status = False
+
         self.set_auth_work_status(self.current_status)
 
     def set_auth_work_status(self, status: bool):

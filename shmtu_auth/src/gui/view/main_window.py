@@ -67,7 +67,7 @@ class MainWindow(FluentWindow):
         self.__init_left_navigation_item()
         self.splash_screen.finish()
 
-        log_new("MainWindow initialized.", "Info")
+        log_new("Info", "MainWindow initialized.")
 
         logger.info("Start Auto Task.")
         task_auto_start()
