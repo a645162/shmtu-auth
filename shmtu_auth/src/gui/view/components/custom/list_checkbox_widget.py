@@ -27,6 +27,7 @@ class ListCheckboxWidgets(QWidget):
                 self.checkbox_data[item_name] = {
                     "default": False,
                     "status": False,
+                    "enable": True,
                 }
             if isinstance(item, dict):
                 item_name = str(item["name"]).strip()
@@ -35,9 +36,14 @@ class ListCheckboxWidgets(QWidget):
                 if "default" in item:
                     default_value = item["default"]
 
+                enable_value = True
+                if "enable" in item and isinstance(item["enable"], bool):
+                    enable_value = item["enable"]
+
                 self.checkbox_data[item_name] = {
                     "default": default_value,
                     "status": default_value,
+                    "enable": enable_value,
                 }
 
     def __init_checkbox(self):
@@ -55,6 +61,7 @@ class ListCheckboxWidgets(QWidget):
 
             default_state = self.checkbox_data[key]["default"]
             current_checkbox.setChecked(default_state)
+            current_checkbox.setEnabled(self.checkbox_data[key]["enable"])
             __update_checkbox_data(state=default_state, dict_key=key)
 
             current_checkbox.stateChanged.connect(

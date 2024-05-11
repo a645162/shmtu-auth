@@ -3,7 +3,8 @@
 from typing import List
 
 from PySide6.QtCore import Signal, Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
+
 from qfluentwidgets import (
     PushButton, LineEdit, PasswordLineEdit,
     ZhDatePicker,
@@ -80,7 +81,7 @@ class UserInfoEditWidget(QWidget):
                 self,
                 [
                     {"name": "校园网", "default": True},
-                    {"name": "iSMU", "default": False},
+                    {"name": "iSMU", "default": False, "enable": False},
                 ]
             )
 
@@ -94,14 +95,47 @@ class UserInfoEditWidget(QWidget):
         self.__selection_changed()
 
     def __init_layout(self):
+
+        class TitleLabelLevel1(QLabel):
+            def __init__(self, text: str, parent=None):
+                super().__init__(parent)
+                self.setText(text)
+                self.setStyleSheet("""
+                    QLabel {
+                        font-size: 14px;
+                        color: #333333;
+                    }
+                """)
+
+        class TitleLabelLevel2(QLabel):
+            def __init__(self, text: str, parent=None):
+                super().__init__(parent)
+                self.setText(text)
+                self.setStyleSheet("""
+                    QLabel {
+                        font-size: 12px;
+                        color: #333333;
+                    }
+                """)
+
         self.layout = QVBoxLayout(self)
 
+        # Separator
+        self.layout.addWidget(TitleLabelLevel1("用户信息编辑"))
+
+        self.layout.addWidget(TitleLabelLevel2(""))
+
+        self.layout.addWidget(TitleLabelLevel1("学号"))
         self.layout.addWidget(self.input_user_id)
+        self.layout.addWidget(TitleLabelLevel1("姓名"))
         self.layout.addWidget(self.input_user_name)
+        self.layout.addWidget(TitleLabelLevel1("密码"))
         self.layout.addWidget(self.input_password)
 
+        self.layout.addWidget(TitleLabelLevel1("支持的服务类型"))
         self.layout.addWidget(self.checkbox_support_type)
 
+        self.layout.addWidget(TitleLabelLevel1("毕业(过期)时间"))
         self.layout.addWidget(self.widget_expire_date)
 
         self.layout.addWidget(self.button_save)

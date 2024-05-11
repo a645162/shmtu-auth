@@ -2,6 +2,8 @@
 
 from typing import List
 
+import threading
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
@@ -34,56 +36,53 @@ from ....utils.logs import get_logger
 logger = get_logger()
 
 
-class SliderWithText(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.value_label = QLabel(self)
-
-        self.slider = Slider(Qt.Horizontal, self)
-        self.slider.setFixedWidth(200)
-        self.slider.valueChanged.connect(self.__on_value_update)
-
-        self.hBoxLayout = QHBoxLayout(self)
-
-        self.hBoxLayout.addWidget(self.value_label)
-        self.hBoxLayout.addWidget(self.slider)
-
-        self.setLayout(self.hBoxLayout)
-
-    def __on_value_update(self, value):
-        self.value_label.setText(str(value))
-
-    def set_range(self, min_value, max_value):
-        self.slider.setRange(min_value, max_value)
-
-    def set_value(self, value):
-        self.slider.setValue(value)
-
-    def get_value(self):
-        return self.slider.value()
-
-
-class SettingGroupSliderWithText(SliderWithText):
-    def __init__(self, range_config_item: RangeConfigItem, parent=None):
-        super().__init__(parent)
-        self.range_config_item = range_config_item
-
-        value_range: tuple = self.range_config_item.range
-        self.set_range(value_range[0], value_range[1])
-
-        self.set_value(qconfig.get(range_config_item))
-
-        self.slider.valueChanged.connect(self.__value_change_update_setting)
-
-    def __value_change_update_setting(self, value):
-        qconfig.set(self.range_config_item, value)
-
-    def restore_default_value(self):
-        self.set_value(self.range_config_item.defaultValue)
-
-
 class InternetCheckSettingCard(ExpandGroupSettingCard):
+    class SliderWithText(QWidget):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+
+            self.value_label = QLabel(self)
+
+            self.slider = Slider(Qt.Horizontal, self)
+            self.slider.setFixedWidth(200)
+            self.slider.valueChanged.connect(self.__on_value_update)
+
+            self.hBoxLayout = QHBoxLayout(self)
+
+            self.hBoxLayout.addWidget(self.value_label)
+            self.hBoxLayout.addWidget(self.slider)
+
+            self.setLayout(self.hBoxLayout)
+
+        def __on_value_update(self, value):
+            self.value_label.setText(str(value))
+
+        def set_range(self, min_value, max_value):
+            self.slider.setRange(min_value, max_value)
+
+        def set_value(self, value):
+            self.slider.setValue(value)
+
+        def get_value(self):
+            return self.slider.value()
+
+    class SettingGroupSliderWithText(SliderWithText):
+        def __init__(self, range_config_item: RangeConfigItem, parent=None):
+            super().__init__(parent)
+            self.range_config_item = range_config_item
+
+            value_range: tuple = self.range_config_item.range
+            self.set_range(value_range[0], value_range[1])
+
+            self.set_value(qconfig.get(range_config_item))
+
+            self.slider.valueChanged.connect(self.__value_change_update_setting)
+
+        def __value_change_update_setting(self, value):
+            qconfig.set(self.range_config_item, value)
+
+        def restore_default_value(self):
+            self.set_value(self.range_config_item.defaultValue)
 
     def __init__(self, cfg: Config, parent=None):
         super().__init__(
@@ -111,15 +110,15 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
 
     def __init_content(self):
         self.check_internet_interval_slider = \
-            SettingGroupSliderWithText(self.cfg.check_internet_interval, self)
+            self.SettingGroupSliderWithText(self.cfg.check_internet_interval, self)
         self.add(FBodyLabel("检测间隔", self), self.check_internet_interval_slider)
 
         self.check_internet_retry_times_slider = \
-            SettingGroupSliderWithText(self.cfg.check_internet_retry_times, self)
+            self.SettingGroupSliderWithText(self.cfg.check_internet_retry_times, self)
         self.add(FBodyLabel("联网失败的重试次数", self), self.check_internet_retry_times_slider)
 
         self.check_internet_retry_wait_time_slider = \
-            SettingGroupSliderWithText(self.cfg.check_internet_retry_wait_time, self)
+            self.SettingGroupSliderWithText(self.cfg.check_internet_retry_wait_time, self)
         self.add(FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider)
 
     def __restore_default(self):
@@ -190,6 +189,10 @@ class AuthSettingWidget(ScrollArea):
             duration=1500,
             parent=self
         )
+
+
+class AuthThread(threading.Thread):
+    pass
 
 
 class AuthInterface(GalleryInterface):

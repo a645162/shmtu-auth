@@ -97,7 +97,7 @@ class UserItem:
             user_name: str = "",
             password: str = "",
             support_type_list: List[int] = None,
-            expire_date: datetime.date = datetime.date.today(),
+            expire_date: datetime.date = datetime.date.today() + datetime.timedelta(days=3 * 365),
     ):
         self.user_id = user_id
         self.user_name = user_name
@@ -201,6 +201,18 @@ class UserItem:
         )
 
         return valid
+
+
+def get_valid_user_list(
+        original_user_list: List[UserItem]
+) -> List[UserItem]:
+    valid_user_list = []
+
+    for user in original_user_list:
+        if user.is_valid():
+            valid_user_list.append(user)
+
+    return valid_user_list
 
 
 def user_is_exist_in_list(

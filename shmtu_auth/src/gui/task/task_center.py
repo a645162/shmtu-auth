@@ -5,4 +5,5 @@ from .check_update import start_check_update_once_thread
 
 
 def task_auto_start():
-    start_check_update_once_thread()
+    if cfg.check_update_at_start_up.value:
+        start_check_update_once_thread()
