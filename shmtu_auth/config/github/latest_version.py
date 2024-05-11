@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import requests
 
 github_author_name = "a645162"

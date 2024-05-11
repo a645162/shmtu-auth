@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class ProgramVersion:
     """
     程序版本
@@ -63,6 +65,9 @@ class ProgramVersion:
             version_str.replace("v", "")
             .strip()
         )
+
+        if version_str == "":
+            return None
 
         if version_str.count(".") != 2:
             return None

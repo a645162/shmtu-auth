@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from ...config.build_info import (
     program_version,
     branch
 )
 from ....config.github.latest_version import get_branch_version
 from ..common.signal_bus import log_new
+from ...utils.program_version import ProgramVersion
 
 from ...utils.logs import get_logger
 
@@ -17,6 +20,9 @@ LATEST_VERSION = ""
 
 def get_latest_version() -> str:
     latest_version = get_branch_version(GIT_BRANCH)
+
+    if len(latest_version) == 0:
+        return ""
 
     if len(latest_version) == 0:
         log_new("Update", "Get Github Version Failed.")
@@ -33,13 +39,14 @@ def get_latest_version() -> str:
 
 
 def is_have_new_version() -> bool:
-    if LATEST_VERSION == "":
-        get_latest_version()
     if LATEST_VERSION == "" or PROGRAM_VERSION == "":
         return False
 
+    latest_version_obj = ProgramVersion.from_str(LATEST_VERSION)
+    program_version_obj = ProgramVersion.from_str(PROGRAM_VERSION)
+
     have_new_version = \
-        PROGRAM_VERSION != LATEST_VERSION
+        program_version_obj < latest_version_obj
 
     if have_new_version:
         log_text = (

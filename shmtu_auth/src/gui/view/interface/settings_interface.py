@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
 from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
 from ...common.style_sheet import StyleSheet
 
-from ...task.check_update import program_auto_check_update
+from ...task.check_update import start_check_update_once_thread
 
 from ....utils.logs import get_logger
 
@@ -159,10 +159,7 @@ class SettingInterface(ScrollArea):
             self.about_group
         )
         self.about_card.clicked.connect(
-            lambda: program_auto_check_update(
-                parent=self.window(),
-                dialog=True
-            )
+            lambda: start_check_update_once_thread()
         )
 
         self.__init_widget()

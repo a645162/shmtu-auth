@@ -5,9 +5,15 @@ from PySide6.QtCore import QUrl, QSize
 from PySide6.QtGui import QIcon, QDesktopServices, QColor, QAction
 from PySide6.QtWidgets import QApplication, QMenuBar
 
-from qfluentwidgets import (NavigationItemPosition, FluentWindow,
-                            SplashScreen)
+from qfluentwidgets import (
+    NavigationItemPosition,
+    FluentWindow,
+    SplashScreen,
+    MessageBox
+)
 from qfluentwidgets import FluentIcon as FIF
+
+from ..common.config import cfg, RELEASE_URL
 
 from .interface.about_interface import AboutInterface
 from .interface.log_interface import LogInterface
@@ -24,8 +30,10 @@ from ..resource import resources
 from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
-from ..common.signal_bus import log_new
-from ..task.check_update import program_auto_check_update
+from ..common.signal_bus import signal_bus, log_new
+
+from ..task.task_center import task_auto_start
+from ..software import program_update
 from ...system.system_info import SystemType
 
 from ...utils.logs import get_logger
@@ -55,8 +63,6 @@ class MainWindow(FluentWindow):
         self.navigationInterface.setAcrylicEnabled(True)
         self.setCustomBackgroundColor(QColor(240, 244, 249), QColor(32, 32, 32))
 
-        self.__connect_signal_to_global_slot()
-
         # add items to navigation interface
         self.__init_left_navigation_item()
         self.splash_screen.finish()
@@ -64,7 +70,7 @@ class MainWindow(FluentWindow):
         log_new("MainWindow initialized.", "Info")
 
         logger.info("Start Auto Task.")
-        self.__auto_task()
+        task_auto_start()
         logger.info("Auto Task Finished.")
 
     def try_to_show(self):
@@ -73,18 +79,6 @@ class MainWindow(FluentWindow):
             self.hide()
         else:
             self.show()
-
-    def __auto_task(self):
-        # Check Update
-        if cfg.get(cfg.check_update_at_start_up):
-            program_auto_check_update(self.window())
-
-    def __connect_signal_to_global_slot(self):
-        pass
-
-    #     signalBus.micaEnableChanged.connect(self.setMicaEffectEnabled)
-    #     signalBus.switchToSampleCard.connect(self.switchToSample)
-    #     signalBus.supportSignal.connect(self.onGithubPage)
 
     def __init_left_navigation_item(self):
         # add navigation items
@@ -202,6 +196,32 @@ class MainWindow(FluentWindow):
         SystemTray(self)
 
         QApplication.processEvents()
+
+        # 连接信号槽
+        self.__connect_to_global_slot()
+
+    def __connect_to_global_slot(self):
+        signal_bus.signal_new_version.connect(self.__pop_up_new_version)
+
+    def __pop_up_new_version(self, version: str):
+        logger.info("Receive Signal New Version:", version)
+        if not program_update.is_have_new_version():
+            return
+
+        current_version = program_update.PROGRAM_VERSION
+        new_version = program_update.LATEST_VERSION
+
+        title = "检测到新版本"
+        content = (
+            f"当前版本: {current_version}\n"
+            f"最新版本: {new_version}\n"
+            f"您是否需要前往官网下载?"
+        )
+
+        w = MessageBox(title, content, self)
+        w.setContentCopyable(True)
+        if w.exec():
+            QDesktopServices.openUrl(QUrl(RELEASE_URL))
 
     def open_github_page(self):
         QDesktopServices.openUrl(QUrl("https://a645162.github.io/shmtu-auth/"))

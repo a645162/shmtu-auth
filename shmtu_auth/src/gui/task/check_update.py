@@ -1,35 +1,26 @@
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QDesktopServices
-from qfluentwidgets import MessageBox
+# -*- coding: utf-8 -*-
 
-from ..common.config import cfg, RELEASE_URL
+import threading
+
 from ..software import program_update
 
+from ..common.signal_bus import signal_bus, log_new
 
-def program_auto_check_update(parent, dialog=False) -> bool:
-    if not program_update.is_have_new_version():
-        if dialog:
-            w = MessageBox(
-                "检查新版本",
-                "您正在使用最新版本。",
-                parent
-            )
-            w.setContentCopyable(True)
-        return False
 
-    current_version = program_update.PROGRAM_VERSION
-    new_version = program_update.LATEST_VERSION
+class CheckUpdateOnceThread(threading.Thread):
+    def __init__(self):
+        super().__init__()
 
-    title = "检测到新版本"
-    content = (
-        f"当前版本: {current_version}\n"
-        f"最新版本: {new_version}\n"
-        f"您是否需要前往官网下载?"
-    )
+    def run(self):
+        latest_version = \
+            program_update.get_latest_version()
 
-    w = MessageBox(title, content, parent)
-    w.setContentCopyable(True)
-    if w.exec():
-        QDesktopServices.openUrl(QUrl(RELEASE_URL))
+        if len(latest_version) == 0:
+            log_new("Update", "Get Latest Version Faild.")
 
-    return True
+        signal_bus.signal_new_version.emit(latest_version)
+
+
+def start_check_update_once_thread():
+    check_update_thread = CheckUpdateOnceThread()
+    check_update_thread.start()
