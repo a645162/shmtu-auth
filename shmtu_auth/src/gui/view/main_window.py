@@ -30,6 +30,10 @@ from ..resource import resources
 from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
+from ..common.system_menu import (
+    system_menu,
+    init_system_menu
+)
 from ..common.signal_bus import signal_bus, log_new
 
 from ..task.task_center import task_auto_start
@@ -199,6 +203,8 @@ class MainWindow(FluentWindow):
 
         # 连接信号槽
         self.__connect_to_global_slot()
+
+        init_system_menu()
 
     def __connect_to_global_slot(self):
         signal_bus.signal_new_version.connect(self.__pop_up_new_version)

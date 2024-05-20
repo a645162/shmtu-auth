@@ -16,7 +16,7 @@ class CheckUpdateOnceThread(threading.Thread):
             program_update.get_latest_version()
 
         if len(latest_version) == 0:
-            log_new("Update", "Get Latest Version Faild.")
+            log_new("Update", "Get Latest Version Failed.")
 
         signal_bus.signal_new_version.emit(latest_version)
 
