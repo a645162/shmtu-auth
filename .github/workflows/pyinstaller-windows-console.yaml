@@ -1,4 +1,4 @@
-name: PyInstaller Build exe on Windows
+name: PyInstaller Build Console exe on Windows
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
       - name: Install PyInstaller
         run: pip install pyinstaller
 
-      - name: Build EXE with PyInstaller
+      - name: Build Console EXE with PyInstaller
         run: . .\Build\windows_generate_exe_console.ps1
 
       - name: Make logs directory

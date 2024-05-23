@@ -1,4 +1,4 @@
-name: PyInstaller Build exe on Windows
+name: PyInstaller Build GUI exe on Windows
 
 on:
   push:
@@ -20,6 +20,12 @@ jobs:
         with:
           python-version: 3.12
 
+      - name: Setup NSIS
+        uses: MinoruSekine/setup-scoop@v4
+        with:
+          buckets: extras
+          apps: nsis
+
       - name: Check Version Setting
         run: |
           python --version
@@ -40,18 +46,24 @@ jobs:
       - name: Install PyInstaller
         run: pip install pyinstaller
 
-      - name: Build EXE with PyInstaller
+      - name: Build GUI EXE with PyInstaller
         run: . .\Build\windows_generate_exe_gui.ps1
 
-      - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1
+      - name: (INNO)Compile .ISS to .EXE Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
-          path: Build/shmtu-auth-gui.iss
+          path: Build/windows-setup-inno-shmtu-auth-gui.iss
           options: /O+
+
+      - name: (NSIS)Compile .NSIS to .EXE Installer
+        run: |
+          makensis .\Build\windows-setup-nsis-shmtu-auth-gui.nsi
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./Build/Output/Windows/INNO/setup-inno-shmtu-auth-gui.exe
+          files: |
+            ./Build/Output/Windows/INNO/setup-inno-shmtu-auth-gui.exe
+            ./Build/Output/Windows/NSIS/setup-nsis-shmtu-auth-gui.exe
