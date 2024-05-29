@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from qfluentwidgets import (SettingCardGroup, SwitchSettingCard, FolderListSettingCard,
-                            OptionsSettingCard, PushSettingCard,
-                            HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
-                            ComboBoxSettingCard, ExpandLayout, Theme, CustomColorSettingCard,
-                            setTheme, setThemeColor, RangeSettingCard, isDarkTheme)
+from qfluentwidgets import (
+    SettingCardGroup, SwitchSettingCard,
+    OptionsSettingCard,
+    HyperlinkCard, PrimaryPushSettingCard, ScrollArea,
+    ExpandLayout, CustomColorSettingCard,
+    setTheme, setThemeColor, RangeSettingCard
+)
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
-from PySide6.QtCore import Qt, Signal, QUrl, QStandardPaths
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QWidget, QLabel, QFileDialog
+from PySide6.QtWidgets import QWidget, QLabel
 
 from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
 from ...common.style_sheet import StyleSheet

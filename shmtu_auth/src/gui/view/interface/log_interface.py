@@ -6,17 +6,17 @@ import datetime
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem
-from qfluentwidgets import (TableWidget, InfoBar, InfoBarIcon, InfoBarPosition, PushButton)
+from qfluentwidgets import (
+    TableWidget, InfoBar, InfoBarIcon, InfoBarPosition
+)
 
 from .gallery_interface import GalleryInterface
 from ..components.fluent.widget_push_button import FPushButton
-from ...common.config import cfg
 
 import pickle
 
 from ....config.project_directory import (
-    get_directory_data_path,
-    get_directory_log_path
+    get_directory_data_path
 )
 
 from ...common.signal_bus import signal_bus

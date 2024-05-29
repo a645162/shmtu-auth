@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from PySide6.QtCore import Qt, QRectF, QSize
-from PySide6.QtGui import QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
+from PySide6.QtGui import (
+    QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
+)
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
@@ -11,7 +13,7 @@ from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
 
 from ...common.style_sheet import StyleSheet
 from ...common import font_confg
-from ...common.config import cfg, FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
+from ...common.config import FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
 
 from ....utils.logs import get_logger
 
@@ -93,8 +95,8 @@ class BannerWidget(QWidget):
         path = path.simplified()
 
         # 绘图逻辑
-        pixmap = self.banner.scaled(
-            self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        # pixmap = self.banner.scaled(
+        #     self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # painter.fillPath(path, QBrush(pixmap))
 
         # painter.drawPixmap(self.rect(), pixmap)
@@ -112,7 +114,11 @@ class BannerWidget(QWidget):
             width_new = width_target
             height_new = width_new / wh_ratio
 
-        scaled_pixmap = self.banner.scaled(QSize(width_new, height_new), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        scaled_pixmap = self.banner.scaled(
+            QSize(width_new, height_new),
+            Qt.AspectRatioMode.IgnoreAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
 
         # 计算裁剪坐标(水平全部，垂直是中心部分)
         crop_x = 0

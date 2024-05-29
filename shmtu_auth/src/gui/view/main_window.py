@@ -2,8 +2,8 @@
 
 from typing import List
 from PySide6.QtCore import QUrl, QSize
-from PySide6.QtGui import QIcon, QDesktopServices, QColor, QAction
-from PySide6.QtWidgets import QApplication, QMenuBar
+from PySide6.QtGui import QIcon, QDesktopServices, QColor
+from PySide6.QtWidgets import QApplication
 
 from qfluentwidgets import (
     NavigationItemPosition,
@@ -18,7 +18,6 @@ from ..common.config import cfg, RELEASE_URL
 from .interface.about_interface import AboutInterface
 from .interface.log_interface import LogInterface
 from .interface.user_list_interface import UserListInterface
-from ..common.config import cfg
 
 from .interface.home_interface import HomeInterface
 from .interface.auth_interface import AuthInterface
@@ -31,7 +30,6 @@ from .system_tray import SystemTray
 from ...datatype.shmtu.auth.auth_user import UserItem
 
 from ..common.system_menu import (
-    system_menu,
     init_system_menu
 )
 from ..common.signal_bus import signal_bus, log_new

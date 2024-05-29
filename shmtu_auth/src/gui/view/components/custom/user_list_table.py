@@ -2,6 +2,7 @@
 
 from typing import List, Optional
 
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QTableWidgetItem
 from qfluentwidgets import TableWidget
 
@@ -23,6 +24,8 @@ table_header = [
 
 
 class UserListTableWidget(QFluentTableWidget):
+    slot_user_list_updated: Signal = Signal()
+
     column_count: int = len(table_header)
 
     user_list: Optional[List[UserItem]]
@@ -70,3 +73,4 @@ class UserListTableWidget(QFluentTableWidget):
                 )
 
         self.resizeColumnsToContents()
+        self.slot_user_list_updated.emit()

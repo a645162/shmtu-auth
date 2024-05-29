@@ -33,18 +33,18 @@ class SystemTray:
 
         # 连接系统托盘图标的激活事件
         self.tray_icon.activated.connect(
-            lambda reason: self._on_tray_icon_activated(reason)
+            lambda reason: self.__on_tray_icon_activated(reason)
         )
 
-        self._create_menu_action()
+        self.__create_menu_action()
         self.tray_icon.setContextMenu(self._tray_icon_menu)
 
         self.tray_icon.show()
 
         # 应用程序键盘监听
-        self._listen_keyboard()
+        self.__listen_keyboard()
 
-    def _restore_from_tray(self):
+    def __restore_from_tray(self):
         logger.info("restore_from_tray")
 
         # 还原窗口
@@ -55,7 +55,7 @@ class SystemTray:
         else:
             self.window.show()
 
-    def _on_tray_icon_activated(self, reason):
+    def __on_tray_icon_activated(self, reason):
         # 当系统托盘图标被点击时的处理
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
             # Handle left-click event
@@ -65,7 +65,7 @@ class SystemTray:
             logger.debug("Double-clicked on system tray icon")
 
             # 如果点击的是触发事件（比如左键单击），则还原窗口
-            self._show_or_hide_window()
+            self.__show_or_hide_window()
         elif reason == QSystemTrayIcon.ActivationReason.MiddleClick:
             # Handle middle-click event
             logger.debug("Middle-clicked on system tray icon")
@@ -73,10 +73,10 @@ class SystemTray:
             # Handle right-click event
             logger.debug("Right-clicked on system tray icon")
 
-    def _create_menu_action(self):
+    def __create_menu_action(self):
         self._restore_action = Action(FIF.LINK, "显示")
         self._restore_action.triggered.connect(
-            lambda: self._restore_from_tray()
+            lambda: self.__restore_from_tray()
         )
 
         self._quit_action = Action(FIF.CLOSE, "退出程序")
@@ -86,13 +86,13 @@ class SystemTray:
         self._tray_icon_menu.addSeparator()
         self._tray_icon_menu.addAction(self._quit_action)
 
-    def _listen_keyboard(self):
+    def __listen_keyboard(self):
         # 键盘监听
         shortcut = QShortcut(QKeySequence("Esc"), self.window)
         # 当按下 Esc 键时隐藏窗口
         shortcut.activated.connect(self.window.hide)
 
-    def _show_or_hide_window(self):
+    def __show_or_hide_window(self):
         logger.debug("show_or_hide_window")
         if self.window.isVisible():
             logger.debug("hide_window")

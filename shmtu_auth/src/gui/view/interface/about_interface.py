@@ -3,7 +3,6 @@
 from qfluentwidgets import (HorizontalFlipView)
 
 from .gallery_interface import GalleryInterface
-from ...common.config import cfg
 
 from ....utils.logs import get_logger
 

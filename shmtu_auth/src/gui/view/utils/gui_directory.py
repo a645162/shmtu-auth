@@ -12,7 +12,7 @@ def navigate_to_file(file_path: str):
         # 显示在最前方(需要授权)
         subprocess.Popen([
             'osascript', '-e',
-            f'tell application "Finder" to set frontmost of process "Finder" to true'
+            'tell application "Finder" to set frontmost of process "Finder" to true'
         ])
 
         # 使用 osascript 命令来调用 AppleScript 脚本，在 Finder 中导航到文件

@@ -12,12 +12,12 @@ class QFluentTableWidget(TableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self._connect_slot()
+        self.__connect_slot()
 
-    def _connect_slot(self):
-        self.itemSelectionChanged.connect(self._selected_item_changed)
+    def __connect_slot(self):
+        self.itemSelectionChanged.connect(self.__selected_item_changed)
 
-    def _selected_item_changed(self):
+    def __selected_item_changed(self):
         selected_items_obj = self.selectedItems()
 
         selected_index = []

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
-
 
 def set_py_variable(
         src_text: str,

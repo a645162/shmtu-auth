@@ -2,6 +2,8 @@ import ssl
 import requests.adapters
 
 url = 'https://www.tauron-dystrybucja.pl/'
+
+
 # url = "https://expired.badssl.com/"
 
 class TLSAdapter(requests.adapters.HTTPAdapter):

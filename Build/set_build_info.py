@@ -122,7 +122,7 @@ if __name__ == "__main__":
             exit(1)
 
         with open(
-                file_path,"w+", encoding="utf-8"
+                file_path, "w+", encoding="utf-8"
         ) as f:
             text = f.read()
             text = text.replace("shmtu_auth_", "shmtu_auth_gui_")

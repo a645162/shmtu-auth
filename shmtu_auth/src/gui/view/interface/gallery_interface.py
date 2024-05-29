@@ -4,10 +4,13 @@ from PySide6.QtCore import Qt, QUrl, QEvent
 from PySide6.QtGui import QDesktopServices, QPainter, QPen, QColor
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 
-from qfluentwidgets import (ScrollArea, PushButton, ToolButton, FluentIcon,
-                            isDarkTheme, IconWidget, Theme, ToolTipFilter, TitleLabel, CaptionLabel,
-                            StrongBodyLabel, BodyLabel, toggleTheme)
-from ...common.config import cfg, FEEDBACK_URL, HELP_URL, REPO_URL
+from qfluentwidgets import (
+    ScrollArea, PushButton, ToolButton, FluentIcon,
+    isDarkTheme, IconWidget, ToolTipFilter, TitleLabel, CaptionLabel,
+    StrongBodyLabel, BodyLabel, toggleTheme
+)
+
+from ...common.config import FEEDBACK_URL, HELP_URL, REPO_URL
 from ...common.style_sheet import StyleSheet
 
 from ....utils.logs import get_logger
