@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import datetime
 import argparse
+
 import pytz
 
 build_dir = os.path.dirname(__file__)
@@ -42,11 +44,30 @@ def set_build_config(src: str, variable: dict) -> str:
     return src
 
 
-def get_version() -> str:
-    with open(os.path.join(base_dir, "version.txt"), "r", encoding="utf-8") as f:
-        content = f.read().strip()
+def read_version_from_init():
+    """从 src/shmtu_auth/__init__.py 中读取 __version__ 变量"""
+    # 获取当前文件所在目录作为base_dir
+    # base_dir = os.path.dirname(os.path.abspath(__file__))
+    init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "__init__.py")
 
-    return content
+    try:
+        with open(init_file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # 使用正则表达式匹配 __version__ 变量
+        version_pattern = r'__version__\s*=\s*["\']([^"\']+)["\']'
+        match = re.search(version_pattern, content)
+
+        if match:
+            version = match.group(1)
+            return version
+        else:
+            return None
+
+    except FileNotFoundError:
+        return None
+    except Exception:
+        return None
 
 
 def check_is_docker() -> bool:
@@ -68,13 +89,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read Py File
-    py_path = os.path.join(base_dir, "shmtu_auth", "src", "config", "build_info.py")
+    py_path = os.path.join(base_dir,"src", "shmtu_auth", "src", "config", "build_info.py")
 
     with open(py_path, "r", encoding="utf-8") as f:
         src = f.read()
 
     # Set Version
-    version = get_version()
+    version = read_version_from_init()
+    if not version:
+        print("Version not found in __init__.py")
+        exit(1)
+    print("Version:", version)
 
     src = set_build_config(src, {"program_version": version})
 

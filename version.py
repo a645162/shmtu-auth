@@ -24,7 +24,7 @@ def read_version_from_init():
 
     except FileNotFoundError:
         return None
-    except Exception as e:
+    except Exception:
         return None
 
 
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     if version:
         print(version)
     else:
-        exit(1)
+        exit
