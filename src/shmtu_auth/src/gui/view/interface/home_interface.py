@@ -224,13 +224,14 @@ class HomeInterface(ScrollArea):
     def load_card_content(self):
         # 状态概览卡片 - 添加左右边距
         from PySide6.QtWidgets import QHBoxLayout
+
         status_container = QWidget(self.view)
         status_layout = QHBoxLayout(status_container)
         status_layout.setContentsMargins(20, 0, 20, 0)  # 左右各20px边距
-        
+
         self.status_card = QuickStatusCard(self.view)
         status_layout.addWidget(self.status_card)
-        
+
         self.vBoxLayout.addWidget(status_container)
 
         current_application_view_group = SampleCardView("本程序功能", self.view)

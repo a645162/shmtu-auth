@@ -76,6 +76,21 @@ class MainWindow(FluentWindow):
         task_auto_start()
         logger.info("Auto Task Finished.")
 
+        # 处理认证服务自动启动（在所有界面初始化完成后）
+        self.__handle_auth_auto_start()
+
+    def __handle_auth_auto_start(self):
+        """处理认证服务自动启动"""
+        if cfg.auth_auto_start_work_thread.value:
+            logger.info("配置了认证服务自动启动，准备启动...")
+            # 延迟一点时间确保所有数据都已加载
+            from PySide6.QtCore import QTimer
+
+            QTimer.singleShot(
+                1000, self.auth_interface._AuthInterface__on_work_button_clicked
+            )
+            logger.info("已安排认证服务自动启动")
+
     def try_to_show(self):
         if cfg.auto_minimize.value:
             logger.info("Auto minimize to system tray enabled.")

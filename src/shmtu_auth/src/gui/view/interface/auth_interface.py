@@ -304,8 +304,9 @@ class AuthInterface(GalleryInterface):
         self.current_status = False
         self.set_auth_work_status(False)
 
-        if cfg.auth_auto_start_work_thread.value:
-            self.__on_work_button_clicked()
+        # 注意：不在这里自动启动，而是在MainWindow初始化完成后处理
+        # if cfg.auth_auto_start_work_thread.value:
+        #     self.__on_work_button_clicked()
 
     def __connect_signals(self):
         """连接信号总线的信号"""
@@ -370,12 +371,23 @@ class AuthInterface(GalleryInterface):
             # 当前为False,需要启动
             logger.info("准备启动认证服务...")
 
-            # 检查用户列表
-            if not self.user_list or len(self.user_list) == 0:
-                logger.warning("用户列表为空，无法启动认证服务")
+            # 检查用户列表 - 添加更详细的调试信息
+            logger.info(f"当前用户列表长度: {len(self.user_list)}")
+            logger.info(
+                f"用户列表内容: {[user.user_id if hasattr(user, 'user_id') else str(user) for user in self.user_list]}"
+            )
+
+            # 过滤有效用户
+            from shmtu_auth.src.datatype.shmtu.auth.auth_user import get_valid_user_list
+
+            valid_users = get_valid_user_list(self.user_list)
+            logger.info(f"有效用户数量: {len(valid_users)}")
+
+            if not valid_users or len(valid_users) == 0:
+                logger.warning("没有有效的认证用户，无法启动认证服务")
                 InfoBar.warning(
                     "启动失败",
-                    "请先在用户列表中添加认证用户",
+                    "请先在用户列表中添加有效的认证用户",
                     duration=3000,
                     parent=self,
                 )
