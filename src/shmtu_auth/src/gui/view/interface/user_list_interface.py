@@ -41,7 +41,8 @@ logger = get_logger()
 
 pickle_user_list_path = "user_list.pickle"
 pickle_user_list_path = os.path.join(get_directory_data_path(), pickle_user_list_path)
-
+# Log the path for debugging
+logger.info(f"User list pickle path: {pickle_user_list_path}")
 
 class UserListInterface(GalleryInterface):
     table_widget: UserListTableWidget

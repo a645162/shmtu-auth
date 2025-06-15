@@ -222,9 +222,16 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
     def load_card_content(self):
-        # 状态概览卡片
+        # 状态概览卡片 - 添加左右边距
+        from PySide6.QtWidgets import QHBoxLayout
+        status_container = QWidget(self.view)
+        status_layout = QHBoxLayout(status_container)
+        status_layout.setContentsMargins(20, 0, 20, 0)  # 左右各20px边距
+        
         self.status_card = QuickStatusCard(self.view)
-        self.vBoxLayout.addWidget(self.status_card)
+        status_layout.addWidget(self.status_card)
+        
+        self.vBoxLayout.addWidget(status_container)
 
         current_application_view_group = SampleCardView("本程序功能", self.view)
         current_application_view_group.addSampleCard(
@@ -292,6 +299,3 @@ class HomeInterface(ScrollArea):
             url="https://github.com/a645162/nvi-notify",
         )
         self.vBoxLayout.addWidget(group_project_view_group)
-
-        quick_status_card = QuickStatusCard(self.view)
-        self.vBoxLayout.addWidget(quick_status_card)
