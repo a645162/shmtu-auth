@@ -1,1 +1,3 @@
-__version__ = "2.0.0"
+from shmtu_auth.version import __version__ as version
+
+__version__ = version

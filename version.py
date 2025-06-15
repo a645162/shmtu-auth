@@ -6,7 +6,7 @@ def read_version_from_init():
     """从 src/shmtu_auth/__init__.py 中读取 __version__ 变量"""
     # 获取当前文件所在目录作为base_dir
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "__init__.py")
+    init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "version.py")
 
     try:
         with open(init_file_path, "r", encoding="utf-8") as f:

@@ -1,11 +1,11 @@
-name: Create Tag from version.txt
+name: Create Tag from version.py
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'version.txt'
+      - 'src/shmtu_auth/version.py'
   workflow_dispatch:
 
 jobs:

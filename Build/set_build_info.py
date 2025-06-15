@@ -48,7 +48,7 @@ def read_version_from_init():
     """从 src/shmtu_auth/__init__.py 中读取 __version__ 变量"""
     # 获取当前文件所在目录作为base_dir
     # base_dir = os.path.dirname(os.path.abspath(__file__))
-    init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "__init__.py")
+    init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "version.py")
 
     try:
         with open(init_file_path, "r", encoding="utf-8") as f:
@@ -89,7 +89,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read Py File
-    py_path = os.path.join(base_dir,"src", "shmtu_auth", "src", "config", "build_info.py")
+    py_path = os.path.join(
+        base_dir, "src", "shmtu_auth", "src", "config", "build_info.py"
+    )
 
     with open(py_path, "r", encoding="utf-8") as f:
         src = f.read()
@@ -109,7 +111,9 @@ if __name__ == "__main__":
     if hasattr(args, "exe") and args.exe:
         src = set_build_config(src, {"exe_build_time": formatted_now})
     if hasattr(args, "gui") and args.exe:
-        file_path = os.path.join(base_dir, "shmtu_auth", "src", "utils", "logs.py")
+        file_path = os.path.join(
+            base_dir, "src", "shmtu_auth", "src", "utils", "logs.py"
+        )
 
         if not os.path.exists(file_path):
             print("logs.py is not found:", file_path)

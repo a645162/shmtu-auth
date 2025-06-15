@@ -4,15 +4,26 @@ from pathlib import Path
 
 from setuptools import setup, find_packages
 
-from version import read_version_from_init
+__version__ = "0.0.0"  # Default version
+
+try:
+    from version import read_version_from_init
+
+    __version__ = read_version_from_init()
+except ImportError:
+    try:
+        from shmtu_auth import __version__ as version
+
+        __version__ = version
+    except ImportError:
+        print("Failed to import version from shmtu_auth or version.py")
+        exit(1)
 
 print("shmtu-auth setup.py")
 
 this_directory = Path(__file__).parent
 with open(this_directory / "README.md", encoding="utf-8") as f:
     long_description = f.read()
-
-__version__ = read_version_from_init()
 
 if __version__.strip() == "":
     print("version.txt is empty")
