@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
-统一安装脚本
-支持不同的安装模式：基础、GUI、开发环境
+Unified Installation Script
+Supports different installation modes: Basic, GUI, Development Environment
 """
 
 import os
@@ -11,34 +11,63 @@ import argparse
 import subprocess
 from typing import List
 
-# 全局软件源配置
+
+# Fix Windows console encoding issues
+def fix_console_encoding():
+    """Fix console encoding issues"""
+    if sys.platform.startswith("win"):
+        try:
+            # Try to set the console to UTF-8
+            import codecs
+
+            sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+            sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
+        except Exception:
+            # If it fails, use a safe print function
+            pass
+
+
+def safe_print(text):
+    """Safe print function to handle encoding issues"""
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # If a encoding error occurs, replace with ASCII characters
+        safe_text = text.encode("ascii", "replace").decode("ascii")
+        print(safe_text)
+
+
+# Fix encoding when the module is loaded
+fix_console_encoding()
+
+# Global software source configuration
 PYPI_SOURCES = [
-    {"name": "official", "url": "https://pypi.org/simple/", "description": "官方源"},
+    {"name": "official", "url": "https://pypi.org/simple/", "description": "Official Source"},
     {
         "name": "tsinghua",
         "url": "https://pypi.tuna.tsinghua.edu.cn/simple/",
-        "description": "清华大学源",
+        "description": "Tsinghua University Source",
     },
     {
         "name": "aliyun",
         "url": "https://mirrors.aliyun.com/pypi/simple/",
-        "description": "阿里云源",
+        "description": "Aliyun Source",
     },
     {
         "name": "ustc",
         "url": "https://pypi.mirrors.ustc.edu.cn/simple/",
-        "description": "中科大源",
+        "description": "USTC Source",
     },
     {
         "name": "tencent",
         "url": "https://mirrors.cloud.tencent.com/pypi/simple/",
-        "description": "腾讯云源",
+        "description": "Tencent Cloud Source",
     },
 ]
 
 
 class InstallManager:
-    """安装管理器"""
+    """Installation Manager"""
 
     def __init__(self, source_name: str = "official"):
         self.requirements_files = {
@@ -50,7 +79,7 @@ class InstallManager:
         self.source_url = self._get_source_url(source_name)
         self.extra_index_params = f" -i {self.source_url}" if self.source_url else ""
 
-        # 安装选项控制变量
+        # Installation option control variables
         self.install_base_deps = False
         self.install_gui_deps = False
         self.install_dev_deps = False
@@ -58,26 +87,26 @@ class InstallManager:
         self.fluent_full_version = True
 
     def _get_source_url(self, source_name: str) -> str:
-        """根据源名称获取源URL"""
+        """Get source URL by source name"""
         for source in PYPI_SOURCES:
             if source["name"] == source_name:
                 return source["url"]
-        return PYPI_SOURCES[0]["url"]  # 默认返回官方源
+        return PYPI_SOURCES[0]["url"]  # Default to official source
 
     def get_available_sources(self) -> List[dict]:
-        """获取可用的软件源列表"""
+        """Get a list of available software sources"""
         return PYPI_SOURCES
 
     def show_source_info(self):
-        """显示当前使用的软件源信息"""
+        """Show the current software source information"""
         for source in PYPI_SOURCES:
             if source["name"] == self.source_name:
-                print(f"使用软件源: {source['description']} ({source['url']})")
+                print(f"Using software source: {source['description']} ({source['url']})")
                 break
 
     def set_install_options(self, mode: str, fluent_full: bool = True):
-        """根据安装模式设置安装选项"""
-        # 重置所有选项
+        """Set installation options based on the installation mode"""
+        # Reset all options
         self.install_base_deps = False
         self.install_gui_deps = False
         self.install_dev_deps = False
@@ -102,62 +131,62 @@ class InstallManager:
             self.install_fluent_widgets = True
 
     def show_install_plan(self):
-        """显示安装计划"""
-        print("安装计划:")
+        """Show the installation plan"""
+        print("Installation Plan:")
         if self.install_base_deps:
-            print(f"  ✓ 基础依赖 ({self.requirements_files['base']})")
+            print(f"  ✓ Base dependencies ({self.requirements_files['base']})")
         if self.install_gui_deps:
-            print(f"  ✓ GUI依赖 ({self.requirements_files['gui']})")
+            print(f"  ✓ GUI dependencies ({self.requirements_files['gui']})")
         if self.install_dev_deps:
-            print(f"  ✓ 开发环境依赖 ({self.requirements_files['dev']})")
+            print(f"  ✓ Development environment dependencies ({self.requirements_files['dev']})")
         if self.install_fluent_widgets:
-            version_type = "完整版" if self.fluent_full_version else "轻量版"
+            version_type = "Full Version" if self.fluent_full_version else "Lightweight Version"
             print(f"  ✓ PySide6-Fluent-Widgets ({version_type})")
 
     def run_command(self, command: str) -> bool:
-        """执行命令并返回是否成功"""
+        """Execute a command and return whether it was successful"""
         try:
-            print(f"执行命令: {command}")
-            # 支持os.system()调用方式
+            print(f"Executing command: {command}")
+            # Support os.system() call method
             result = os.system(command)
             return result == 0
         except Exception as e:
-            print(f"命令执行失败: {e}")
+            print(f"Command execution failed: {e}")
             return False
 
     def run_command_subprocess(self, command: str) -> bool:
-        """使用subprocess执行命令"""
+        """Execute a command using subprocess"""
         try:
-            print(f"执行命令: {command}")
+            print(f"Executing command: {command}")
             result = subprocess.run(command, shell=True, check=True)
             return result.returncode == 0
         except subprocess.CalledProcessError as e:
-            print(f"命令执行失败: {e}")
+            print(f"Command execution failed: {e}")
             return False
 
     def upgrade_pip(self) -> bool:
-        """升级pip"""
-        print("正在升级pip...")
+        """Upgrade pip"""
+        print("Upgrading pip...")
         command = f"pip install --upgrade pip{self.extra_index_params}"
         return self.run_command(command)
 
     def install_requirements(self, requirements_file: str) -> bool:
-        """安装requirements文件中的依赖"""
+        """Install dependencies from the requirements file"""
         if not os.path.exists(requirements_file):
-            print(f"错误: 找不到文件 {requirements_file}")
+            print(f"Error: File {requirements_file} not found")
             return False
 
-        print(f"正在安装 {requirements_file} 中的依赖...")
+        print(f"Installing dependencies from {requirements_file}...")
         command = f"pip install -r {requirements_file}{self.extra_index_params}"
         return self.run_command(command)
 
     def install_fluent_widgets_package(self) -> bool:
-        """安装PySide6-Fluent-Widgets"""
+        """Install PySide6-Fluent-Widgets"""
         if self.fluent_full_version:
-            print("正在安装PySide6-Fluent-Widgets完整版...")
+            print("Installing PySide6-Fluent-Widgets Full Version...")
             command = f'pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
         else:
-            print("正在安装PySide6-Fluent-Widgets轻量版...")
+            print("Installing PySide6-Fluent-Widgets Lightweight Version...")
             command = (
                 f"pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}"
             )
@@ -165,7 +194,7 @@ class InstallManager:
         return self.run_command(command)
 
     def execute_install(self, mode_name: str = "") -> bool:
-        """执行安装"""
+        """Execute the installation"""
         print(f"=== {mode_name} ===")
         self.show_source_info()
         self.show_install_plan()
@@ -173,11 +202,11 @@ class InstallManager:
 
         success = True
 
-        # 总是先升级pip
+        # Always upgrade pip first
         if not self.upgrade_pip():
             success = False
 
-        # 按顺序安装各种依赖
+        # Install various dependencies in order
         if self.install_base_deps:
             if not self.install_requirements(self.requirements_files["base"]):
                 success = False
@@ -197,30 +226,30 @@ class InstallManager:
         return success
 
     def install_base(self, fluent_full: bool = True) -> bool:
-        """安装基础依赖"""
+        """Install base dependencies"""
         self.set_install_options("base", fluent_full)
-        return self.execute_install("安装基础依赖")
+        return self.execute_install("Installing Base Dependencies")
 
     def install_gui(self, fluent_full: bool = True) -> bool:
-        """安装GUI依赖"""
+        """Install GUI dependencies"""
         self.set_install_options("gui", fluent_full)
-        return self.execute_install("安装GUI依赖")
+        return self.execute_install("Installing GUI Dependencies")
 
     def install_dev(self, fluent_full: bool = True) -> bool:
-        """安装开发环境依赖"""
+        """Install development environment dependencies"""
         self.set_install_options("dev", fluent_full)
-        return self.execute_install("安装开发环境依赖")
+        return self.execute_install("Installing Development Environment Dependencies")
 
     def install_all(self, fluent_full: bool = True) -> bool:
-        """安装所有依赖（基础+GUI+开发环境）"""
+        """Install all dependencies (Base + GUI + Development Environment)"""
         self.set_install_options("all", fluent_full)
-        return self.execute_install("安装所有依赖")
+        return self.execute_install("Installing All Dependencies")
 
     def install_custom(
         self, requirements_files: List[str], fluent_full: bool = True
     ) -> bool:
-        """自定义安装"""
-        print("=== 自定义安装 ===")
+        """Custom installation"""
+        print("=== Custom Installation ===")
         self.show_source_info()
         success = True
 
@@ -231,7 +260,7 @@ class InstallManager:
             if not self.install_requirements(req_file):
                 success = False
 
-        # 如果包含GUI requirements，则安装Fluent Widgets
+        # If GUI requirements are included, install Fluent Widgets
         if self.requirements_files["gui"] in requirements_files:
             self.fluent_full_version = fluent_full
             if not self.install_fluent_widgets_package():
@@ -241,52 +270,52 @@ class InstallManager:
 
 
 def main():
-    # 支持向后兼容：如果没有命令行参数，默认执行基础安装
+    # Support backward compatibility: if there are no command line arguments, default to basic installation
     if len(sys.argv) == 1:
-        print("=== 默认基础安装模式 ===")
+        print("=== Default Basic Installation Mode ===")
         installer = InstallManager()
         success = installer.install_base()
         if success:
-            print("\n✅ 安装完成!")
+            print("\n✅ Installation Complete!")
         else:
-            print("\n❌ 安装过程中出现错误!")
+            print("\n❌ An error occurred during installation!")
         return
 
     parser = argparse.ArgumentParser(
-        description="统一安装脚本 - 支持不同的安装模式",
+        description="Unified Installation Script - Supports different installation modes",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=f"""
-安装模式说明:
-  base    - 仅安装基础依赖 (requirements.txt)
-  gui     - 安装基础 + GUI依赖 (requirements.txt + requirements/r-gui-requirements.txt)
-  dev     - 安装完整开发环境 (所有requirements文件)
-  all     - 安装所有依赖 (基础 + GUI + 开发环境)
-  custom  - 自定义安装指定的requirements文件
+Installation Mode Description:
+  base    - Install only base dependencies (requirements.txt)
+  gui     - Install base + GUI dependencies (requirements.txt + requirements/r-gui-requirements.txt)
+  dev     - Install complete development environment (all requirements files)
+  all     - Install all dependencies (Base + GUI + Development Environment)
+  custom  - Custom installation of specified requirements files
 
-可用软件源:
+Available Software Sources:
 {chr(10).join([f"  {src['name']:<10} - {src['description']} ({src['url']})" for src in PYPI_SOURCES])}
 
-示例:
-  python install.py                         # 默认基础安装(向后兼容)
-  python install.py base                    # 基础安装
-  python install.py gui                     # GUI安装
-  python install.py gui --fluent-light      # GUI安装(轻量版Fluent Widgets)
-  python install.py dev --source tsinghua   # 开发环境安装(使用清华源)
-  python install.py all --source aliyun     # 安装所有依赖(使用阿里云源)
-  python install.py custom req1.txt req2.txt --source aliyun # 自定义安装(使用阿里云源)
+Examples:
+  python install.py                         # Default basic installation (backward compatible)
+  python install.py base                    # Basic installation
+  python install.py gui                     # GUI installation
+  python install.py gui --fluent-light      # GUI installation (Lightweight Fluent Widgets)
+  python install.py dev --source tsinghua   # Development environment installation (using Tsinghua source)
+  python install.py all --source aliyun     # Install all dependencies (using Aliyun source)
+  python install.py custom req1.txt req2.txt --source aliyun # Custom installation (using Aliyun source)
   
-支持os.system()调用方式:
+Supports os.system() call method:
   import os
   os.system("pip install --upgrade \\"PySide6-Fluent-Widgets[full]\\" -i https://pypi.org/simple/")
         """,
     )
 
     parser.add_argument(
-        "mode", choices=["base", "gui", "dev", "all", "custom"], help="安装模式"
+        "mode", choices=["base", "gui", "dev", "all", "custom"], help="Installation mode"
     )
 
     parser.add_argument(
-        "requirements", nargs="*", help="自定义模式下的requirements文件列表"
+        "requirements", nargs="*", help="List of requirements files in custom mode"
     )
 
     parser.add_argument(
@@ -294,52 +323,52 @@ def main():
         "-s",
         choices=[src["name"] for src in PYPI_SOURCES],
         default="official",
-        help="指定pip软件源 (默认: official)",
+        help="Specify pip software source (default: official)",
     )
 
     parser.add_argument(
         "--fluent-light",
         action="store_true",
-        help="安装PySide6-Fluent-Widgets轻量版而非完整版",
+        help="Install PySide6-Fluent-Widgets lightweight version instead of full version",
     )
 
     parser.add_argument(
-        "--dry-run", action="store_true", help="仅显示将要执行的操作，不实际安装"
+        "--dry-run", action="store_true", help="Only show the operations to be performed, do not actually install"
     )
 
     parser.add_argument(
-        "--list-sources", action="store_true", help="显示所有可用的软件源"
+        "--list-sources", action="store_true", help="Show all available software sources"
     )
 
     args = parser.parse_args()
 
-    # 显示可用软件源
+    # Show available software sources
     if args.list_sources:
-        print("可用的pip软件源:")
+        print("Available pip software sources:")
         for source in PYPI_SOURCES:
             print(f"  {source['name']:<10} - {source['description']}")
             print(f"             {source['url']}")
         return
 
-    # 验证自定义模式参数
+    # Validate custom mode parameters
     if args.mode == "custom" and not args.requirements:
-        parser.error("自定义模式需要指定至少一个requirements文件")
+        parser.error("Custom mode requires specifying at least one requirements file")
 
     installer = InstallManager(args.source)
     fluent_full = not args.fluent_light
 
-    # 干运行模式
+    # Dry run mode
     if args.dry_run:
-        print("=== 干运行模式 - 仅显示操作 ===")
-        print(f"安装模式: {args.mode}")
-        print(f"软件源: {args.source}")
+        print("=== Dry Run Mode - Only showing operations ===")
+        print(f"Installation Mode: {args.mode}")
+        print(f"Software Source: {args.source}")
         installer.show_source_info()
         if args.mode == "custom":
-            print(f"Requirements文件: {args.requirements}")
-        print(f"Fluent Widgets版本: {'完整版' if fluent_full else '轻量版'}")
+            print(f"Requirements Files: {args.requirements}")
+        print(f"Fluent Widgets Version: {'Full Version' if fluent_full else 'Lightweight Version'}")
         return
 
-    # 执行安装
+    # Execute installation
     success = False
 
     if args.mode == "base":
@@ -354,10 +383,10 @@ def main():
         success = installer.install_custom(args.requirements, fluent_full)
 
     if success:
-        print("\n✅ 安装完成!")
+        print("\n✅ Installation Complete!")
         sys.exit(0)
     else:
-        print("\n❌ 安装过程中出现错误!")
+        print("\n❌ An error occurred during installation!")
         sys.exit(1)
 
 
