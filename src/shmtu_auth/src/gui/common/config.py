@@ -56,6 +56,20 @@ class Config(QConfig):
     auto_startup = ConfigItem("General", "AutoStartup", False, BoolValidator())
     auto_minimize = ConfigItem("General", "AutoMinimize", False, BoolValidator())
 
+    # 托盘设置
+    close_to_tray = ConfigItem("Tray", "CloseToTray", True, BoolValidator())
+    minimize_to_tray = ConfigItem("Tray", "MinimizeToTray", True, BoolValidator())
+    silent_start = ConfigItem("Tray", "SilentStart", False, BoolValidator())
+    show_tray_notifications = ConfigItem(
+        "Tray", "ShowTrayNotifications", True, BoolValidator()
+    )
+    tray_double_click_action = OptionsConfigItem(
+        "Tray",
+        "DoubleClickAction",
+        "show_hide",
+        OptionsValidator(["show_hide", "show_only", "hide_only"]),
+    )
+
     # 界面个性化
 
     # Main Window

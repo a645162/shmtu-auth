@@ -75,6 +75,45 @@ class SettingInterface(ScrollArea):
             self.general_group,
         )
 
+        # 托盘设置
+        self.tray_group = SettingCardGroup("系统托盘设置", self.scrollWidget)
+        self.close_to_tray_card = SwitchSettingCard(
+            FIF.CLOSE,
+            "关闭到托盘",
+            "点击关闭按钮时最小化到系统托盘而不是退出程序",
+            cfg.close_to_tray,
+            self.tray_group,
+        )
+        self.minimize_to_tray_card = SwitchSettingCard(
+            FIF.DOWN,
+            "最小化到托盘",
+            "最小化窗口时隐藏到系统托盘",
+            cfg.minimize_to_tray,
+            self.tray_group,
+        )
+        self.silent_start_card = SwitchSettingCard(
+            FIF.QUIET_HOURS,
+            "静默启动",
+            "程序启动时直接最小化到托盘，不显示主窗口",
+            cfg.silent_start,
+            self.tray_group,
+        )
+        self.show_tray_notifications_card = SwitchSettingCard(
+            FIF.MESSAGE,
+            "托盘通知",
+            "显示系统托盘通知消息",
+            cfg.show_tray_notifications,
+            self.tray_group,
+        )
+        self.tray_double_click_action_card = OptionsSettingCard(
+            cfg.tray_double_click_action,
+            FIF.ARROW_DOWN,
+            "双击托盘动作",
+            "设置双击托盘图标时的行为",
+            texts=["显示/隐藏切换", "仅显示窗口", "仅隐藏窗口"],
+            parent=self.tray_group,
+        )
+
         # 个性化设置
         self.personalization_group = SettingCardGroup("个性化设置", self.scrollWidget)
         self.mica_card = SwitchSettingCard(
@@ -180,6 +219,13 @@ class SettingInterface(ScrollArea):
         self.general_group.addSettingCard(self.auto_startup_card)
         self.general_group.addSettingCard(self.auto_minimize_card)
 
+        # 托盘设置
+        self.tray_group.addSettingCard(self.close_to_tray_card)
+        self.tray_group.addSettingCard(self.minimize_to_tray_card)
+        self.tray_group.addSettingCard(self.silent_start_card)
+        self.tray_group.addSettingCard(self.show_tray_notifications_card)
+        self.tray_group.addSettingCard(self.tray_double_click_action_card)
+
         # 界面个性化设置
         self.personalization_group.addSettingCard(self.mica_card)
         self.personalization_group.addSettingCard(self.theme_card)
@@ -200,6 +246,7 @@ class SettingInterface(ScrollArea):
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
         self.expandLayout.addWidget(self.shmtu_auth_group)
         self.expandLayout.addWidget(self.general_group)
+        self.expandLayout.addWidget(self.tray_group)
         self.expandLayout.addWidget(self.personalization_group)
         self.expandLayout.addWidget(self.material_group)
         self.expandLayout.addWidget(self.update_software_group)

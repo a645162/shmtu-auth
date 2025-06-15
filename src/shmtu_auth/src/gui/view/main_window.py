@@ -91,12 +91,104 @@ class MainWindow(FluentWindow):
             )
             logger.info("已安排认证服务自动启动")
 
+    def __connect_tray_signals(self):
+        """连接托盘相关信号"""
+        # 连接认证状态信号到托盘更新
+        signal_bus.signal_auth_thread_started.connect(
+            lambda: self.system_tray.update_auth_status(True)
+        )
+        signal_bus.signal_auth_thread_stopped.connect(
+            lambda: self.system_tray.update_auth_status(False)
+        )
+        signal_bus.signal_auth_status_changed.connect(
+            lambda is_online: self.system_tray.update_auth_status(None, is_online)
+        )
+        signal_bus.signal_auth_success.connect(
+            lambda user_id: self.system_tray.show_notification(
+                "认证成功", f"用户 {user_id} 认证成功"
+            )
+        )
+        signal_bus.signal_auth_failed.connect(
+            lambda user_id, error: self.system_tray.show_notification(
+                "认证失败", f"用户 {user_id} 认证失败"
+            )
+        )
+        logger.info("托盘信号连接完成")
+
     def try_to_show(self):
-        if cfg.auto_minimize.value:
-            logger.info("Auto minimize to system tray enabled.")
-            self.hide()
+        """根据配置显示或隐藏窗口"""
+        if cfg.auto_minimize.value or cfg.silent_start.value:
+            logger.info("根据配置自动隐藏到系统托盘")
+            # 使用托盘的隐藏方法，确保正确隐藏到托盘
+            self.system_tray._SystemTray__hide_window_to_tray()
+            if cfg.show_tray_notifications.value:
+                self.system_tray.show_notification(
+                    "SHMTU Auth", "程序已启动并隐藏到系统托盘"
+                )
         else:
             self.show()
+
+    def closeEvent(self, event):
+        """重写关闭事件"""
+        # 检查是否是从托盘强制退出
+        force_quit = getattr(self, "_force_quit", False)
+
+        if cfg.close_to_tray.value and not force_quit:
+            logger.info("关闭按钮点击 - 最小化到托盘")
+            event.ignore()
+            # 使用托盘的隐藏方法，确保正确隐藏到托盘
+            self.system_tray._SystemTray__hide_window_to_tray()
+            if cfg.show_tray_notifications.value:
+                self.system_tray.show_notification(
+                    "SHMTU Auth", "程序已最小化到系统托盘，双击托盘图标可恢复窗口"
+                )
+        else:
+            logger.info("关闭按钮点击 - 退出程序")
+            self.__cleanup_resources()
+            event.accept()
+
+    def __cleanup_resources(self):
+        """清理程序资源"""
+        logger.info("开始清理程序资源...")
+
+        try:
+            # 停止认证线程
+            if hasattr(self, "auth_interface") and self.auth_interface.work_thread:
+                if self.auth_interface.work_thread.is_alive():
+                    logger.info("停止认证线程...")
+                    self.auth_interface.work_thread.stop()
+                    self.auth_interface.work_thread.join(timeout=3)
+                    logger.info("认证线程已停止")
+
+            # 隐藏托盘图标
+            if hasattr(self, "system_tray"):
+                self.system_tray.tray_icon.hide()
+                logger.info("托盘图标已隐藏")
+
+        except Exception as e:
+            logger.error(f"清理资源时出错: {e}")
+
+        logger.info("程序资源清理完成")
+
+    def force_quit(self):
+        """强制退出程序"""
+        logger.info("强制退出程序")
+        self._force_quit = True
+        self.close()
+
+    def changeEvent(self, event):
+        """重写改变事件（处理最小化）"""
+        if (
+            event.type() == event.Type.WindowStateChange
+            and self.isMinimized()
+            and cfg.minimize_to_tray.value
+        ):
+            logger.info("窗口最小化 - 隐藏到托盘")
+            # 使用托盘的隐藏方法，确保正确隐藏到托盘
+            self.system_tray._SystemTray__hide_window_to_tray()
+            event.ignore()
+        else:
+            super().changeEvent(event)
 
     def __init_left_navigation_item(self):
         # add navigation items
@@ -181,9 +273,14 @@ class MainWindow(FluentWindow):
         desktop = QApplication.screens()[0].availableGeometry()
         w, h = desktop.width(), desktop.height()
         self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
-        self.try_to_show()
 
-        SystemTray(self)
+        # 初始化系统托盘
+        self.system_tray = SystemTray(self)
+
+        # 连接信号以更新托盘状态
+        self.__connect_tray_signals()
+
+        self.try_to_show()
 
         QApplication.processEvents()
 
