@@ -92,7 +92,7 @@ pyinstaller `
     --noupx `
     --noconfirm `
     --clean `
-    --icon "..\Assets\Icon\icons\Icon.ico" `
+    --icon "$baseLocation\Assets\Icon\icons\Icon.ico" `
     --name "$project_name_with_profile" `
     --distpath "$outputLocation" `
     --workpath "$tmpLocation" `
