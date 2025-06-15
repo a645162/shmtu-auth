@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
 from qfluentwidgets import (RoundMenu, Action)
 from qfluentwidgets import FluentIcon as FIF
 
-from ...utils.logs import get_logger
+from shmtu_auth.src..utils.logs import get_logger
 
 logger = get_logger()
 

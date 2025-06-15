@@ -11,17 +11,17 @@ from qfluentwidgets import (
 )
 
 from .gallery_interface import GalleryInterface
-from ..components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
 
 import pickle
 
-from ....config.project_directory import (
+from shmtu_auth.src...config.project_directory import (
     get_directory_data_path
 )
 
-from ...common.signal_bus import signal_bus
+from shmtu_auth.src..common.signal_bus import signal_bus
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

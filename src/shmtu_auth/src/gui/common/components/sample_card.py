@@ -5,12 +5,13 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 
 from qfluentwidgets import IconWidget, TextWrap, FlowLayout, CardWidget
-# from ..common.signal_bus import signalBus
+
+# from shmtu_auth.src.common.signal_bus import signalBus
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 
 
 class SampleCard(CardWidget):
-    """ Sample card """
+    """Sample card"""
 
     def __init__(self, icon, title, content, index, url="", parent=None):
         super().__init__(parent=parent)
@@ -43,8 +44,8 @@ class SampleCard(CardWidget):
         self.vBoxLayout.addWidget(self.contentLabel)
         self.vBoxLayout.addStretch(1)
 
-        self.titleLabel.setObjectName('titleLabel')
-        self.contentLabel.setObjectName('contentLabel')
+        self.titleLabel.setObjectName("titleLabel")
+        self.contentLabel.setObjectName("contentLabel")
 
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
@@ -56,7 +57,7 @@ class SampleCard(CardWidget):
 
 
 class SampleCardView(QWidget):
-    """ Sample card view """
+    """Sample card view"""
 
     def __init__(self, title: str, parent=None):
         super().__init__(parent=parent)
@@ -73,10 +74,10 @@ class SampleCardView(QWidget):
         self.vBoxLayout.addWidget(self.titleLabel)
         self.vBoxLayout.addLayout(self.flowLayout, 1)
 
-        self.titleLabel.setObjectName('viewTitleLabel')
+        self.titleLabel.setObjectName("viewTitleLabel")
         StyleSheet.SAMPLE_CARD.apply(self)
 
     def addSampleCard(self, icon, title, content, index, url=""):
-        """ add sample card """
+        """add sample card"""
         card = SampleCard(icon, title, content, index, url, self)
         self.flowLayout.addWidget(card)

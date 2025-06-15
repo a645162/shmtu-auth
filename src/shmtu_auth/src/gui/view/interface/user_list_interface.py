@@ -15,12 +15,12 @@ from .gallery_interface import GalleryInterface
 from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
 from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
 from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableWidget
-from ..components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
 
-from ....config.project_directory import (
+from shmtu_auth.src...config.project_directory import (
     get_directory_data_path
 )
-from ....datatype.shmtu.auth.auth_user import (
+from shmtu_auth.src...datatype.shmtu.auth.auth_user import (
     UserItem,
 
     generate_test_user_list,
@@ -35,7 +35,7 @@ from ....datatype.shmtu.auth.auth_user import (
     user_is_exist_in_list,
 )
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

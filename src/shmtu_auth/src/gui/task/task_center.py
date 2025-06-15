@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..common.config import cfg
+from shmtu_auth.src.common.config import cfg
 from .check_update import start_check_update_once_thread
 
 

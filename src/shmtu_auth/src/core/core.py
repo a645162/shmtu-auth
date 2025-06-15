@@ -4,11 +4,11 @@ import json
 
 import requests
 
-from ..core.core_exp import check_is_connected_retry, get_query_string
-from ..core.shmtu_auth_const_value import ServiceType
-from ..utils.env import get_env_str
+from shmtu_auth.src.core.core_exp import check_is_connected_retry, get_query_string
+from shmtu_auth.src.core.shmtu_auth_const_value import ServiceType
+from shmtu_auth.src.utils.env import get_env_str
 
-from ..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
@@ -26,17 +26,13 @@ class ShmtuNetAuthCore:
         self.userIndex = ""
         self.info = ""
         self.data = {}
-        self.url: str = \
-            "https://ismu.shmtu.edu.cn:8443/eportal/InterFace.do?method="
+        self.url: str = "https://ismu.shmtu.edu.cn:8443/eportal/InterFace.do?method="
         self.header: dict = {
-            "Content-Type":
-                "application/x-www-form-urlencoded; charset=UTF-8",
-            "User-Agent":
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-                "Version/17.2.1 Safari/605.1.15",
-            "Accept-Encoding":
-                "identify",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+            "Version/17.2.1 Safari/605.1.15",
+            "Accept-Encoding": "identify",
         }
         self.isLogin: bool = False
         self.allData: dict = {}
@@ -63,11 +59,14 @@ class ShmtuNetAuthCore:
         :return: 是否已经认证
         """
         import urllib3
+
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         # noinspection PyBroadException
         try:
-            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header, verify=False)
+            res = requests.get(
+                "http://ismu.shmtu.edu.cn/", headers=self.header, verify=False
+            )
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
@@ -86,6 +85,7 @@ class ShmtuNetAuthCore:
         :return:元组第一项：是否认证状态；第二项：详细信息
         """
         import urllib3
+
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         # 执行登录前再进行一次状态检测
@@ -145,12 +145,11 @@ class ShmtuNetAuthCore:
         :return:全部数据的字典格式
         """
         import urllib3
+
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         res = requests.get(
-            self.url + "getOnlineUserInfo",
-            headers=self.header,
-            verify=False
+            self.url + "getOnlineUserInfo", headers=self.header, verify=False
         )
         try:
             self.allData = json.loads(res.text)
@@ -171,6 +170,7 @@ class ShmtuNetAuthCore:
         #     self.get_alldata()
 
         import urllib3
+
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         res = requests.get(self.url + "logout", headers=self.header, verify=False)

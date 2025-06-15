@@ -3,7 +3,7 @@
 import os
 import toml
 
-from ..utils.file.infer_encoding import read_file_with_auto_encoding
+from shmtu_auth.src.utils.file.infer_encoding import read_file_with_auto_encoding
 
 toml_config_dict: dict = {}
 env_from_toml: dict = {}

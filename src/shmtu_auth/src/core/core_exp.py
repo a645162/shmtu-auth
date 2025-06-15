@@ -7,7 +7,7 @@ from .query_string import handle_query_string
 
 from .shmtu_auth_const_value import get_default_query_string
 
-from ..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 

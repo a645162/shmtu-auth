@@ -19,16 +19,16 @@ from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 
 from .gallery_interface import GalleryInterface
-from ..components.fluent.widget_label import FBodyLabel
-from ..components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.components.fluent.widget_label import FBodyLabel
+from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
 
-from ...common.config import cfg, Config
-from ...common.style_sheet import StyleSheet
-from ....datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src..common.config import cfg, Config
+from shmtu_auth.src..common.style_sheet import StyleSheet
+from shmtu_auth.src...datatype.shmtu.auth.auth_user import UserItem
 
-from ...feature.network_auth import AuthThread
+from shmtu_auth.src..feature.network_auth import AuthThread
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

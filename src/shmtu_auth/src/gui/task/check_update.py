@@ -2,9 +2,9 @@
 
 import threading
 
-from ..software import program_update
+from shmtu_auth.src.software import program_update
 
-from ..common.signal_bus import signal_bus, log_new
+from shmtu_auth.src.common.signal_bus import signal_bus, log_new
 
 
 class CheckUpdateOnceThread(threading.Thread):
@@ -12,8 +12,7 @@ class CheckUpdateOnceThread(threading.Thread):
         super().__init__()
 
     def run(self):
-        latest_version = \
-            program_update.get_latest_version()
+        latest_version = program_update.get_latest_version()
 
         if len(latest_version) == 0:
             log_new("Update", "Get Latest Version Failed.")

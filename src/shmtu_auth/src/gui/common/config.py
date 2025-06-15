@@ -9,10 +9,10 @@ from qfluentwidgets import (
 )
 
 from qfluentwidgets import __version__ as q_fluent_widgets_version
-from ...config.build_info import program_version
-from ...system.system_info import SystemType
+from shmtu_auth.src..config.build_info import program_version
+from shmtu_auth.src..system.system_info import SystemType
 
-from ...utils.logs import get_logger
+from shmtu_auth.src..utils.logs import get_logger
 
 logger = get_logger()
 

@@ -7,10 +7,10 @@ from time import sleep as time_sleep
 
 import requests
 
-from ..utils import my_time
-from ..utils.env import get_env_str, get_env_time
+from shmtu_auth.src.utils import my_time
+from shmtu_auth.src.utils.env import get_env_str, get_env_time
 
-from ..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
@@ -42,7 +42,7 @@ def get_wework_url(webhook_env: str = ""):
 
 
 def direct_send_text(
-        webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None
+    webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None
 ):
     """Send text to WeWork"""
 
@@ -104,8 +104,7 @@ def send_text_thread():
 
 
 def add_send_text_to_queue(
-        webhook_url: str, msg: str,
-        mentioned_id=None, mentioned_mobile=None
+    webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None
 ):
     msg_queue.append((webhook_url, msg, mentioned_id, mentioned_mobile))
     logger.info("WebHook WeWork add send text to queue!")
@@ -131,5 +130,5 @@ if __name__ == "__main__":
         f"\tTime: {formatted_time}\n"
         f"Test Pass!\n",
         mentioned_id=["khm"],
-        mentioned_mobile=[]
+        mentioned_mobile=[],
     )

@@ -11,11 +11,11 @@ from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
 from shmtu_auth.src.gui.common.components.link_card import LinkCardView
 from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
 
-from ...common.style_sheet import StyleSheet
-from ...common import font_confg
-from ...common.config import FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
+from shmtu_auth.src..common.style_sheet import StyleSheet
+from shmtu_auth.src..common import font_confg
+from shmtu_auth.src..common.config import FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

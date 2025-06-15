@@ -4,7 +4,7 @@ from qfluentwidgets import (HorizontalFlipView)
 
 from .gallery_interface import GalleryInterface
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

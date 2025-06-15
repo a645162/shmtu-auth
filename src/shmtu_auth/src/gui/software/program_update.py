@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from ...config.build_info import (
+from shmtu_auth.src..config.build_info import (
     program_version,
     branch
 )
-from ....config.github.latest_version import get_branch_version
-from ..common.signal_bus import log_new
-from ...utils.program_version import ProgramVersion
+from shmtu_auth.src...config.github.latest_version import get_branch_version
+from shmtu_auth.src.common.signal_bus import log_new
+from shmtu_auth.src..utils.program_version import ProgramVersion
 
-from ...utils.logs import get_logger
+from shmtu_auth.src..utils.logs import get_logger
 
 logger = get_logger()
 

@@ -13,7 +13,7 @@ from qfluentwidgets import (
 )
 from qfluentwidgets import FluentIcon as FIF
 
-from ..common.config import cfg, RELEASE_URL
+from shmtu_auth.src.common.config import cfg, RELEASE_URL
 
 from .interface.about_interface import AboutInterface
 from .interface.log_interface import LogInterface
@@ -24,21 +24,21 @@ from .interface.auth_interface import AuthInterface
 from .interface.settings_interface import SettingInterface
 
 # 加载资源文件,虽然表面上没有调用(不可以移除!)
-from ..resource import resources
+from shmtu_auth.src.resource import resources
 
 from .system_tray import SystemTray
-from ...datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src..datatype.shmtu.auth.auth_user import UserItem
 
-from ..common.system_menu import (
+from shmtu_auth.src.common.system_menu import (
     init_system_menu
 )
-from ..common.signal_bus import signal_bus, log_new
+from shmtu_auth.src.common.signal_bus import signal_bus, log_new
 
-from ..task.task_center import task_auto_start
-from ..software import program_update
-from ...system.system_info import SystemType
+from shmtu_auth.src.task.task_center import task_auto_start
+from shmtu_auth.src.software import program_update
+from shmtu_auth.src..system.system_info import SystemType
 
-from ...utils.logs import get_logger
+from shmtu_auth.src..utils.logs import get_logger
 
 logger = get_logger()
 

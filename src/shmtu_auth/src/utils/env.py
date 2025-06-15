@@ -3,8 +3,8 @@
 import os
 import datetime
 
-from ..config.config_global import env_from_global
-from ..config.config_toml import env_from_toml
+from shmtu_auth.src.config.config_global import env_from_global
+from shmtu_auth.src.config.config_toml import env_from_toml
 
 
 def get_env_str(key, default=None):
@@ -34,7 +34,7 @@ def get_env_time(key, default=None):
         return default
 
     time_str_1 = time_str[:index].strip()
-    time_str_2 = time_str[index + 1:].strip()
+    time_str_2 = time_str[index + 1 :].strip()
 
     try:
         int_1 = int(time_str_1)

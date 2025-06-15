@@ -13,12 +13,12 @@ from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QWidget, QLabel
 
-from ...common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
-from ...common.style_sheet import StyleSheet
+from shmtu_auth.src..common.config import cfg, HELP_URL, FEEDBACK_URL, AUTHOR, VERSION, YEAR
+from shmtu_auth.src..common.style_sheet import StyleSheet
 
-from ...task.check_update import start_check_update_once_thread
+from shmtu_auth.src..task.check_update import start_check_update_once_thread
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

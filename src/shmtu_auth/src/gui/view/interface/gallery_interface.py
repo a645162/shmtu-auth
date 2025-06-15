@@ -10,10 +10,10 @@ from qfluentwidgets import (
     StrongBodyLabel, BodyLabel, toggleTheme
 )
 
-from ...common.config import FEEDBACK_URL, HELP_URL, REPO_URL
-from ...common.style_sheet import StyleSheet
+from shmtu_auth.src..common.config import FEEDBACK_URL, HELP_URL, REPO_URL
+from shmtu_auth.src..common.style_sheet import StyleSheet
 
-from ....utils.logs import get_logger
+from shmtu_auth.src...utils.logs import get_logger
 
 logger = get_logger()
 

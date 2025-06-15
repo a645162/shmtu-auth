@@ -10,10 +10,10 @@ from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
     get_valid_user_list
 )
 
-from ...core.core_exp import check_is_connected
-from ...core.shmtu_auth import ShmtuNetAuth
+from shmtu_auth.src..core.core_exp import check_is_connected
+from shmtu_auth.src..core.shmtu_auth import ShmtuNetAuth
 
-from ..common.signal_bus import log_new
+from shmtu_auth.src.common.signal_bus import log_new
 
 
 class AuthThread(threading.Thread):

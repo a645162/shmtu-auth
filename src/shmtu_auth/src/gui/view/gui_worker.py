@@ -2,13 +2,13 @@ import threading
 from typing import List, Optional
 from time import sleep as time_sleep
 
-from ...core.shmtu_auth import ShmtuNetAuth
-from ...utils.program_env_config import (
+from shmtu_auth.src..core.shmtu_auth import ShmtuNetAuth
+from shmtu_auth.src..utils.program_env_config import (
     convert_number_to_star,
     convert_password_to_star
 )
 
-from ...utils.logs import get_logger
+from shmtu_auth.src..utils.logs import get_logger
 
 logger = get_logger()
 
