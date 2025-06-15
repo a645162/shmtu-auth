@@ -10,7 +10,15 @@ from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, get_valid_use
 from shmtu_auth.src.core.core_exp import check_is_connected
 from shmtu_auth.src.core.shmtu_auth import ShmtuNetAuth
 
-from shmtu_auth.src.gui.common.signal_bus import log_new
+from shmtu_auth.src.gui.common.signal_bus import (
+    log_new,
+    auth_status_changed,
+    auth_attempt,
+    auth_success,
+    auth_failed,
+    auth_thread_started,
+    auth_thread_stopped,
+)
 
 
 class AuthThread(threading.Thread):
@@ -68,8 +76,10 @@ class AuthThread(threading.Thread):
         if self.shmtu_auth_obj.isLogin != network_status:
             if network_status:
                 log_new("Auth", "检测到网络已连接(状态变动)")
+                auth_status_changed(True)
             else:
                 log_new("Auth", "检测到网络未连接(状态变动)")
+                auth_status_changed(False)
 
         self.shmtu_auth_obj.isLogin = network_status
 
@@ -83,26 +93,37 @@ class AuthThread(threading.Thread):
             if not user.is_valid():
                 continue
 
-            if self.shmtu_auth_obj.login(
+            # 发送认证尝试信号
+            auth_attempt(user.user_id)
+
+            login_result = self.shmtu_auth_obj.login(
                 user.user_id, user.password, user.is_encrypted
-            ):
-                log_new("Auth", f"认证成功：{user.user_id}")
+            )
+
+            if login_result[0]:  # 登录成功
+                auth_success(user.user_id)
                 break
-            else:
-                log_new("Auth", f"认证失败：{user.user_id}")
+            else:  # 登录失败
+                error_msg = login_result[1] if len(login_result) > 1 else "未知错误"
+                auth_failed(user.user_id, error_msg)
 
     def run(self):
         if self.user_list is None or len(self.user_list) == 0:
             return
 
-        while self.need_work:
+        # 发送线程启动信号
+        auth_thread_started()
 
+        while self.need_work:
             self.main_loop()
 
             for _ in range(self.check_internet_interval):
                 if not self.need_work:
                     break
                 time_sleep(1)
+
+        # 发送线程停止信号
+        auth_thread_stopped()
 
     def stop(self):
         self.need_work = False

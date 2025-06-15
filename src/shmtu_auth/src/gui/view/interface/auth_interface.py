@@ -14,9 +14,9 @@ from qfluentwidgets import (
     Slider,
     RangeConfigItem,
     qconfig,
+    InfoBar,
 )
 from qfluentwidgets import FluentIcon as FIF
-from qfluentwidgets import InfoBar
 
 from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
 from shmtu_auth.src.gui.view.components.fluent.widget_label import FBodyLabel
@@ -27,6 +27,7 @@ from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
 
 from shmtu_auth.src.gui.feature.network_auth import AuthThread
+from shmtu_auth.src.gui.common.signal_bus import signal_bus
 
 from shmtu_auth.src.utils.logs import get_logger
 
@@ -155,8 +156,12 @@ class AuthSettingWidget(ScrollArea):
         self.expand_layout.setSpacing(28)
         self.expand_layout.setContentsMargins(36, 10, 36, 0)
 
-        # shmtu-auth
-        self.auth_group_general = SettingCardGroup("通用", self.scroll_widget)
+        # 状态显示组
+        self.status_group = AuthStatusCard(self.scroll_widget)
+        self.expand_layout.addWidget(self.status_group)
+
+        # shmtu-auth 控制组
+        self.auth_group_general = SettingCardGroup("认证控制", self.scroll_widget)
 
         self.start_card = PrimaryPushSettingCard(
             text="启动", icon=FIF.HELP, title="运行状态", content="启动或关闭服务"
@@ -168,6 +173,14 @@ class AuthSettingWidget(ScrollArea):
             cfg=cfg, parent=self.auth_group_general
         )
         self.auth_group_general.addSettingCard(self.check_interval_card)
+
+        # 手动测试按钮
+        self.manual_test_card = PrimaryPushSettingCard(
+            text="测试", icon=FIF.SYNC, title="手动测试", content="手动测试网络连接状态"
+        )
+        # 注意：信号连接将在AuthInterface中进行
+        self.auth_group_general.addSettingCard(self.manual_test_card)
+
         self.expand_layout.addWidget(self.auth_group_general)
 
         self.__init_widget()
@@ -188,6 +201,70 @@ class AuthSettingWidget(ScrollArea):
         InfoBar.success(
             "更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self
         )
+
+
+class AuthStatusCard(SettingCardGroup):
+    """显示认证状态的卡片"""
+
+    def __init__(self, parent=None):
+        super().__init__("认证状态", parent)
+
+        # 网络状态
+        self.network_status_card = self.__create_status_card(
+            "网络状态", "检查中...", FIF.WIFI
+        )
+        self.addSettingCard(self.network_status_card)
+
+        # 认证服务状态
+        self.service_status_card = self.__create_status_card(
+            "认证服务", "已停止", FIF.POWER_BUTTON
+        )
+        self.addSettingCard(self.service_status_card)
+
+        # 最后认证用户
+        self.last_auth_card = self.__create_status_card("最后认证", "无", FIF.PEOPLE)
+        self.addSettingCard(self.last_auth_card)
+
+        # 认证尝试次数
+        self.auth_attempts_card = self.__create_status_card("认证次数", "0", FIF.FLAG)
+        self.addSettingCard(self.auth_attempts_card)
+
+        self.auth_attempt_count = 0
+
+    def __create_status_card(self, title, content, icon):
+        """创建状态显示卡片"""
+        from qfluentwidgets import SettingCard
+
+        card = SettingCard(icon, title, content)
+        return card
+
+    def update_network_status(self, is_online: bool):
+        """更新网络状态"""
+        if is_online:
+            self.network_status_card.setContent("已连接 ✓")
+        else:
+            self.network_status_card.setContent("未连接 ✗")
+
+    def update_service_status(self, is_running: bool):
+        """更新服务状态"""
+        if is_running:
+            self.service_status_card.setContent("运行中 ✓")
+        else:
+            self.service_status_card.setContent("已停止 ✗")
+
+    def update_last_auth_user(self, user_id: str):
+        """更新最后认证用户"""
+        self.last_auth_card.setContent(f"{user_id}")
+
+    def update_auth_attempt(self, user_id: str):
+        """更新认证尝试"""
+        self.auth_attempt_count += 1
+        self.auth_attempts_card.setContent(f"{self.auth_attempt_count}")
+
+    def reset_counters(self):
+        """重置计数器"""
+        self.auth_attempt_count = 0
+        self.auth_attempts_card.setContent("0")
 
 
 class AuthInterface(GalleryInterface):
@@ -217,6 +294,12 @@ class AuthInterface(GalleryInterface):
         self.authSettingsWidget.start_card.clicked.connect(
             self.__on_work_button_clicked
         )
+        self.authSettingsWidget.manual_test_card.clicked.connect(
+            self.__on_manual_test_clicked
+        )
+
+        # 连接信号
+        self.__connect_signals()
 
         self.current_status = False
         self.set_auth_work_status(False)
@@ -224,16 +307,89 @@ class AuthInterface(GalleryInterface):
         if cfg.auth_auto_start_work_thread.value:
             self.__on_work_button_clicked()
 
+    def __connect_signals(self):
+        """连接信号总线的信号"""
+        # 连接认证状态变化信号
+        signal_bus.signal_auth_status_changed.connect(
+            self.authSettingsWidget.status_group.update_network_status
+        )
+
+        # 连接认证尝试信号
+        signal_bus.signal_auth_attempt.connect(
+            self.authSettingsWidget.status_group.update_auth_attempt
+        )
+
+        # 连接认证成功信号
+        signal_bus.signal_auth_success.connect(self.__on_auth_success)
+
+        # 连接认证失败信号
+        signal_bus.signal_auth_failed.connect(self.__on_auth_failed)
+
+        # 连接线程启动信号
+        signal_bus.signal_auth_thread_started.connect(self.__on_thread_started)
+
+        # 连接线程停止信号
+        signal_bus.signal_auth_thread_stopped.connect(self.__on_thread_stopped)
+
+        logger.info("认证界面信号连接完成")
+
+    def __on_thread_stopped(self):
+        """处理认证线程停止信号"""
+        logger.info("GUI收到认证线程停止信号")
+        self.authSettingsWidget.status_group.update_service_status(False)
+        self.authSettingsWidget.status_group.reset_counters()
+
+    def __on_auth_success(self, user_id: str):
+        """处理认证成功"""
+        logger.info(f"GUI收到认证成功信号：{user_id}")
+        self.authSettingsWidget.status_group.update_last_auth_user(user_id)
+        InfoBar.success(
+            "认证成功", f"用户 {user_id} 认证成功", duration=3000, parent=self
+        )
+
+    def __on_auth_failed(self, user_id: str, error_msg: str):
+        """处理认证失败"""
+        logger.warning(f"GUI收到认证失败信号：{user_id} - {error_msg}")
+        InfoBar.warning(
+            "认证失败",
+            f"用户 {user_id} 认证失败：{error_msg}",
+            duration=3000,
+            parent=self,
+        )
+
+    def __on_thread_started(self):
+        """处理线程启动"""
+        logger.info("GUI收到认证线程启动信号")
+        self.authSettingsWidget.status_group.update_service_status(True)
+
     def __on_work_button_clicked(self):
+        """处理启动/停止按钮点击"""
+        logger.info(f"认证服务按钮点击，当前状态：{self.current_status}")
 
         if not self.current_status:
             # 当前为False,需要启动
+            logger.info("准备启动认证服务...")
+
+            # 检查用户列表
+            if not self.user_list or len(self.user_list) == 0:
+                logger.warning("用户列表为空，无法启动认证服务")
+                InfoBar.warning(
+                    "启动失败",
+                    "请先在用户列表中添加认证用户",
+                    duration=3000,
+                    parent=self,
+                )
+                return
+
+            # 停止已有线程
             if self.work_thread is not None:
                 if self.work_thread.is_alive():
-                    self.work_thread.need_work = False
-                    self.work_thread.join()
+                    logger.info("停止现有认证线程...")
+                    self.work_thread.stop()
+                    self.work_thread.join(timeout=5)
                 self.work_thread = None
 
+            # 创建新线程
             self.work_thread = AuthThread(
                 user_list=self.user_list,
                 check_internet_interval=cfg.check_internet_interval.value,
@@ -241,30 +397,77 @@ class AuthInterface(GalleryInterface):
                 check_internet_retry_wait_time=cfg.check_internet_retry_wait_time.value,
             )
 
+            logger.info("启动认证线程...")
             self.work_thread.start()
-
             self.current_status = True
+
+            InfoBar.success("启动成功", "认证服务已启动", duration=2000, parent=self)
+
         else:
             # 当前为True,需要停止
+            logger.info("准备停止认证服务...")
+
             if self.work_thread is not None:
                 if self.work_thread.is_alive():
-                    self.work_thread.need_work = False
-                    self.work_thread.join()
+                    logger.info("停止认证线程...")
+                    self.work_thread.stop()
+                    self.work_thread.join(timeout=5)
                 self.work_thread = None
 
             self.current_status = False
 
+            InfoBar.info("已停止", "认证服务已停止", duration=2000, parent=self)
+
         self.set_auth_work_status(self.current_status)
+        logger.info(f"认证服务状态已更新：{self.current_status}")
 
     def set_auth_work_status(self, status: bool):
-        """set auth work status"""
+        """设置认证工作状态"""
+        logger.info(f"更新认证工作状态UI：{status}")
+
         if status:
             # Started
             self.authSettingsWidget.start_card.iconLabel.setIcon(FIF.PLAY_SOLID)
             self.authSettingsWidget.start_card.button.setText("停止")
             self.authSettingsWidget.start_card.setContent("当前服务已经启动")
+            self.authSettingsWidget.status_group.update_service_status(True)
         else:
             # Stopped
             self.authSettingsWidget.start_card.iconLabel.setIcon(FIF.PAUSE_BOLD)
             self.authSettingsWidget.start_card.button.setText("启动")
             self.authSettingsWidget.start_card.setContent("当前服务已经停止")
+            self.authSettingsWidget.status_group.update_service_status(False)
+
+    def __on_manual_test_clicked(self):
+        """处理手动测试按钮点击"""
+        logger.info("开始手动测试网络连接...")
+
+        # 显示测试进行中的提示
+        InfoBar.info(
+            "测试中", "正在测试网络连接状态，请稍候...", duration=2000, parent=self
+        )
+
+        # 执行网络测试
+        from shmtu_auth.src.core.core_exp import check_is_connected
+
+        try:
+            is_connected = check_is_connected()
+
+            if is_connected:
+                logger.info("手动测试结果：网络已连接")
+                InfoBar.success(
+                    "测试完成", "网络连接正常 ✓", duration=3000, parent=self
+                )
+                self.authSettingsWidget.status_group.update_network_status(True)
+            else:
+                logger.warning("手动测试结果：网络未连接")
+                InfoBar.warning(
+                    "测试完成", "网络连接异常，需要认证 ✗", duration=3000, parent=self
+                )
+                self.authSettingsWidget.status_group.update_network_status(False)
+
+        except Exception as e:
+            logger.error(f"手动测试出错：{str(e)}")
+            InfoBar.error(
+                "测试失败", f"测试过程中出现错误：{str(e)}", duration=3000, parent=self
+            )

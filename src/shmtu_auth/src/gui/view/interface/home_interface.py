@@ -11,10 +11,17 @@ from PySide6.QtGui import (
 )
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
-from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
+from qfluentwidgets import (
+    ScrollArea,
+    isDarkTheme,
+    FluentIcon,
+    SettingCardGroup,
+    SettingCard,
+)
 
 from shmtu_auth.src.gui.common.components.link_card import LinkCardView
 from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
+from shmtu_auth.src.gui.common.signal_bus import signal_bus
 
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 from shmtu_auth.src.gui.common import font_confg
@@ -157,6 +164,37 @@ class BannerWidget(QWidget):
         painter.fillPath(path, QBrush(gradient))
 
 
+class QuickStatusCard(SettingCardGroup):
+    """主页快速状态概览卡片"""
+
+    def __init__(self, parent=None):
+        super().__init__("系统状态概览", parent)
+
+        # 网络状态卡
+        self.network_card = SettingCard(FluentIcon.WIFI, "网络状态", "检查中...")
+        self.addSettingCard(self.network_card)
+
+        # 服务状态卡
+        self.service_card = SettingCard(FluentIcon.POWER_BUTTON, "认证服务", "未启动")
+        self.addSettingCard(self.service_card)
+
+        # 连接信号
+        signal_bus.signal_auth_status_changed.connect(self.update_network_status)
+        signal_bus.signal_auth_thread_started.connect(
+            lambda: self.service_card.setContent("运行中 ✓")
+        )
+        signal_bus.signal_auth_thread_stopped.connect(
+            lambda: self.service_card.setContent("已停止 ✗")
+        )
+
+    def update_network_status(self, is_online: bool):
+        """更新网络状态"""
+        if is_online:
+            self.network_card.setContent("已连接 ✓")
+        else:
+            self.network_card.setContent("需要认证 ⚠")
+
+
 class HomeInterface(ScrollArea):
     """Home interface"""
 
@@ -184,6 +222,10 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
     def load_card_content(self):
+        # 状态概览卡片
+        self.status_card = QuickStatusCard(self.view)
+        self.vBoxLayout.addWidget(self.status_card)
+
         current_application_view_group = SampleCardView("本程序功能", self.view)
         current_application_view_group.addSampleCard(
             icon=":/gui/Logo128",
@@ -250,3 +292,6 @@ class HomeInterface(ScrollArea):
             url="https://github.com/a645162/nvi-notify",
         )
         self.vBoxLayout.addWidget(group_project_view_group)
+
+        quick_status_card = QuickStatusCard(self.view)
+        self.vBoxLayout.addWidget(quick_status_card)
