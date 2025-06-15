@@ -71,21 +71,26 @@ chmod +x start.sh
 
 ## 环境变量
 
+**必选配置项：**
+
 学号列表中，学号之间用`;`分隔
 
 - `SHMTU_AUTH_USER_LIST` : {学号1};{学号2}
 - `SHMTU_AUTH_USER_PWD_{学号1}` : {学号1的密码}
 - `SHMTU_AUTH_USER_PWD_{学号2}` : {学号2的密码}
 - `SHMTU_AUTH_USER_PWD_ENCRYPT_{学号1}` : {学号1的密码的是否为密文，密文为1，否则不用填}
+
+**可选配置项：**
+
 - `SHMTU_MACHINE_NAME`: 服务器名称
 - `SHMTU_AUTH_TIME_INTERVAL`: 认证状态检测时间间隔
-- `SHMTU_AUTH_WEBHOOK_WEWORK`: 企业微信机器人WebHook
-- `SHMTU_WEBHOOK_SLEEP_TIME_START`: WebHook免打扰-开始时间
-- `SHMTU_WEBHOOK_SLEEP_TIME_END`: WebHook免打扰-结束时间
+<!-- - `SHMTU_AUTH_WEBHOOK_WEWORK`: 企业微信机器人WebHook -->
+<!-- - `SHMTU_WEBHOOK_SLEEP_TIME_START`: WebHook免打扰-开始时间 -->
+<!-- - `SHMTU_WEBHOOK_SLEEP_TIME_END`: WebHook免打扰-结束时间 -->
 
 ## 开发指南
 
-推荐使用`Anaconda`或`Miniconda`创建虚拟环境。
+推荐使用`uv`进行包管理，也可以使用`Anaconda`或`Miniconda`创建虚拟环境。
 推荐使用学生认证的`Jetbrains PyCharm Professional`进行开发。
 
 因为许多开发步骤已经在`PyCharm`中配置好，因此推荐使用`PyCharm`进行开发。

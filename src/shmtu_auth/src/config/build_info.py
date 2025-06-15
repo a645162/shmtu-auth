@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-program_version = "1.2.0"
+from shmtu_auth import __version__ as version
+
+program_version = version
 docker_build_time = ""
 exe_build_time = ""
 wheel_build_time = ""

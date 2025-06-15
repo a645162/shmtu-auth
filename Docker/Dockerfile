@@ -12,7 +12,7 @@ WORKDIR "$BASE_PATH"
 ENV LOGS_PATH="$BASE_PATH/logs"
 
 # Copy Directory
-COPY shmtu_auth/ "$BASE_PATH/"
+COPY src/shmtu_auth/ "$BASE_PATH/"
 
 # Copy Files
 COPY requirements.txt $BASE_PATH/requirements.txt
