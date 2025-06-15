@@ -6,10 +6,10 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
-from .common.config import cfg
-from .view.main_window import MainWindow
+from shmtu_auth.src.gui.common.config import cfg
+from shmtu_auth.src.gui.view.main_window import MainWindow
 
-from ..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 

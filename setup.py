@@ -32,7 +32,8 @@ setup(
     author="Haomin Kong",
     author_email="a645162@gmail.com",
     license="GPLv3",
-    packages=find_packages(),
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     python_requires=">=3.5",
     install_requires=["urllib3<2", "requests", "chardet", "PyYaml", "toml", "loguru"],
     entry_points={
