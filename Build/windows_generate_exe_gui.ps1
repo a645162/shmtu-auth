@@ -65,16 +65,17 @@ else
     Write-Host "Running in Release Mode"
     # $null = Read-Host "Press Enter to Continue"
     Write-Host "Installing requirements..."
-    pip install -r requirements.txt > $null
-    pip install -r r-dev-requirements.txt > $null
-    pip install -r r-gui-requirements.txt > $null
+    # pip install -r requirements.txt > $null
+    # pip install -r r-dev-requirements.txt > $null
+    # pip install -r r-gui-requirements.txt > $null
+    python install.py all
 }
 
 $project_name = "shmtu_auth"
 $profile_name = "windows_gui"
 $project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
-$srcLocation = "$baseLocation\$project_name"
+$srcLocation = "$baseLocation\src\$project_name"
 $outputLocation = "$baseLocation\Build\Output\Windows\$project_name_with_profile"
 $tmpLocation = "$outputLocation\tmp"
 

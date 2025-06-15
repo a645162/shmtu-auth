@@ -119,8 +119,7 @@ class MainWindow(FluentWindow):
         """根据配置显示或隐藏窗口"""
         if cfg.auto_minimize.value or cfg.silent_start.value:
             logger.info("根据配置自动隐藏到系统托盘")
-            # 使用托盘的隐藏方法，确保正确隐藏到托盘
-            self.system_tray._SystemTray__hide_window_to_tray()
+            self.hide()
             if cfg.show_tray_notifications.value:
                 self.system_tray.show_notification(
                     "SHMTU Auth", "程序已启动并隐藏到系统托盘"
@@ -136,8 +135,7 @@ class MainWindow(FluentWindow):
         if cfg.close_to_tray.value and not force_quit:
             logger.info("关闭按钮点击 - 最小化到托盘")
             event.ignore()
-            # 使用托盘的隐藏方法，确保正确隐藏到托盘
-            self.system_tray._SystemTray__hide_window_to_tray()
+            self.hide()
             if cfg.show_tray_notifications.value:
                 self.system_tray.show_notification(
                     "SHMTU Auth", "程序已最小化到系统托盘，双击托盘图标可恢复窗口"
@@ -184,8 +182,7 @@ class MainWindow(FluentWindow):
             and cfg.minimize_to_tray.value
         ):
             logger.info("窗口最小化 - 隐藏到托盘")
-            # 使用托盘的隐藏方法，确保正确隐藏到托盘
-            self.system_tray._SystemTray__hide_window_to_tray()
+            self.hide()
             event.ignore()
         else:
             super().changeEvent(event)

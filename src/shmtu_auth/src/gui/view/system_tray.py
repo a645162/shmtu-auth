@@ -2,7 +2,6 @@
 
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
-from PySide6.QtCore import Qt
 
 from qfluentwidgets import RoundMenu, Action
 from qfluentwidgets import FluentIcon as FIF
@@ -73,41 +72,15 @@ class SystemTray:
                 self.tray_icon.setToolTip(f"{self.tray_icon.toolTip()} | 网络未连接")
 
     def __restore_from_tray(self):
-        """从托盘恢复窗口"""
-        logger.info("从托盘恢复窗口")
+        logger.info("restore_from_tray")
 
-        try:
-            from shmtu_auth.src.system.system_info import SystemType
-
-            if SystemType.is_windows():
-                # 恢复Windows窗口标志
-                if hasattr(self.window, "_original_window_flags"):
-                    logger.debug("Windows: 恢复原始窗口标志")
-                    self.window.setWindowFlags(self.window._original_window_flags)
-                else:
-                    # 如果没有保存的标志，使用默认的窗口标志
-                    self.window.setWindowFlags(Qt.Window)
-
-                # 重新设置窗口属性
-                self.window.setAttribute(Qt.WA_ShowWithoutActivating, False)
-
-        except Exception as e:
-            logger.warning(f"Windows特定恢复方法失败: {e}")
-
-        # 显示窗口
-        self.window.show()
-
-        # 还原窗口状态
+        # 还原窗口
         if self.window.isMinimized():
             self.window.showNormal()
         elif self.window.isMaximized():
             self.window.showMaximized()
-
-        # 激活窗口并置顶
-        self.window.activateWindow()
-        self.window.raise_()
-
-        logger.debug("窗口已从托盘恢复")
+        else:
+            self.window.show()
 
     def __on_tray_icon_activated(self, reason):
         """托盘图标点击事件处理"""
@@ -219,44 +192,7 @@ class SystemTray:
         logger.debug("show_or_hide_window")
         if self.window.isVisible():
             logger.debug("hide_window")
-            self.__hide_window_to_tray()
+            self.window.hide()
         else:
             logger.debug("show_window")
-            self.__restore_from_tray()
-
-    def __hide_window_to_tray(self):
-        """隐藏窗口到托盘"""
-        logger.info("隐藏窗口到系统托盘")
-
-        try:
-            from shmtu_auth.src.system.system_info import SystemType
-
-            if SystemType.is_windows():
-                # Windows特定的隐藏方法 - 保存当前窗口标志
-                if not hasattr(self.window, "_original_window_flags"):
-                    self.window._original_window_flags = self.window.windowFlags()
-
-                # 先隐藏窗口
-                self.window.hide()
-
-                # 设置窗口为工具窗口，这样可以从任务栏移除
-                self.window.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint)
-
-                # 设置不在任务栏显示
-                self.window.setAttribute(Qt.WA_ShowWithoutActivating, True)
-
-                # 确保窗口状态为隐藏
-                self.window.setVisible(False)
-
-                logger.debug("Windows: 应用特殊窗口标志隐藏到托盘")
-            else:
-                # 其他系统直接隐藏
-                self.window.hide()
-                logger.debug("非Windows: 直接隐藏窗口")
-
-        except Exception as e:
-            logger.warning(f"隐藏窗口时出错: {e}")
-            # 回退到简单隐藏
-            self.window.hide()
-
-        logger.debug("窗口已隐藏到托盘")
+            self.window.show()
