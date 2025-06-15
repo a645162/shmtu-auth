@@ -72,7 +72,7 @@ $project_name = "shmtu_auth"
 $profile_name = "windows_console"
 $project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
-$srcLocation = "$baseLocation\$project_name"
+$srcLocation = "$baseLocation\src\$project_name"
 $outputLocation = "$baseLocation\Build\Output\Windows\$project_name_with_profile"
 $tmpLocation = "$outputLocation\tmp"
 

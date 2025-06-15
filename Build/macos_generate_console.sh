@@ -81,8 +81,9 @@ if [[ $DebugMode == true ]]; then
 fi
 if [[ $DebugMode == false ]]; then
     echo "Debug mode is disabled."
-    pip install -r requirements.txt > /dev/null
-    pip install -r r-dev-requirements.txt > /dev/null
+    # pip install -r requirements.txt > /dev/null
+    # pip install -r r-dev-requirements.txt > /dev/null
+    python install.py all
 fi
 
 # Set project name
@@ -92,7 +93,7 @@ project_name_with_profile="${project_name}_${profile_name}"
 echo "project_name_with_profile: $project_name_with_profile"
 
 # Set source and output directories
-src_location="$base_location/$project_name"
+src_location="$base_location/src/$project_name"
 output_location="$base_location/Build/Output/macOS/$project_name_with_profile"
 tmp_location="$output_location/tmp"
 

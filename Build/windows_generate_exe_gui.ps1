@@ -23,6 +23,8 @@ else
 # 获取Python命令的路径
 $pythonCommandPath = (Get-Command -Name "python" -ErrorAction SilentlyContinue).Path
 
+# python --version
+
 # 检查Python命令是否存在
 if (-not $pythonCommandPath)
 {
@@ -94,7 +96,7 @@ pyinstaller `
     --windowed `
     --noconfirm `
     --clean `
-    --icon ..\Assets\Icon\icons\Icon.ico `
+    --icon "$baseLocation\Assets\Icon\icons\Icon.ico" `
     --name $project_name_with_profile `
     --distpath $outputLocation `
     --workpath $tmpLocation `
