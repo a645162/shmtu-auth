@@ -64,8 +64,9 @@ else
 {
     Write-Host "Debug mode is disabled."
     # $null = Read-Host "Press Enter to Continue"
-    pip install -r requirements.txt > $null
-    pip install -r r-dev-requirements.txt > $null
+    # pip install -r requirements.txt > $null
+    # pip install -r r-dev-requirements.txt > $null
+    python install.py all
 }
 
 $project_name = "shmtu_auth"
