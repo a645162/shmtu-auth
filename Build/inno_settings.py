@@ -9,6 +9,6 @@ def modify_inno_variables(src: str, variables: dict) -> str:
     return "\n".join(spilt_list)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Modify Inno Variables
     src = ""

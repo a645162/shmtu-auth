@@ -2,7 +2,12 @@
 
 from PySide6.QtCore import Qt, QRectF, QSize
 from PySide6.QtGui import (
-    QPixmap, QPainter, QColor, QBrush, QPainterPath, QLinearGradient
+    QPixmap,
+    QPainter,
+    QColor,
+    QBrush,
+    QPainterPath,
+    QLinearGradient,
 )
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
@@ -11,17 +16,22 @@ from qfluentwidgets import ScrollArea, isDarkTheme, FluentIcon
 from shmtu_auth.src.gui.common.components.link_card import LinkCardView
 from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
 
-from shmtu_auth.src..common.style_sheet import StyleSheet
-from shmtu_auth.src..common import font_confg
-from shmtu_auth.src..common.config import FEEDBACK_URL, HELP_URL, REPO_URL, AUTHOR_MAIN_PAGE_URL
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
+from shmtu_auth.src.gui.common import font_confg
+from shmtu_auth.src.gui.common.config import (
+    FEEDBACK_URL,
+    HELP_URL,
+    REPO_URL,
+    AUTHOR_MAIN_PAGE_URL,
+)
 
-from shmtu_auth.src...utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
 
 class BannerWidget(QWidget):
-    """ Banner widget """
+    """Banner widget"""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -29,13 +39,11 @@ class BannerWidget(QWidget):
 
         self.vBoxLayout = QVBoxLayout(self)
 
-        self.galleryLabel = QLabel(
-            "ShangHai Maritime University", self
-        )
+        self.galleryLabel = QLabel("ShangHai Maritime University", self)
         self.galleryLabel.setFont(font_confg.title_font)
-        self.galleryLabel.setObjectName('galleryLabel')
+        self.galleryLabel.setObjectName("galleryLabel")
 
-        self.banner: QPixmap = QPixmap(':/shmtu/banner1')
+        self.banner: QPixmap = QPixmap(":/shmtu/banner1")
         self.linkCardView = LinkCardView(self)
 
         self.vBoxLayout.setSpacing(0)
@@ -50,39 +58,32 @@ class BannerWidget(QWidget):
         self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
         self.linkCardView.addCard(
-            ':/gui/Logo128',
-            "快速入门",
-            "查看本程序的在线文档。",
-            HELP_URL
+            ":/gui/Logo128", "快速入门", "查看本程序的在线文档。", HELP_URL
         )
 
         self.linkCardView.addCard(
-            FluentIcon.GITHUB,
-            "Github主页",
-            "查看本程序的源代码。",
-            REPO_URL
+            FluentIcon.GITHUB, "Github主页", "查看本程序的源代码。", REPO_URL
         )
 
         self.linkCardView.addCard(
             FluentIcon.HOME_FILL,
             "孔昊旻的主页",
             "查看作者的其他项目",
-            AUTHOR_MAIN_PAGE_URL
+            AUTHOR_MAIN_PAGE_URL,
         )
 
         self.linkCardView.addCard(
             FluentIcon.FEEDBACK,
             "问题反馈",
             "反馈问题或建议(需要Github账户)。",
-            FEEDBACK_URL
+            FEEDBACK_URL,
         )
 
     def paintEvent(self, e):
         super().paintEvent(e)
 
         painter = QPainter(self)
-        painter.setRenderHints(
-            QPainter.SmoothPixmapTransform | QPainter.Antialiasing)
+        painter.setRenderHints(QPainter.SmoothPixmapTransform | QPainter.Antialiasing)
         painter.setPen(Qt.NoPen)
 
         path = QPainterPath()
@@ -117,7 +118,7 @@ class BannerWidget(QWidget):
         scaled_pixmap = self.banner.scaled(
             QSize(width_new, height_new),
             Qt.AspectRatioMode.IgnoreAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
+            Qt.TransformationMode.SmoothTransformation,
         )
 
         # 计算裁剪坐标(水平全部，垂直是中心部分)
@@ -128,10 +129,7 @@ class BannerWidget(QWidget):
 
         # 裁剪图片
         croped_pixmap = scaled_pixmap.copy(
-            int(crop_x),
-            int(crop_y),
-            int(crop_width),
-            int(crop_height)
+            int(crop_x), int(crop_y), int(crop_width), int(crop_height)
         )
 
         # print(width_target, height_target)
@@ -142,11 +140,7 @@ class BannerWidget(QWidget):
         painter.drawPixmap(
             path.boundingRect(),
             croped_pixmap,
-            QRectF(
-                0, 0,
-                width_target,
-                height_target
-            )
+            QRectF(0, 0, width_target, height_target),
         )
 
         # init linear gradient effect
@@ -164,7 +158,7 @@ class BannerWidget(QWidget):
 
 
 class HomeInterface(ScrollArea):
-    """ Home interface """
+    """Home interface"""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -176,8 +170,8 @@ class HomeInterface(ScrollArea):
         self.load_card_content()
 
     def __initWidget(self):
-        self.view.setObjectName('view')
-        self.setObjectName('homeInterface')
+        self.view.setObjectName("view")
+        self.setObjectName("homeInterface")
         StyleSheet.HOME_INTERFACE.apply(self)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -190,52 +184,48 @@ class HomeInterface(ScrollArea):
         self.vBoxLayout.setAlignment(Qt.AlignTop)
 
     def load_card_content(self):
-        current_application_view_group = SampleCardView(
-            "本程序功能", self.view)
+        current_application_view_group = SampleCardView("本程序功能", self.view)
         current_application_view_group.addSampleCard(
             icon=":/gui/Logo128",
             title="校园网自动认证",
-            content="监控网络状况，自动认证校园网，\n"
-                    "避免因各种因素导致断网。",
+            content="监控网络状况，自动认证校园网，\n" "避免因各种因素导致断网。",
             index=26,
             url="https://a645162.github.io/shmtu-auth/"
-                "1.Guide/0.Quick%20Start/1.Quick%20Start.html"
+            "1.Guide/0.Quick%20Start/1.Quick%20Start.html",
         )
         self.vBoxLayout.addWidget(current_application_view_group)
 
         # 为上海海事大学开发的项目
-        shmtu_project_view_group = (
-            SampleCardView("数字海大系列(非官方,个人学习使用)", self.view))
+        shmtu_project_view_group = SampleCardView(
+            "数字海大系列(非官方,个人学习使用)", self.view
+        )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_terminal",
             title="用户终端(非官方)",
-            content="数字海大的用户终端(第三方)\n"
-                    "主要包括账单获取、账单分析等功能。",
+            content="数字海大的用户终端(第三方)\n" "主要包括账单获取、账单分析等功能。",
             index=3,
-            url="https://github.com/a645162/SHMTU-Terminal-Wails"
+            url="https://github.com/a645162/SHMTU-Terminal-Wails",
         )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_shmtu",
             title="验证码识别服务器(C++)",
             content="自动识别统一认证平台的验证码。",
             index=4,
-            url="https://github.com/a645162/shmtu-cas-ocr-server"
+            url="https://github.com/a645162/shmtu-cas-ocr-server",
         )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_golang",
             title="登录流程(Golang)",
-            content="统一认证平台的登录流程\n"
-                    "包括调用识别验证码接口。",
+            content="统一认证平台的登录流程\n" "包括调用识别验证码接口。",
             index=5,
-            url="https://github.com/a645162/shmtu-cas-go"
+            url="https://github.com/a645162/shmtu-cas-go",
         )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_kotlin",
             title="登录流程(Kotlin)",
-            content="统一认证平台的登录流程\n"
-                    "包括调用识别验证码接口。",
+            content="统一认证平台的登录流程\n" "包括调用识别验证码接口。",
             index=5,
-            url="https://github.com/a645162/shmtu-cas-kotlin"
+            url="https://github.com/a645162/shmtu-cas-kotlin",
         )
         self.vBoxLayout.addWidget(shmtu_project_view_group)
 
@@ -245,18 +235,18 @@ class HomeInterface(ScrollArea):
             icon=":/project/logo_gpu_dashboard",
             title="GPU任务通知工具",
             content="我与师兄合作开发的一款GPU任务监控工具，\n"
-                    "GPU训练任务结束自动推送消息。",
+            "GPU训练任务结束自动推送消息。",
             index=4,
-            url="https://github.com/a645162/nvi-notify"
+            url="https://github.com/a645162/nvi-notify",
         )
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU看板",
             content="GPU任务面板基于"
-                    "Vue3 + Element Plus + Pinia"
-                    "开发，"
-                    "后端为显卡监控脚本的Flask。",
+            "Vue3 + Element Plus + Pinia"
+            "开发，"
+            "后端为显卡监控脚本的Flask。",
             index=4,
-            url="https://github.com/a645162/nvi-notify"
+            url="https://github.com/a645162/nvi-notify",
         )
         self.vBoxLayout.addWidget(group_project_view_group)

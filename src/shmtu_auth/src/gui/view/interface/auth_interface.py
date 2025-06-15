@@ -7,28 +7,28 @@ from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
 from qfluentwidgets import (
     SettingCardGroup,
-
     PrimaryPushSettingCard,
-
     ExpandGroupSettingCard,
-
     ScrollArea,
-    ExpandLayout, Slider, RangeConfigItem, qconfig
+    ExpandLayout,
+    Slider,
+    RangeConfigItem,
+    qconfig,
 )
 from qfluentwidgets import FluentIcon as FIF
 from qfluentwidgets import InfoBar
 
-from .gallery_interface import GalleryInterface
-from shmtu_auth.src.components.fluent.widget_label import FBodyLabel
-from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
+from shmtu_auth.src.gui.view.components.fluent.widget_label import FBodyLabel
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 
-from shmtu_auth.src..common.config import cfg, Config
-from shmtu_auth.src..common.style_sheet import StyleSheet
-from shmtu_auth.src...datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.gui.common.config import cfg, Config
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
 
-from shmtu_auth.src..feature.network_auth import AuthThread
+from shmtu_auth.src.gui.feature.network_auth import AuthThread
 
-from shmtu_auth.src...utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
@@ -86,7 +86,7 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
             FIF.SPEED_OFF,
             "网络状态监控设置",
             "设置网络状态监控的具体细节(一般不需要调整)",
-            parent
+            parent,
         )
 
         self.cfg = cfg
@@ -106,17 +106,25 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
         self.add(self.restore_label, self.restore_button)
 
     def __init_content(self):
-        self.check_internet_interval_slider = \
-            self.SettingGroupSliderWithText(self.cfg.check_internet_interval, self)
+        self.check_internet_interval_slider = self.SettingGroupSliderWithText(
+            self.cfg.check_internet_interval, self
+        )
         self.add(FBodyLabel("检测间隔", self), self.check_internet_interval_slider)
 
-        self.check_internet_retry_times_slider = \
-            self.SettingGroupSliderWithText(self.cfg.check_internet_retry_times, self)
-        self.add(FBodyLabel("联网失败的重试次数", self), self.check_internet_retry_times_slider)
+        self.check_internet_retry_times_slider = self.SettingGroupSliderWithText(
+            self.cfg.check_internet_retry_times, self
+        )
+        self.add(
+            FBodyLabel("联网失败的重试次数", self),
+            self.check_internet_retry_times_slider,
+        )
 
-        self.check_internet_retry_wait_time_slider = \
-            self.SettingGroupSliderWithText(self.cfg.check_internet_retry_wait_time, self)
-        self.add(FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider)
+        self.check_internet_retry_wait_time_slider = self.SettingGroupSliderWithText(
+            self.cfg.check_internet_retry_wait_time, self
+        )
+        self.add(
+            FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider
+        )
 
     def __restore_default(self):
         self.check_internet_interval_slider.restore_default_value()
@@ -148,20 +156,17 @@ class AuthSettingWidget(ScrollArea):
         self.expand_layout.setContentsMargins(36, 10, 36, 0)
 
         # shmtu-auth
-        self.auth_group_general = \
-            SettingCardGroup("通用", self.scroll_widget)
+        self.auth_group_general = SettingCardGroup("通用", self.scroll_widget)
 
         self.start_card = PrimaryPushSettingCard(
-            text="启动",
-            icon=FIF.HELP,
-            title="运行状态",
-            content="启动或关闭服务"
+            text="启动", icon=FIF.HELP, title="运行状态", content="启动或关闭服务"
         )
 
         self.auth_group_general.addSettingCard(self.start_card)
 
-        self.check_interval_card = \
-            InternetCheckSettingCard(cfg=cfg, parent=self.auth_group_general)
+        self.check_interval_card = InternetCheckSettingCard(
+            cfg=cfg, parent=self.auth_group_general
+        )
         self.auth_group_general.addSettingCard(self.check_interval_card)
         self.expand_layout.addWidget(self.auth_group_general)
 
@@ -172,24 +177,21 @@ class AuthSettingWidget(ScrollArea):
         self.setViewportMargins(0, 0, 0, 0)
         self.setWidget(self.scroll_widget)
         self.setWidgetResizable(True)
-        self.setObjectName('settingInterface')
+        self.setObjectName("settingInterface")
 
         # initialize style sheet
-        self.scroll_widget.setObjectName('scrollWidget')
+        self.scroll_widget.setObjectName("scrollWidget")
         StyleSheet.SETTING_INTERFACE.apply(self)
 
     def __show_restart_tooltip(self):
-        """ show restart tooltip """
+        """show restart tooltip"""
         InfoBar.success(
-            "更新成功",
-            "设置已经保存，重启程序后生效。",
-            duration=1500,
-            parent=self
+            "更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self
         )
 
 
 class AuthInterface(GalleryInterface):
-    """ Auth interface """
+    """Auth interface"""
 
     user_list: List[UserItem]
     current_status: bool
@@ -200,9 +202,9 @@ class AuthInterface(GalleryInterface):
         super().__init__(
             title="上海海事大学校园网自动认证",
             subtitle="Author:Haomin Kong",
-            parent=parent
+            parent=parent,
         )
-        self.setObjectName('authInterface')
+        self.setObjectName("authInterface")
 
         if user_list is None:
             raise Exception("user_list is None")
@@ -212,7 +214,9 @@ class AuthInterface(GalleryInterface):
 
         self.vBoxLayout.addWidget(self.authSettingsWidget)
 
-        self.authSettingsWidget.start_card.clicked.connect(self.__on_work_button_clicked)
+        self.authSettingsWidget.start_card.clicked.connect(
+            self.__on_work_button_clicked
+        )
 
         self.current_status = False
         self.set_auth_work_status(False)
@@ -234,7 +238,7 @@ class AuthInterface(GalleryInterface):
                 user_list=self.user_list,
                 check_internet_interval=cfg.check_internet_interval.value,
                 check_internet_retry_times=cfg.check_internet_retry_times.value,
-                check_internet_retry_wait_time=cfg.check_internet_retry_wait_time.value
+                check_internet_retry_wait_time=cfg.check_internet_retry_wait_time.value,
             )
 
             self.work_thread.start()
@@ -253,7 +257,7 @@ class AuthInterface(GalleryInterface):
         self.set_auth_work_status(self.current_status)
 
     def set_auth_work_status(self, status: bool):
-        """ set auth work status """
+        """set auth work status"""
         if status:
             # Started
             self.authSettingsWidget.start_card.iconLabel.setIcon(FIF.PLAY_SOLID)

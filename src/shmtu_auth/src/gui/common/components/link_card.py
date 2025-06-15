@@ -40,8 +40,8 @@ class LinkCard(QFrame):
         )
         self.urlWidget.move(170, 192)
 
-        self.titleLabel.setObjectName('titleLabel')
-        self.contentLabel.setObjectName('contentLabel')
+        self.titleLabel.setObjectName("titleLabel")
+        self.contentLabel.setObjectName("contentLabel")
 
     def mouseReleaseEvent(self, e):
         super().mouseReleaseEvent(e)
@@ -49,7 +49,7 @@ class LinkCard(QFrame):
 
 
 class LinkCardView(SingleDirectionScrollArea):
-    """ Link card view """
+    """Link card view"""
 
     def __init__(self, parent=None):
         super().__init__(parent, Qt.Orientation.Horizontal)
@@ -65,10 +65,10 @@ class LinkCardView(SingleDirectionScrollArea):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
-        self.view.setObjectName('view')
+        self.view.setObjectName("view")
         StyleSheet.LINK_CARD.apply(self)
 
     def addCard(self, icon, title, content, url):
-        """ add link card """
+        """add link card"""
         card = LinkCard(icon, title, content, url, self.view)
         self.hBoxLayout.addWidget(card, 0, Qt.AlignmentFlag.AlignLeft)

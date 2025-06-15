@@ -4,7 +4,7 @@ import requests
 import ssl
 from urllib3 import poolmanager
 
-url = 'https://live.euronext.com/fr/product/equities/FR0000120271-XPAR'
+url = "https://live.euronext.com/fr/product/equities/FR0000120271-XPAR"
 
 
 class TLSAdapter(requests.adapters.HTTPAdapter):
@@ -12,16 +12,17 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
     def init_poolmanager(self, connections, maxsize, block=False):
         """Create and initialize the urllib3 PoolManager."""
         ctx = ssl.create_default_context()
-        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        ctx.set_ciphers("DEFAULT@SECLEVEL=1")
         self.poolmanager = poolmanager.PoolManager(
             num_pools=connections,
             maxsize=maxsize,
             block=block,
             ssl_version=ssl.PROTOCOL_TLS,
-            ssl_context=ctx)
+            ssl_context=ctx,
+        )
 
 
 session = requests.session()
-session.mount('https://', TLSAdapter())
+session.mount("https://", TLSAdapter())
 res = session.get(url)
 print(res)

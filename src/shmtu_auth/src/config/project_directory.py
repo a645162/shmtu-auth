@@ -2,7 +2,7 @@
 
 import os.path
 
-from .data_directory import get_data_path
+from shmtu_auth.src.config.data_directory import get_data_path
 
 project_name = "shmtu_auth"
 
@@ -59,7 +59,7 @@ def get_directory_log_path():
     return get_directory_child("logs")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(get_directory_base_path())
     print(get_directory_config_path())
     print(get_directory_data_path())

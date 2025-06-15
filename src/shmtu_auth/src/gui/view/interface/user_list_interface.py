@@ -7,43 +7,40 @@ import pickle
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QHBoxLayout
-from qfluentwidgets import (Dialog, RoundMenu, Action)
+from qfluentwidgets import Dialog, RoundMenu, Action
 from qfluentwidgets import FluentIcon as FIF
 
-from .gallery_interface import GalleryInterface
+from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
 
-from shmtu_auth.src.gui.view.components.custom.server_count_message_box import ServerCountMessageBox
-from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import UserInfoEditWidget
-from shmtu_auth.src.gui.view.components.custom.user_list_table import UserListTableWidget
-from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
-
-from shmtu_auth.src...config.project_directory import (
-    get_directory_data_path
+from shmtu_auth.src.gui.view.components.custom.server_count_message_box import (
+    ServerCountMessageBox,
 )
-from shmtu_auth.src...datatype.shmtu.auth.auth_user import (
+from shmtu_auth.src.gui.view.components.custom.user_info_edit_widget import (
+    UserInfoEditWidget,
+)
+from shmtu_auth.src.gui.view.components.custom.user_list_table import (
+    UserListTableWidget,
+)
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
+
+from shmtu_auth.src.config.project_directory import get_directory_data_path
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
     UserItem,
-
     generate_test_user_list,
-
     user_list_move_to_top,
     user_list_move_to_bottom,
-
     user_list_move_up,
     user_list_move_down,
-
     user_list_select_list_by_index,
     user_is_exist_in_list,
 )
 
-from shmtu_auth.src...utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
 pickle_user_list_path = "user_list.pickle"
-pickle_user_list_path = os.path.join(
-    get_directory_data_path(),
-    pickle_user_list_path
-)
+pickle_user_list_path = os.path.join(get_directory_data_path(), pickle_user_list_path)
 
 
 class UserListInterface(GalleryInterface):
@@ -57,9 +54,9 @@ class UserListInterface(GalleryInterface):
         super().__init__(
             title="校园网(统一认证平台)账号列表",
             subtitle="Author:Haomin Kong",
-            parent=parent
+            parent=parent,
         )
-        self.setObjectName('userListInterface')
+        self.setObjectName("userListInterface")
 
         if user_list is None:
             raise Exception("user_list is None")
@@ -88,9 +85,7 @@ class UserListInterface(GalleryInterface):
 
         # 编辑
         self.user_info_edit_widget = UserInfoEditWidget(
-            parent=self,
-            user_list=self.user_list,
-            selected_index=self.selected_index
+            parent=self, user_list=self.user_list, selected_index=self.selected_index
         )
         user_info_layout.addWidget(self.user_info_edit_widget)
 
@@ -114,7 +109,7 @@ class UserListInterface(GalleryInterface):
             return
 
         try:
-            with open(pickle_user_list_path, 'rb') as f:
+            with open(pickle_user_list_path, "rb") as f:
                 user_list = pickle.load(f)
 
             self.user_list.clear()
@@ -128,7 +123,7 @@ class UserListInterface(GalleryInterface):
             self.table_widget.update_user_list()
 
     def save_status(self):
-        with open(pickle_user_list_path, 'wb') as f:
+        with open(pickle_user_list_path, "wb") as f:
             pickle.dump(self.user_list, f)
 
     def __user_list_updated(self):
@@ -142,8 +137,7 @@ class UserListInterface(GalleryInterface):
         self.user_info_edit_widget.onSelectedItemChanged.emit()
 
     def __show_context_menu(self, pos):
-        selected_items_count: int = \
-            self.table_widget.selected_items_count
+        selected_items_count: int = self.table_widget.selected_items_count
 
         # 生成右键菜单
         menu = RoundMenu(parent=self)
@@ -195,7 +189,9 @@ class UserListInterface(GalleryInterface):
         menu.addAction(action_select_all)
 
         action_select_cancel = Action(FIF.CANCEL, "取消选择")
-        action_select_cancel.triggered.connect(lambda: self.table_widget.clearSelection())
+        action_select_cancel.triggered.connect(
+            lambda: self.table_widget.clearSelection()
+        )
         menu.addAction(action_select_cancel)
 
         menu.addSeparator()
@@ -235,8 +231,7 @@ class UserListInterface(GalleryInterface):
             machine_count = w.get_count()
 
             self.__generate_docker_config(
-                save_path=save_path,
-                machine_count=machine_count
+                save_path=save_path, machine_count=machine_count
             )
 
             w = Dialog("提示", "生成成功~\n您是否需要打开目录？", self.window())
@@ -256,11 +251,7 @@ class UserListInterface(GalleryInterface):
             if user_item.is_valid():
                 user_list_valid.append(user_item)
 
-    def __add_item(
-            self,
-            user_item: List[UserItem],
-            insert_index: int = -1
-    ):
+    def __add_item(self, user_item: List[UserItem], insert_index: int = -1):
         if len(user_item) == 0:
             return
 
@@ -268,9 +259,9 @@ class UserListInterface(GalleryInterface):
         for item in user_item:
             current_item = item.copy()
             if user_is_exist_in_list(
-                    user_list=self.user_list,
-                    user_id=current_item.user_id,
-                    excluded_indexes=[]
+                user_list=self.user_list,
+                user_id=current_item.user_id,
+                excluded_indexes=[],
             ):
                 current_item.user_id = ""
 
@@ -288,38 +279,33 @@ class UserListInterface(GalleryInterface):
     def __menu_action_create(self):
         insert_index = -1
         if self.table_widget.selected_items_count > 0:
-            insert_index = \
+            insert_index = (
                 self.table_widget.selected_index[
                     self.table_widget.selected_items_count - 1
-                    ] + 1
+                ]
+                + 1
+            )
 
-        self.__add_item(
-            [UserItem()],
-            insert_index=insert_index
-        )
+        self.__add_item([UserItem()], insert_index=insert_index)
 
     def __menu_action_clone(self):
-        selected_list = \
-            user_list_select_list_by_index(
-                user_list=self.user_list,
-                index=self.table_widget.selected_index
-            )
+        selected_list = user_list_select_list_by_index(
+            user_list=self.user_list, index=self.table_widget.selected_index
+        )
 
         insert_index = -1
         if self.table_widget.selected_items_count > 0:
-            insert_index = \
+            insert_index = (
                 self.table_widget.selected_index[
                     self.table_widget.selected_items_count - 1
-                    ] + 1
+                ]
+                + 1
+            )
 
-        self.__add_item(
-            selected_list,
-            insert_index=insert_index
-        )
+        self.__add_item(selected_list, insert_index=insert_index)
 
     def __menu_action_del(self):
-        selected_index: List[int] = \
-            self.selected_index.copy()
+        selected_index: List[int] = self.selected_index.copy()
         selected_index.sort(reverse=True)
         for i in selected_index:
             self.user_list.pop(i)
@@ -327,39 +313,29 @@ class UserListInterface(GalleryInterface):
         self.table_widget.update_user_list()
 
     def __menu_action_move_to_top(self):
-        final_selection_index: List[int] = \
-            user_list_move_to_top(
-                user_list=self.user_list,
-                index=self.selected_index
-            )
+        final_selection_index: List[int] = user_list_move_to_top(
+            user_list=self.user_list, index=self.selected_index
+        )
         self.table_widget.update_user_list()
         self.table_widget.set_select_index_list(final_selection_index)
 
     def __menu_action_move_to_bottom(self):
-        final_selection_index: List[int] = \
-            user_list_move_to_bottom(
-                user_list=self.user_list,
-                index=self.selected_index
-            )
+        final_selection_index: List[int] = user_list_move_to_bottom(
+            user_list=self.user_list, index=self.selected_index
+        )
         self.table_widget.update_user_list()
         self.table_widget.set_select_index_list(final_selection_index)
 
     def __menu_action_move_up(self):
-        final_selection_index: List[int] = \
-            user_list_move_up(
-                user_list=self.user_list,
-                index=self.selected_index,
-                step=1
-            )
+        final_selection_index: List[int] = user_list_move_up(
+            user_list=self.user_list, index=self.selected_index, step=1
+        )
         self.table_widget.update_user_list()
         self.table_widget.set_select_index_list(final_selection_index)
 
     def __menu_action_move_down(self):
-        final_selection_index: List[int] = \
-            user_list_move_down(
-                user_list=self.user_list,
-                index=self.selected_index,
-                step=1
-            )
+        final_selection_index: List[int] = user_list_move_down(
+            user_list=self.user_list, index=self.selected_index, step=1
+        )
         self.table_widget.update_user_list()
         self.table_widget.set_select_index_list(final_selection_index)

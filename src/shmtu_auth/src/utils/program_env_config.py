@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .env import get_env_str
+from shmtu_auth.src.utils.env import get_env_str
 
 
 def get_user_num_list():
@@ -30,7 +30,7 @@ def get_user_list():
         pwd = get_user_pwd(truly_user_num)
         if pwd != "":
             is_encrypt = (
-                    len(get_env_str("SHMTU_AUTH_USER_PWD_ENCRYPT_" + user_num, "")) > 0
+                len(get_env_str("SHMTU_AUTH_USER_PWD_ENCRYPT_" + user_num, "")) > 0
             )
             return_list.append((truly_user_num, pwd, is_encrypt))
 

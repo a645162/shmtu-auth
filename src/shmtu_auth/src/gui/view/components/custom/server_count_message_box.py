@@ -11,12 +11,14 @@ class QLabelInDialog(QLabel):
     def __init__(self, text: str, parent=None):
         super().__init__(parent)
         self.setText(text)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QLabel {
                 font-size: 14px;
                 color: #333333;
             }
-        """)
+        """
+        )
 
 
 class ServerCountMessageBox(MessageBoxBase):

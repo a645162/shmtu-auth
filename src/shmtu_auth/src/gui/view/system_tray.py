@@ -3,10 +3,10 @@
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
 
-from qfluentwidgets import (RoundMenu, Action)
+from qfluentwidgets import RoundMenu, Action
 from qfluentwidgets import FluentIcon as FIF
 
-from shmtu_auth.src..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
@@ -75,9 +75,7 @@ class SystemTray:
 
     def __create_menu_action(self):
         self._restore_action = Action(FIF.LINK, "显示")
-        self._restore_action.triggered.connect(
-            lambda: self.__restore_from_tray()
-        )
+        self._restore_action.triggered.connect(lambda: self.__restore_from_tray())
 
         self._quit_action = Action(FIF.CLOSE, "退出程序")
         self._quit_action.triggered.connect(QApplication.quit)

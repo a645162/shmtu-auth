@@ -3,8 +3,8 @@
 import os
 
 
-def get_windows_data_path(project_name=''):
-    data_path = os.path.join(os.environ['USERPROFILE'], 'AppData', 'Roaming')
+def get_windows_data_path(project_name=""):
+    data_path = os.path.join(os.environ["USERPROFILE"], "AppData", "Roaming")
 
     project_path = project_name.strip()
     if len(project_path):
@@ -15,8 +15,8 @@ def get_windows_data_path(project_name=''):
     return data_path
 
 
-def get_mac_data_path(project_name=''):
-    data_path = os.path.join(os.environ['HOME'], 'Library', 'Application Support')
+def get_mac_data_path(project_name=""):
+    data_path = os.path.join(os.environ["HOME"], "Library", "Application Support")
 
     project_path = project_name.strip()
     if len(project_path):
@@ -25,8 +25,8 @@ def get_mac_data_path(project_name=''):
     return data_path
 
 
-def get_linux_data_path(project_name=''):
-    data_path = os.path.join(os.environ['HOME'], '.config')
+def get_linux_data_path(project_name=""):
+    data_path = os.path.join(os.environ["HOME"], ".config")
 
     project_path = project_name.strip()
     if len(project_path):
@@ -35,18 +35,18 @@ def get_linux_data_path(project_name=''):
     return data_path
 
 
-def get_data_path(project_name=''):
-    if os.name == 'nt':
+def get_data_path(project_name=""):
+    if os.name == "nt":
         return get_windows_data_path(project_name)
-    elif os.name == 'mac':
+    elif os.name == "mac":
         return get_mac_data_path(project_name)
-    elif os.name == 'posix':
+    elif os.name == "posix":
         return get_linux_data_path(project_name)
     else:
-        raise Exception('Unsupported OS')
+        raise Exception("Unsupported OS")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(os.name)
     print(get_windows_data_path("shmtu_auth"))
     print(get_mac_data_path("shmtu_auth"))

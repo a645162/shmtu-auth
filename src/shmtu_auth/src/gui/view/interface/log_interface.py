@@ -6,41 +6,30 @@ import datetime
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem
-from qfluentwidgets import (
-    TableWidget, InfoBar, InfoBarIcon, InfoBarPosition
-)
+from qfluentwidgets import TableWidget, InfoBar, InfoBarIcon, InfoBarPosition
 
-from .gallery_interface import GalleryInterface
-from shmtu_auth.src.components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 
 import pickle
 
-from shmtu_auth.src...config.project_directory import (
-    get_directory_data_path
-)
+from shmtu_auth.src.config.project_directory import get_directory_data_path
 
-from shmtu_auth.src..common.signal_bus import signal_bus
+from shmtu_auth.src.gui.common.signal_bus import signal_bus
 
-from shmtu_auth.src...utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
 pickle_log_path = "logs.pickle"
-pickle_log_path = os.path.join(
-    get_directory_data_path(),
-    pickle_log_path
-)
+pickle_log_path = os.path.join(get_directory_data_path(), pickle_log_path)
 
 
 class LogInterface(GalleryInterface):
 
     def __init__(self, parent=None):
-        super().__init__(
-            title="程序日志",
-            subtitle="Author:Haomin Kong",
-            parent=parent
-        )
-        self.setObjectName('logInterface')
+        super().__init__(title="程序日志", subtitle="Author:Haomin Kong", parent=parent)
+        self.setObjectName("logInterface")
 
         info_bar = InfoBar(
             icon=InfoBarIcon.INFORMATION,
@@ -50,7 +39,7 @@ class LogInterface(GalleryInterface):
             isClosable=True,
             duration=-1,
             position=InfoBarPosition.NONE,
-            parent=self
+            parent=self,
         )
         self.vBoxLayout.addWidget(info_bar)
 
@@ -62,10 +51,7 @@ class LogInterface(GalleryInterface):
         self.logTable = LogTableFrame(self)
         self.vBoxLayout.addWidget(self.logTable)
 
-    def add_new_record(
-            self,
-            time: str = "", event: str = "", status: str = ""
-    ):
+    def add_new_record(self, time: str = "", event: str = "", status: str = ""):
         self.logTable.add_record(time=time, event=event, status=status)
 
     def export_logs(self):
@@ -86,11 +72,13 @@ class LogTableFrame(TableWidget):
         self.setBorderVisible(True)
 
         self.setColumnCount(self.column_count)
-        self.setHorizontalHeaderLabels([
-            "日志时间",
-            "事件",
-            "状态",
-        ])
+        self.setHorizontalHeaderLabels(
+            [
+                "日志时间",
+                "事件",
+                "状态",
+            ]
+        )
 
         # self.add_record("2024年01月01日 12:34:56", "检测到网络断开", "成功")
 
@@ -106,19 +94,15 @@ class LogTableFrame(TableWidget):
 
     def add_new_record(self, event: str, status: str):
         now = datetime.datetime.now()
-        time = now.strftime('%Y-%m-%d %H:%M:%S')
-        self.add_record(
-            time=time,
-            event=event,
-            status=status
-        )
+        time = now.strftime("%Y-%m-%d %H:%M:%S")
+        self.add_record(time=time, event=event, status=status)
 
     def read_status(self):
         if not os.path.exists(pickle_log_path):
             return
 
         try:
-            with open(pickle_log_path, 'rb') as f:
+            with open(pickle_log_path, "rb") as f:
                 self.record_list = pickle.load(f)
         except Exception:
             return
@@ -127,20 +111,13 @@ class LogTableFrame(TableWidget):
             self.update_by_list()
 
     def save_status(self):
-        with open(pickle_log_path, 'wb') as f:
+        with open(pickle_log_path, "wb") as f:
             pickle.dump(self.record_list, f)
 
-    def update_record(
-            self,
-            index: int,
-            current_record: List[str]
-    ):
+    def update_record(self, index: int, current_record: List[str]):
         for j in range(min(current_record.__len__(), self.column_count)):
             current_text = current_record[j]
-            self.setItem(
-                index, j,
-                QTableWidgetItem(current_text)
-            )
+            self.setItem(index, j, QTableWidgetItem(current_text))
 
     def update_by_list(self, record_list: List[List[str]] = None):
         if record_list is not None:

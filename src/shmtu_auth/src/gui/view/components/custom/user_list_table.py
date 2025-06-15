@@ -9,18 +9,11 @@ from qfluentwidgets import TableWidget
 from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
     UserItem,
     convert_to_list_list,
-    generate_test_user_list
+    generate_test_user_list,
 )
 from shmtu_auth.src.gui.view.components.fluent.widget_table import QFluentTableWidget
 
-table_header = [
-    "学号",
-    "姓名",
-    "密码",
-    "支持类型",
-    "过期时间",
-    "有效"
-]
+table_header = ["学号", "姓名", "密码", "支持类型", "过期时间", "有效"]
 
 
 class UserListTableWidget(QFluentTableWidget):
@@ -56,8 +49,7 @@ class UserListTableWidget(QFluentTableWidget):
 
         self.setRowCount(user_count)
 
-        user_list: List[List[str]] = \
-            convert_to_list_list(self.user_list)
+        user_list: List[List[str]] = convert_to_list_list(self.user_list)
 
         for i, user_info_str_list in enumerate(user_list):
             for j in range(user_info_str_list.__len__()):
@@ -67,10 +59,7 @@ class UserListTableWidget(QFluentTableWidget):
                 if j == 2:
                     text = "*" * len(text)
 
-                self.setItem(
-                    i, j,
-                    QTableWidgetItem(text)
-                )
+                self.setItem(i, j, QTableWidgetItem(text))
 
         self.resizeColumnsToContents()
         self.slot_user_list_updated.emit()

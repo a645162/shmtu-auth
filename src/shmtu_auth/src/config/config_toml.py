@@ -10,7 +10,7 @@ env_from_toml: dict = {}
 
 
 def read_file_directly(file_path: str) -> str:
-    with open(file_path, 'r', encoding="utf-8") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
@@ -36,9 +36,7 @@ def output_toml_result():
         print("No TOML Config Load!")
 
 
-def read_config_toml(
-        toml_path: str = 'config.toml'
-) -> bool:
+def read_config_toml(toml_path: str = "config.toml") -> bool:
     global toml_config_dict
 
     if not os.path.exists(toml_path):
@@ -58,6 +56,6 @@ def read_config_toml(
     return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     read_config_toml()
     print()

@@ -5,15 +5,12 @@ from typing import List
 import threading
 from time import sleep as time_sleep
 
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
-    UserItem,
-    get_valid_user_list
-)
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, get_valid_user_list
 
-from shmtu_auth.src..core.core_exp import check_is_connected
-from shmtu_auth.src..core.shmtu_auth import ShmtuNetAuth
+from shmtu_auth.src.core.core_exp import check_is_connected
+from shmtu_auth.src.core.shmtu_auth import ShmtuNetAuth
 
-from shmtu_auth.src.common.signal_bus import log_new
+from shmtu_auth.src.gui.common.signal_bus import log_new
 
 
 class AuthThread(threading.Thread):
@@ -29,14 +26,11 @@ class AuthThread(threading.Thread):
     shmtu_auth_obj: ShmtuNetAuth
 
     def __init__(
-            self,
-
-            user_list: List[UserItem] = None,
-
-            check_internet_interval: int = 60,
-
-            check_internet_retry_times: int = 3,
-            check_internet_retry_wait_time: int = 30,
+        self,
+        user_list: List[UserItem] = None,
+        check_internet_interval: int = 60,
+        check_internet_retry_times: int = 3,
+        check_internet_retry_wait_time: int = 30,
     ):
         super().__init__()
 
@@ -90,9 +84,7 @@ class AuthThread(threading.Thread):
                 continue
 
             if self.shmtu_auth_obj.login(
-                    user.user_id,
-                    user.password,
-                    user.is_encrypted
+                user.user_id, user.password, user.is_encrypted
             ):
                 log_new("Auth", f"认证成功：{user.user_id}")
                 break
@@ -100,10 +92,7 @@ class AuthThread(threading.Thread):
                 log_new("Auth", f"认证失败：{user.user_id}")
 
     def run(self):
-        if (
-                self.user_list is None or
-                len(self.user_list) == 0
-        ):
+        if self.user_list is None or len(self.user_list) == 0:
             return
 
         while self.need_work:

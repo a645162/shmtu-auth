@@ -33,5 +33,5 @@ def gui_main_application():
     app.exec()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     gui_main_application()

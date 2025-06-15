@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from shmtu_auth.src.common.config import cfg
-from .check_update import start_check_update_once_thread
+from shmtu_auth.src.gui.common.config import cfg
+from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
 
 
 def task_auto_start():

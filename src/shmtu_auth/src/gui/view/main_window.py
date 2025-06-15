@@ -9,38 +9,39 @@ from qfluentwidgets import (
     NavigationItemPosition,
     FluentWindow,
     SplashScreen,
-    MessageBox
+    MessageBox,
 )
 from qfluentwidgets import FluentIcon as FIF
 
-from shmtu_auth.src.common.config import cfg, RELEASE_URL
+from shmtu_auth.src.gui.common.config import cfg, RELEASE_URL
 
-from .interface.about_interface import AboutInterface
-from .interface.log_interface import LogInterface
-from .interface.user_list_interface import UserListInterface
+from shmtu_auth.src.gui.view.interface.about_interface import AboutInterface
+from shmtu_auth.src.gui.view.interface.log_interface import LogInterface
+from shmtu_auth.src.gui.view.interface.user_list_interface import UserListInterface
 
-from .interface.home_interface import HomeInterface
-from .interface.auth_interface import AuthInterface
-from .interface.settings_interface import SettingInterface
+from shmtu_auth.src.gui.view.interface.home_interface import HomeInterface
+from shmtu_auth.src.gui.view.interface.auth_interface import AuthInterface
+from shmtu_auth.src.gui.view.interface.settings_interface import SettingInterface
 
 # 加载资源文件,虽然表面上没有调用(不可以移除!)
-from shmtu_auth.src.resource import resources
+from shmtu_auth.src.gui.resource import resources
 
-from .system_tray import SystemTray
-from shmtu_auth.src..datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.gui.view.system_tray import SystemTray
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
 
-from shmtu_auth.src.common.system_menu import (
-    init_system_menu
-)
-from shmtu_auth.src.common.signal_bus import signal_bus, log_new
+from shmtu_auth.src.gui.common.system_menu import init_system_menu
+from shmtu_auth.src.gui.common.signal_bus import signal_bus, log_new
 
-from shmtu_auth.src.task.task_center import task_auto_start
-from shmtu_auth.src.software import program_update
-from shmtu_auth.src..system.system_info import SystemType
+from shmtu_auth.src.gui.task.task_center import task_auto_start
+from shmtu_auth.src.gui.software import program_update
+from shmtu_auth.src.system.system_info import SystemType
 
-from shmtu_auth.src..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
+
+# dummy import for type hinting
+resources
 
 
 class MainWindow(FluentWindow):
@@ -90,69 +91,44 @@ class MainWindow(FluentWindow):
         self.navigationInterface.addSeparator()
 
         pos = NavigationItemPosition.SCROLL
-        self.addSubInterface(
-            self.auth_interface,
-            FIF.VPN,
-            "校园网认证",
-            pos
-        )
-        self.addSubInterface(
-            self.user_list_interface,
-            FIF.PEOPLE,
-            "用户列表",
-            pos
-        )
+        self.addSubInterface(self.auth_interface, FIF.VPN, "校园网认证", pos)
+        self.addSubInterface(self.user_list_interface, FIF.PEOPLE, "用户列表", pos)
 
         self.navigationInterface.addSeparator(pos)
 
-        self.addSubInterface(
-            self.log_interface,
-            FIF.DATE_TIME,
-            "工作日志",
-            pos
-        )
+        self.addSubInterface(self.log_interface, FIF.DATE_TIME, "工作日志", pos)
 
         # add custom widget to bottom
         self.navigationInterface.addItem(
-            routeKey='github.io',
+            routeKey="github.io",
             icon=FIF.DOCUMENT,
             text="项目文档",
-            onClick=
-            lambda: QDesktopServices.openUrl(
+            onClick=lambda: QDesktopServices.openUrl(
                 QUrl("https://a645162.github.io/shmtu-auth/")
             ),
             selectable=False,
             tooltip="项目文档",
-            position=NavigationItemPosition.BOTTOM
+            position=NavigationItemPosition.BOTTOM,
         )
         self.navigationInterface.addItem(
-            routeKey='github',
+            routeKey="github",
             icon=FIF.GITHUB,
             text="项目源代码仓库",
-            onClick=
-            lambda: QDesktopServices.openUrl(
+            onClick=lambda: QDesktopServices.openUrl(
                 QUrl("https://github.com/a645162/shmtu-auth")
             ),
             selectable=False,
             tooltip="官方网站",
-            position=NavigationItemPosition.BOTTOM
+            position=NavigationItemPosition.BOTTOM,
         )
 
-        self.navigationInterface.addSeparator(
-            position=NavigationItemPosition.BOTTOM
-        )
+        self.navigationInterface.addSeparator(position=NavigationItemPosition.BOTTOM)
 
         self.addSubInterface(
-            self.setting_interface,
-            FIF.SETTING,
-            "设置",
-            NavigationItemPosition.BOTTOM
+            self.setting_interface, FIF.SETTING, "设置", NavigationItemPosition.BOTTOM
         )
         self.addSubInterface(
-            self.about_interface,
-            FIF.INFO,
-            "关于",
-            NavigationItemPosition.BOTTOM
+            self.about_interface, FIF.INFO, "关于", NavigationItemPosition.BOTTOM
         )
 
     def __init_window(self):
@@ -174,13 +150,10 @@ class MainWindow(FluentWindow):
 
         self.setMinimumWidth(min_width)
         self.setMinimumHeight(min_height)
-        self.resize(
-            default_width,
-            default_height
-        )
+        self.resize(default_width, default_height)
 
-        self.setWindowIcon(QIcon(':/gui/Logo128'))
-        self.setWindowTitle('shmtu-auth')
+        self.setWindowIcon(QIcon(":/gui/Logo128"))
+        self.setWindowTitle("shmtu-auth")
 
         # 直接关闭Mica云母特效(我的AMD Radeon RX 6800 显卡反正是显示有问题)
         self.setMicaEffectEnabled(False)
@@ -232,5 +205,5 @@ class MainWindow(FluentWindow):
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
-        if hasattr(self, 'splashScreen'):
+        if hasattr(self, "splashScreen"):
             self.splash_screen.resize(self.size())

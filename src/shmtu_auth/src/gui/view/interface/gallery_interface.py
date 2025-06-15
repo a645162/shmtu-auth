@@ -5,21 +5,30 @@ from PySide6.QtGui import QDesktopServices, QPainter, QPen, QColor
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 
 from qfluentwidgets import (
-    ScrollArea, PushButton, ToolButton, FluentIcon,
-    isDarkTheme, IconWidget, ToolTipFilter, TitleLabel, CaptionLabel,
-    StrongBodyLabel, BodyLabel, toggleTheme
+    ScrollArea,
+    PushButton,
+    ToolButton,
+    FluentIcon,
+    isDarkTheme,
+    IconWidget,
+    ToolTipFilter,
+    TitleLabel,
+    CaptionLabel,
+    StrongBodyLabel,
+    BodyLabel,
+    toggleTheme,
 )
 
-from shmtu_auth.src..common.config import FEEDBACK_URL, HELP_URL, REPO_URL
-from shmtu_auth.src..common.style_sheet import StyleSheet
+from shmtu_auth.src.gui.common.config import FEEDBACK_URL, HELP_URL, REPO_URL
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 
-from shmtu_auth.src...utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
 
 class SeparatorWidget(QWidget):
-    """ Seperator widget """
+    """Seperator widget"""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -38,7 +47,7 @@ class SeparatorWidget(QWidget):
 
 
 class ToolBar(QWidget):
-    """ Tool bar """
+    """Tool bar"""
 
     document_url: str = ""
 
@@ -47,8 +56,7 @@ class ToolBar(QWidget):
         self.titleLabel = TitleLabel(title, self)
         self.subtitleLabel = CaptionLabel(subtitle, self)
 
-        self.documentButton = PushButton(
-            "使用文档", self, FluentIcon.DOCUMENT)
+        self.documentButton = PushButton("使用文档", self, FluentIcon.DOCUMENT)
         self.sourceButton = PushButton("程序源代码", self, FluentIcon.GITHUB)
         self.themeButton = ToolButton(FluentIcon.CONSTRACT, self)
         self.separator = SeparatorWidget(self)
@@ -84,10 +92,9 @@ class ToolBar(QWidget):
 
         self.themeButton.installEventFilter(ToolTipFilter(self.themeButton))
         self.supportButton.installEventFilter(ToolTipFilter(self.supportButton))
-        self.feedbackButton.installEventFilter(
-            ToolTipFilter(self.feedbackButton))
+        self.feedbackButton.installEventFilter(ToolTipFilter(self.feedbackButton))
         self.themeButton.setToolTip("切换主题")
-        self.supportButton.setToolTip(self.tr('Support me'))
+        self.supportButton.setToolTip(self.tr("Support me"))
         self.feedbackButton.setToolTip("提交反馈")
 
         self.themeButton.clicked.connect(lambda: toggleTheme(True))
@@ -97,18 +104,21 @@ class ToolBar(QWidget):
         if len(final_help_url) == 0:
             final_help_url = HELP_URL
         self.documentButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(final_help_url)))
+            lambda: QDesktopServices.openUrl(QUrl(final_help_url))
+        )
 
         self.sourceButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
+            lambda: QDesktopServices.openUrl(QUrl(REPO_URL))
+        )
         self.feedbackButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+            lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL))
+        )
 
         self.subtitleLabel.setTextColor(QColor(96, 96, 96), QColor(216, 216, 216))
 
 
 class ExampleCard(QWidget):
-    """ Example card """
+    """Example card"""
 
     def __init__(self, title, widget: QWidget, sourcePath, stretch=0, parent=None):
         super().__init__(parent=parent)
@@ -120,8 +130,7 @@ class ExampleCard(QWidget):
 
         self.sourceWidget = QFrame(self.card)
         self.sourcePath = sourcePath
-        self.sourcePathLabel = BodyLabel(
-            self.tr('Source code'), self.sourceWidget)
+        self.sourcePathLabel = BodyLabel(self.tr("Source code"), self.sourceWidget)
         self.linkIcon = IconWidget(FluentIcon.LINK, self.sourceWidget)
 
         self.vBoxLayout = QVBoxLayout(self)
@@ -138,8 +147,8 @@ class ExampleCard(QWidget):
         self.sourceWidget.setCursor(Qt.PointingHandCursor)
         self.sourceWidget.installEventFilter(self)
 
-        self.card.setObjectName('card')
-        self.sourceWidget.setObjectName('sourceWidget')
+        self.card.setObjectName("card")
+        self.sourceWidget.setObjectName("sourceWidget")
 
     def __initLayout(self):
         self.vBoxLayout.setSizeConstraint(QVBoxLayout.SetMinimumSize)
@@ -182,7 +191,7 @@ class ExampleCard(QWidget):
 
 
 class GalleryInterface(ScrollArea):
-    """ Gallery interface """
+    """Gallery interface"""
 
     def __init__(self, title: str, subtitle: str, parent=None):
         """
@@ -211,11 +220,11 @@ class GalleryInterface(ScrollArea):
         self.vBoxLayout.setAlignment(Qt.AlignTop)
         self.vBoxLayout.setContentsMargins(36, 20, 36, 36)
 
-        self.view.setObjectName('view')
+        self.view.setObjectName("view")
         StyleSheet.GALLERY_INTERFACE.apply(self)
 
     def set_document_url(self, url: str):
-        """ set document url """
+        """set document url"""
         if isinstance(url, str):
             return
         url = url.strip()
@@ -228,7 +237,7 @@ class GalleryInterface(ScrollArea):
         return card
 
     def scrollToCard(self, index: int):
-        """ scroll to example card """
+        """scroll to example card"""
         w = self.vBoxLayout.itemAt(index).widget()
         self.verticalScrollBar().setValue(w.y())
 

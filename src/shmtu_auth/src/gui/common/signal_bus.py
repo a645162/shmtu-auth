@@ -4,7 +4,7 @@ from PySide6.QtCore import QObject, Signal
 
 
 class SignalBus(QObject):
-    """ Signal bus """
+    """Signal bus"""
 
     signal_log_new = Signal(str, str)
 

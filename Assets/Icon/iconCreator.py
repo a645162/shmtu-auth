@@ -6,6 +6,7 @@
 #
 
 import os
+
 # import sys
 from PIL import Image
 from pathlib import Path
@@ -37,7 +38,7 @@ for dir in directories:
     if not os.path.exists(pathToDir):
         os.makedirs(pathToDir)
 
-    if dir == 'base':
+    if dir == "base":
         # General icons
         imgSizes = [16, 24, 32, 48, 64]
     else:
@@ -50,7 +51,7 @@ for dir in directories:
             with Image.open(infile) as img:
                 # Scale & convert image
 
-                if 'mac' in dir:
+                if "mac" in dir:
                     # Add ~5% margin to Mac icons
                     m = int(img.size[0] * 0.05)
                     img = addMargin(img, m, m, m, m)

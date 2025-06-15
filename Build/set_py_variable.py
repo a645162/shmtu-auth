@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-def set_py_variable(
-        src_text: str,
-        var_name: str, var_value: str
-) -> str:
+def set_py_variable(src_text: str, var_name: str, var_value: str) -> str:
     """
     设置py文件中的变量
     :param src_text:

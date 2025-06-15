@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class ProgramVersion:
     """
     程序版本
@@ -18,7 +19,11 @@ class ProgramVersion:
 
     def __eq__(self, other):
         if isinstance(other, ProgramVersion):
-            return self.major == other.major and self.minor == other.minor and self.patch == other.patch
+            return (
+                self.major == other.major
+                and self.minor == other.minor
+                and self.patch == other.patch
+            )
         return False
 
     def __ne__(self, other):
@@ -61,10 +66,7 @@ class ProgramVersion:
         :param version_str: 版本字符串
         :return: 版本对象
         """
-        version_str = (
-            version_str.replace("v", "")
-            .strip()
-        )
+        version_str = version_str.replace("v", "").strip()
 
         if version_str == "":
             return None

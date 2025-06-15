@@ -2,9 +2,9 @@
 
 import threading
 
-from shmtu_auth.src.software import program_update
+from shmtu_auth.src.gui.software import program_update
 
-from shmtu_auth.src.common.signal_bus import signal_bus, log_new
+from shmtu_auth.src.gui.common.signal_bus import signal_bus, log_new
 
 
 class CheckUpdateOnceThread(threading.Thread):

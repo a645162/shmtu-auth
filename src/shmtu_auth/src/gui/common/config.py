@@ -3,22 +3,29 @@
 
 from PySide6.QtWidgets import QApplication
 from qfluentwidgets import (
-    qconfig, QConfig, ConfigItem, OptionsConfigItem, BoolValidator,
-    OptionsValidator, RangeConfigItem, RangeValidator,
-    Theme, FolderValidator
+    qconfig,
+    QConfig,
+    ConfigItem,
+    OptionsConfigItem,
+    BoolValidator,
+    OptionsValidator,
+    RangeConfigItem,
+    RangeValidator,
+    Theme,
+    FolderValidator,
 )
 
 from qfluentwidgets import __version__ as q_fluent_widgets_version
-from shmtu_auth.src..config.build_info import program_version
-from shmtu_auth.src..system.system_info import SystemType
+from shmtu_auth.src.config.build_info import program_version
+from shmtu_auth.src.system.system_info import SystemType
 
-from shmtu_auth.src..utils.logs import get_logger
+from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
 
 
 class Config(QConfig):
-    """ Config of application """
+    """Config of application"""
 
     # shmtu-auth
     auth_auto_start_work_thread = ConfigItem(
@@ -42,44 +49,35 @@ class Config(QConfig):
         "Auth", "AdvancedFeature", False, BoolValidator()
     )
     auth_docker_save_folder = ConfigItem(
-        "Auth", "DockerSaveFolder", "", FolderValidator())
+        "Auth", "DockerSaveFolder", "", FolderValidator()
+    )
 
     # 通用设置
-    auto_startup = ConfigItem(
-        "General", "AutoStartup", False, BoolValidator()
-    )
-    auto_minimize = ConfigItem(
-        "General", "AutoMinimize", False, BoolValidator()
-    )
+    auto_startup = ConfigItem("General", "AutoStartup", False, BoolValidator())
+    auto_minimize = ConfigItem("General", "AutoMinimize", False, BoolValidator())
 
     # 界面个性化
 
     # Main Window
-    mica_enabled = \
-        ConfigItem(
-            "MainWindow",
-            "MicaEnabled",
-            SystemType.is_windows11(),
-            BoolValidator()
-        )
+    mica_enabled = ConfigItem(
+        "MainWindow", "MicaEnabled", SystemType.is_windows11(), BoolValidator()
+    )
     dpi_scale = OptionsConfigItem(
-        "MainWindow", "DpiScale", "Auto",
+        "MainWindow",
+        "DpiScale",
+        "Auto",
         OptionsValidator([1, 1.25, 1.5, 1.75, 2, "Auto"]),
-        restart=True
+        restart=True,
     )
 
     # Material
     blur_radius = RangeConfigItem(
-        "Material", "AcrylicBlurRadius", 15,
-        RangeValidator(0, 40)
+        "Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40)
     )
 
     # software update
     check_update_at_start_up = ConfigItem(
-        "Update",
-        "CheckUpdateAtStartUp",
-        True,
-        BoolValidator()
+        "Update", "CheckUpdateAtStartUp", True, BoolValidator()
     )
 
     def get_dpi_ratio(self) -> float:
@@ -89,8 +87,9 @@ class Config(QConfig):
         if dpi_scale_str == "Auto":
             # Get System Dpi Scale
             if SystemType.is_windows():
-                dpi_scale: float = \
-                    float(QApplication.primaryScreen().devicePixelRatio())
+                dpi_scale: float = float(
+                    QApplication.primaryScreen().devicePixelRatio()
+                )
         else:
             dpi_scale: float = float(dpi_scale_str)
 
@@ -117,6 +116,6 @@ INTERFACE_URL_LOG = ""
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
-qconfig.load('config/gui_config.json', cfg)
+qconfig.load("config/gui_config.json", cfg)
 
 logger.info(f"QFluentWidgets Version: {q_fluent_widgets_version}")

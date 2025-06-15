@@ -33,8 +33,7 @@ class SystemMenu:
         # File Menu
         self.file_menu = self.menu_bar.addMenu("File")
 
-        self.file_menu_open_dir = \
-            MenuAction("Open Directory", self.file_menu)
+        self.file_menu_open_dir = MenuAction("Open Directory", self.file_menu)
         self.file_menu.addAction(self.file_menu_open_dir)
 
         # Help Menu

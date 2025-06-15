@@ -6,17 +6,29 @@ from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 from qfluentwidgets import (
-    PushButton, LineEdit, PasswordLineEdit,
+    PushButton,
+    LineEdit,
+    PasswordLineEdit,
     ZhDatePicker,
-    TeachingTip, TeachingTipTailPosition, InfoBarIcon,
+    TeachingTip,
+    TeachingTipTailPosition,
+    InfoBarIcon,
 )
 
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, NetworkType, user_is_exist_in_list
-from shmtu_auth.src.gui.view.components.custom.list_checkbox_widget import ListCheckboxWidgets
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
+    UserItem,
+    NetworkType,
+    user_is_exist_in_list,
+)
+from shmtu_auth.src.gui.view.components.custom.list_checkbox_widget import (
+    ListCheckboxWidgets,
+)
 
 from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 from shmtu_auth.src.gui.view.components.fluent.widget_date_picker import (
-    FDatePicker, convert_date_to_qdate, convert_qdate_to_date
+    FDatePicker,
+    convert_date_to_qdate,
+    convert_qdate_to_date,
 )
 
 
@@ -44,9 +56,10 @@ class UserInfoEditWidget(QWidget):
     selected_index: List[int]
 
     def __init__(
-            self, parent=None,
-            user_list: List[UserItem] = None,
-            selected_index: List[int] = None
+        self,
+        parent=None,
+        user_list: List[UserItem] = None,
+        selected_index: List[int] = None,
     ):
         super().__init__(parent)
 
@@ -76,14 +89,13 @@ class UserInfoEditWidget(QWidget):
         self.input_password.setFixedWidth(230)
         self.input_password.setPlaceholderText("请输入密码")
 
-        self.checkbox_support_type = \
-            ListCheckboxWidgets(
-                self,
-                [
-                    {"name": "校园网", "default": True},
-                    {"name": "iSMU", "default": False, "enable": False},
-                ]
-            )
+        self.checkbox_support_type = ListCheckboxWidgets(
+            self,
+            [
+                {"name": "校园网", "default": True},
+                {"name": "iSMU", "default": False, "enable": False},
+            ],
+        )
 
         self.widget_expire_date = FDatePicker(self)
 
@@ -100,23 +112,27 @@ class UserInfoEditWidget(QWidget):
             def __init__(self, text: str, parent=None):
                 super().__init__(parent)
                 self.setText(text)
-                self.setStyleSheet("""
+                self.setStyleSheet(
+                    """
                     QLabel {
                         font-size: 14px;
                         color: #333333;
                     }
-                """)
+                """
+                )
 
         class TitleLabelLevel2(QLabel):
             def __init__(self, text: str, parent=None):
                 super().__init__(parent)
                 self.setText(text)
-                self.setStyleSheet("""
+                self.setStyleSheet(
+                    """
                     QLabel {
                         font-size: 12px;
                         color: #333333;
                     }
-                """)
+                """
+                )
 
         self.layout = QVBoxLayout(self)
 
@@ -162,8 +178,8 @@ class UserInfoEditWidget(QWidget):
         self.input_password.setText(self.input_password.text().strip())
 
         if (
-                not self.input_user_id.text().isdigit() or
-                len(self.input_user_id.text()) != 12
+            not self.input_user_id.text().isdigit()
+            or len(self.input_user_id.text()) != 12
         ):
             TeachingTip.create(
                 target=self.input_user_id,
@@ -173,14 +189,14 @@ class UserInfoEditWidget(QWidget):
                 isClosable=True,
                 tailPosition=TeachingTipTailPosition.BOTTOM,
                 duration=-1,
-                parent=self
+                parent=self,
             )
             return False
 
         if user_is_exist_in_list(
-                user_list=self.user_list,
-                user_id=self.input_user_id.text(),
-                excluded_indexes=self.selected_index
+            user_list=self.user_list,
+            user_id=self.input_user_id.text(),
+            excluded_indexes=self.selected_index,
         ):
             TeachingTip.create(
                 target=self.input_user_id,
@@ -190,7 +206,7 @@ class UserInfoEditWidget(QWidget):
                 isClosable=True,
                 tailPosition=TeachingTipTailPosition.BOTTOM,
                 duration=-1,
-                parent=self
+                parent=self,
             )
             return False
 
@@ -203,7 +219,7 @@ class UserInfoEditWidget(QWidget):
                 isClosable=True,
                 tailPosition=TeachingTipTailPosition.BOTTOM,
                 duration=-1,
-                parent=self
+                parent=self,
             )
             return False
 
@@ -225,7 +241,7 @@ class UserInfoEditWidget(QWidget):
             isClosable=True,
             tailPosition=TeachingTipTailPosition.BOTTOM,
             duration=3000,
-            parent=self
+            parent=self,
         )
 
         # 发送信号
@@ -241,13 +257,13 @@ class UserInfoEditWidget(QWidget):
         current_item.user_name = self.input_user_name.text()
         current_item.password = self.input_password.text()
 
-        current_item.support_type_list = \
-            NetworkType.to_binary_list_by_name_list(
-                self.checkbox_support_type.get_selected_list()
-            )
+        current_item.support_type_list = NetworkType.to_binary_list_by_name_list(
+            self.checkbox_support_type.get_selected_list()
+        )
 
-        current_item.expire_date = \
-            convert_qdate_to_date(self.widget_expire_date.getDate())
+        current_item.expire_date = convert_qdate_to_date(
+            self.widget_expire_date.getDate()
+        )
         current_item.update_auto_generate_info()
 
     def __update_input_box_data(self, index: int = 0):
@@ -260,9 +276,7 @@ class UserInfoEditWidget(QWidget):
         self.input_user_name.setText(current_item.user_name)
         self.input_password.setText(current_item.password)
 
-        self.checkbox_support_type.set_selected_list(
-            current_item.support_type_str_list
-        )
+        self.checkbox_support_type.set_selected_list(current_item.support_type_str_list)
 
         q_date = convert_date_to_qdate(current_item.expire_date)
         self.widget_expire_date.setDate(q_date)
