@@ -1,41 +1,33 @@
-# -*- coding: utf-8 -*-
-
 from typing import List
-from PySide6.QtCore import QUrl, QSize
-from PySide6.QtGui import QIcon, QDesktopServices, QColor
+
+from PySide6.QtCore import QSize, QUrl
+from PySide6.QtGui import QColor, QDesktopServices, QIcon
 from PySide6.QtWidgets import QApplication
-
-from qfluentwidgets import (
-    NavigationItemPosition,
-    FluentWindow,
-    SplashScreen,
-    MessageBox,
-)
 from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import (
+    FluentWindow,
+    MessageBox,
+    NavigationItemPosition,
+    SplashScreen,
+)
 
-from shmtu_auth.src.gui.common.config import cfg, RELEASE_URL
-
-from shmtu_auth.src.gui.view.interface.about_interface import AboutInterface
-from shmtu_auth.src.gui.view.interface.log_interface import LogInterface
-from shmtu_auth.src.gui.view.interface.user_list_interface import UserListInterface
-
-from shmtu_auth.src.gui.view.interface.home_interface import HomeInterface
-from shmtu_auth.src.gui.view.interface.auth_interface import AuthInterface
-from shmtu_auth.src.gui.view.interface.settings_interface import SettingInterface
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.gui.common.config import RELEASE_URL, cfg
+from shmtu_auth.src.gui.common.signal_bus import log_new, signal_bus
+from shmtu_auth.src.gui.common.system_menu import init_system_menu
 
 # 加载资源文件,虽然表面上没有调用(不可以移除!)
 from shmtu_auth.src.gui.resource import resources
-
-from shmtu_auth.src.gui.view.system_tray import SystemTray
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
-
-from shmtu_auth.src.gui.common.system_menu import init_system_menu
-from shmtu_auth.src.gui.common.signal_bus import signal_bus, log_new
-
-from shmtu_auth.src.gui.task.task_center import task_auto_start
 from shmtu_auth.src.gui.software import program_update
+from shmtu_auth.src.gui.task.task_center import task_auto_start
+from shmtu_auth.src.gui.view.interface.about_interface import AboutInterface
+from shmtu_auth.src.gui.view.interface.auth_interface import AuthInterface
+from shmtu_auth.src.gui.view.interface.home_interface import HomeInterface
+from shmtu_auth.src.gui.view.interface.log_interface import LogInterface
+from shmtu_auth.src.gui.view.interface.settings_interface import SettingInterface
+from shmtu_auth.src.gui.view.interface.user_list_interface import UserListInterface
+from shmtu_auth.src.gui.view.system_tray import SystemTray
 from shmtu_auth.src.system.system_info import SystemType
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -86,32 +78,20 @@ class MainWindow(FluentWindow):
             # 延迟一点时间确保所有数据都已加载
             from PySide6.QtCore import QTimer
 
-            QTimer.singleShot(
-                1000, self.auth_interface._AuthInterface__on_work_button_clicked
-            )
+            QTimer.singleShot(1000, self.auth_interface._AuthInterface__on_work_button_clicked)
             logger.info("已安排认证服务自动启动")
 
     def __connect_tray_signals(self):
         """连接托盘相关信号"""
         # 连接认证状态信号到托盘更新
-        signal_bus.signal_auth_thread_started.connect(
-            lambda: self.system_tray.update_auth_status(True)
-        )
-        signal_bus.signal_auth_thread_stopped.connect(
-            lambda: self.system_tray.update_auth_status(False)
-        )
-        signal_bus.signal_auth_status_changed.connect(
-            lambda is_online: self.system_tray.update_auth_status(None, is_online)
-        )
+        signal_bus.signal_auth_thread_started.connect(lambda: self.system_tray.update_auth_status(True))
+        signal_bus.signal_auth_thread_stopped.connect(lambda: self.system_tray.update_auth_status(False))
+        signal_bus.signal_auth_status_changed.connect(lambda is_online: self.system_tray.update_auth_status(None, is_online))
         signal_bus.signal_auth_success.connect(
-            lambda user_id: self.system_tray.show_notification(
-                "认证成功", f"用户 {user_id} 认证成功"
-            )
+            lambda user_id: self.system_tray.show_notification("认证成功", f"用户 {user_id} 认证成功")
         )
         signal_bus.signal_auth_failed.connect(
-            lambda user_id, error: self.system_tray.show_notification(
-                "认证失败", f"用户 {user_id} 认证失败"
-            )
+            lambda user_id, error: self.system_tray.show_notification("认证失败", f"用户 {user_id} 认证失败")
         )
         logger.info("托盘信号连接完成")
 
@@ -121,9 +101,7 @@ class MainWindow(FluentWindow):
             logger.info("根据配置自动隐藏到系统托盘")
             self.hide()
             if cfg.show_tray_notifications.value:
-                self.system_tray.show_notification(
-                    "SHMTU Auth", "程序已启动并隐藏到系统托盘"
-                )
+                self.system_tray.show_notification("SHMTU Auth", "程序已启动并隐藏到系统托盘")
         else:
             self.show()
 
@@ -137,9 +115,7 @@ class MainWindow(FluentWindow):
             event.ignore()
             self.hide()
             if cfg.show_tray_notifications.value:
-                self.system_tray.show_notification(
-                    "SHMTU Auth", "程序已最小化到系统托盘，双击托盘图标可恢复窗口"
-                )
+                self.system_tray.show_notification("SHMTU Auth", "程序已最小化到系统托盘，双击托盘图标可恢复窗口")
         else:
             logger.info("关闭按钮点击 - 退出程序")
             self.__cleanup_resources()
@@ -176,11 +152,7 @@ class MainWindow(FluentWindow):
 
     def changeEvent(self, event):
         """重写改变事件（处理最小化）"""
-        if (
-            event.type() == event.Type.WindowStateChange
-            and self.isMinimized()
-            and cfg.minimize_to_tray.value
-        ):
+        if event.type() == event.Type.WindowStateChange and self.isMinimized() and cfg.minimize_to_tray.value:
             logger.info("窗口最小化 - 隐藏到托盘")
             self.hide()
             event.ignore()
@@ -207,9 +179,7 @@ class MainWindow(FluentWindow):
             routeKey="github.io",
             icon=FIF.DOCUMENT,
             text="项目文档",
-            onClick=lambda: QDesktopServices.openUrl(
-                QUrl("https://a645162.github.io/shmtu-auth/")
-            ),
+            onClick=lambda: QDesktopServices.openUrl(QUrl("https://a645162.github.io/shmtu-auth/")),
             selectable=False,
             tooltip="项目文档",
             position=NavigationItemPosition.BOTTOM,
@@ -218,9 +188,7 @@ class MainWindow(FluentWindow):
             routeKey="github",
             icon=FIF.GITHUB,
             text="项目源代码仓库",
-            onClick=lambda: QDesktopServices.openUrl(
-                QUrl("https://github.com/a645162/shmtu-auth")
-            ),
+            onClick=lambda: QDesktopServices.openUrl(QUrl("https://github.com/a645162/shmtu-auth")),
             selectable=False,
             tooltip="官方网站",
             position=NavigationItemPosition.BOTTOM,
@@ -228,12 +196,8 @@ class MainWindow(FluentWindow):
 
         self.navigationInterface.addSeparator(position=NavigationItemPosition.BOTTOM)
 
-        self.addSubInterface(
-            self.setting_interface, FIF.SETTING, "设置", NavigationItemPosition.BOTTOM
-        )
-        self.addSubInterface(
-            self.about_interface, FIF.INFO, "关于", NavigationItemPosition.BOTTOM
-        )
+        self.addSubInterface(self.setting_interface, FIF.SETTING, "设置", NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.about_interface, FIF.INFO, "关于", NavigationItemPosition.BOTTOM)
 
     def __init_window(self):
         dpi_scale = cfg.get_dpi_ratio()
@@ -298,11 +262,7 @@ class MainWindow(FluentWindow):
         new_version = program_update.LATEST_VERSION
 
         title = "检测到新版本"
-        content = (
-            f"当前版本: {current_version}\n"
-            f"最新版本: {new_version}\n"
-            f"您是否需要前往官网下载?"
-        )
+        content = f"当前版本: {current_version}\n最新版本: {new_version}\n您是否需要前往官网下载?"
 
         w = MessageBox(title, content, self)
         w.setContentCopyable(True)

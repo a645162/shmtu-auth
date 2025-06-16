@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from typing import List
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QVBoxLayout, QWidget
 from qfluentwidgets import CheckBox
 
 
@@ -18,7 +16,7 @@ class ListCheckboxWidgets(QWidget):
 
     def __init_data(self, data_list: List = None):
         if data_list is None:
-            raise "List Checkbox Widget data must be a list"
+            raise Exception("List Checkbox Widget data must be a list")
 
         for item in data_list:
             if isinstance(item, str):
@@ -64,8 +62,9 @@ class ListCheckboxWidgets(QWidget):
             current_checkbox.setEnabled(self.checkbox_data[key]["enable"])
             __update_checkbox_data(state=default_state, dict_key=key)
 
+            # 修复：使用默认参数来绑定循环变量
             current_checkbox.stateChanged.connect(
-                lambda state: __update_checkbox_data(state=state, dict_key=key)
+                lambda state, current_key=key: __update_checkbox_data(state=state, dict_key=current_key)
             )
 
             self.checkbox_data[key]["widget"] = current_checkbox

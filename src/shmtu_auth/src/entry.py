@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from shmtu_auth.src.config import build_info
-
 from shmtu_auth.src.monitor import auth_status
 from shmtu_auth.src.parse_args import parse_run_args
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()

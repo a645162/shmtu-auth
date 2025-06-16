@@ -3,8 +3,9 @@ def test_ssl():
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    import requests
     import warnings
+
+    import requests
 
     # 创建一个日志记录器，用于捕获警告
     with warnings.catch_warnings(record=True) as w:

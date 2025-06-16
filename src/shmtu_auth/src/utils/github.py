@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import requests
 
 
@@ -11,9 +9,7 @@ def get_latest_release_version(repo_owner, repo_name):
         release_info = response.json()
         return release_info["tag_name"]
     else:
-        print(
-            f"Failed to fetch release information. Status code: {response.status_code}"
-        )
+        print(f"Failed to fetch release information. Status code: {response.status_code}")
         return None
 
 

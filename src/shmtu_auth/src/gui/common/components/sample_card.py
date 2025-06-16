@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
-
-from qfluentwidgets import IconWidget, TextWrap, FlowLayout, CardWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from qfluentwidgets import CardWidget, FlowLayout, IconWidget, TextWrap
 
 # from shmtu_auth.src.common.signal_bus import signalBus
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet

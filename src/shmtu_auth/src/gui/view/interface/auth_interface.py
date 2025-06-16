@@ -1,34 +1,28 @@
-# -*- coding: utf-8 -*-
-
 from typing import List, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
-
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QWidget
 from qfluentwidgets import (
-    SettingCardGroup,
-    PrimaryPushSettingCard,
     ExpandGroupSettingCard,
-    ScrollArea,
     ExpandLayout,
-    Slider,
-    RangeConfigItem,
-    qconfig,
     InfoBar,
+    PrimaryPushSettingCard,
+    RangeConfigItem,
+    ScrollArea,
+    SettingCardGroup,
+    Slider,
+    qconfig,
 )
 from qfluentwidgets import FluentIcon as FIF
 
-from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
+from shmtu_auth.src.gui.common.config import Config, cfg
+from shmtu_auth.src.gui.common.signal_bus import signal_bus
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
+from shmtu_auth.src.gui.feature.network_auth import AuthThread
 from shmtu_auth.src.gui.view.components.fluent.widget_label import FBodyLabel
 from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
-
-from shmtu_auth.src.gui.common.config import cfg, Config
-from shmtu_auth.src.gui.common.style_sheet import StyleSheet
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem
-
-from shmtu_auth.src.gui.feature.network_auth import AuthThread
-from shmtu_auth.src.gui.common.signal_bus import signal_bus
-
+from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -107,14 +101,10 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
         self.add(self.restore_label, self.restore_button)
 
     def __init_content(self):
-        self.check_internet_interval_slider = self.SettingGroupSliderWithText(
-            self.cfg.check_internet_interval, self
-        )
+        self.check_internet_interval_slider = self.SettingGroupSliderWithText(self.cfg.check_internet_interval, self)
         self.add(FBodyLabel("检测间隔", self), self.check_internet_interval_slider)
 
-        self.check_internet_retry_times_slider = self.SettingGroupSliderWithText(
-            self.cfg.check_internet_retry_times, self
-        )
+        self.check_internet_retry_times_slider = self.SettingGroupSliderWithText(self.cfg.check_internet_retry_times, self)
         self.add(
             FBodyLabel("联网失败的重试次数", self),
             self.check_internet_retry_times_slider,
@@ -123,9 +113,7 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
         self.check_internet_retry_wait_time_slider = self.SettingGroupSliderWithText(
             self.cfg.check_internet_retry_wait_time, self
         )
-        self.add(
-            FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider
-        )
+        self.add(FBodyLabel("重试等待时间", self), self.check_internet_retry_wait_time_slider)
 
     def __restore_default(self):
         self.check_internet_interval_slider.restore_default_value()
@@ -148,7 +136,6 @@ class InternetCheckSettingCard(ExpandGroupSettingCard):
 
 
 class AuthSettingWidget(ScrollArea):
-
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.scroll_widget = QWidget()
@@ -163,15 +150,11 @@ class AuthSettingWidget(ScrollArea):
         # shmtu-auth 控制组
         self.auth_group_general = SettingCardGroup("认证控制", self.scroll_widget)
 
-        self.start_card = PrimaryPushSettingCard(
-            text="启动", icon=FIF.HELP, title="运行状态", content="启动或关闭服务"
-        )
+        self.start_card = PrimaryPushSettingCard(text="启动", icon=FIF.HELP, title="运行状态", content="启动或关闭服务")
 
         self.auth_group_general.addSettingCard(self.start_card)
 
-        self.check_interval_card = InternetCheckSettingCard(
-            cfg=cfg, parent=self.auth_group_general
-        )
+        self.check_interval_card = InternetCheckSettingCard(cfg=cfg, parent=self.auth_group_general)
         self.auth_group_general.addSettingCard(self.check_interval_card)
 
         # 手动测试按钮
@@ -198,9 +181,7 @@ class AuthSettingWidget(ScrollArea):
 
     def __show_restart_tooltip(self):
         """show restart tooltip"""
-        InfoBar.success(
-            "更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self
-        )
+        InfoBar.success("更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self)
 
 
 class AuthStatusCard(SettingCardGroup):
@@ -210,15 +191,11 @@ class AuthStatusCard(SettingCardGroup):
         super().__init__("认证状态", parent)
 
         # 网络状态
-        self.network_status_card = self.__create_status_card(
-            "网络状态", "检查中...", FIF.WIFI
-        )
+        self.network_status_card = self.__create_status_card("网络状态", "检查中...", FIF.WIFI)
         self.addSettingCard(self.network_status_card)
 
         # 认证服务状态
-        self.service_status_card = self.__create_status_card(
-            "认证服务", "已停止", FIF.POWER_BUTTON
-        )
+        self.service_status_card = self.__create_status_card("认证服务", "已停止", FIF.POWER_BUTTON)
         self.addSettingCard(self.service_status_card)
 
         # 最后认证用户
@@ -291,12 +268,8 @@ class AuthInterface(GalleryInterface):
 
         self.vBoxLayout.addWidget(self.authSettingsWidget)
 
-        self.authSettingsWidget.start_card.clicked.connect(
-            self.__on_work_button_clicked
-        )
-        self.authSettingsWidget.manual_test_card.clicked.connect(
-            self.__on_manual_test_clicked
-        )
+        self.authSettingsWidget.start_card.clicked.connect(self.__on_work_button_clicked)
+        self.authSettingsWidget.manual_test_card.clicked.connect(self.__on_manual_test_clicked)
 
         # 连接信号
         self.__connect_signals()
@@ -311,14 +284,10 @@ class AuthInterface(GalleryInterface):
     def __connect_signals(self):
         """连接信号总线的信号"""
         # 连接认证状态变化信号
-        signal_bus.signal_auth_status_changed.connect(
-            self.authSettingsWidget.status_group.update_network_status
-        )
+        signal_bus.signal_auth_status_changed.connect(self.authSettingsWidget.status_group.update_network_status)
 
         # 连接认证尝试信号
-        signal_bus.signal_auth_attempt.connect(
-            self.authSettingsWidget.status_group.update_auth_attempt
-        )
+        signal_bus.signal_auth_attempt.connect(self.authSettingsWidget.status_group.update_auth_attempt)
 
         # 连接认证成功信号
         signal_bus.signal_auth_success.connect(self.__on_auth_success)
@@ -344,9 +313,7 @@ class AuthInterface(GalleryInterface):
         """处理认证成功"""
         logger.info(f"GUI收到认证成功信号：{user_id}")
         self.authSettingsWidget.status_group.update_last_auth_user(user_id)
-        InfoBar.success(
-            "认证成功", f"用户 {user_id} 认证成功", duration=3000, parent=self
-        )
+        InfoBar.success("认证成功", f"用户 {user_id} 认证成功", duration=3000, parent=self)
 
     def __on_auth_failed(self, user_id: str, error_msg: str):
         """处理认证失败"""
@@ -455,9 +422,7 @@ class AuthInterface(GalleryInterface):
         logger.info("开始手动测试网络连接...")
 
         # 显示测试进行中的提示
-        InfoBar.info(
-            "测试中", "正在测试网络连接状态，请稍候...", duration=2000, parent=self
-        )
+        InfoBar.info("测试中", "正在测试网络连接状态，请稍候...", duration=2000, parent=self)
 
         # 执行网络测试
         from shmtu_auth.src.core.core_exp import check_is_connected
@@ -467,19 +432,13 @@ class AuthInterface(GalleryInterface):
 
             if is_connected:
                 logger.info("手动测试结果：网络已连接")
-                InfoBar.success(
-                    "测试完成", "网络连接正常 ✓", duration=3000, parent=self
-                )
+                InfoBar.success("测试完成", "网络连接正常 ✓", duration=3000, parent=self)
                 self.authSettingsWidget.status_group.update_network_status(True)
             else:
                 logger.warning("手动测试结果：网络未连接")
-                InfoBar.warning(
-                    "测试完成", "网络连接异常，需要认证 ✗", duration=3000, parent=self
-                )
+                InfoBar.warning("测试完成", "网络连接异常，需要认证 ✗", duration=3000, parent=self)
                 self.authSettingsWidget.status_group.update_network_status(False)
 
         except Exception as e:
             logger.error(f"手动测试出错：{str(e)}")
-            InfoBar.error(
-                "测试失败", f"测试过程中出现错误：{str(e)}", duration=3000, parent=self
-            )
+            InfoBar.error("测试失败", f"测试过程中出现错误：{str(e)}", duration=3000, parent=self)

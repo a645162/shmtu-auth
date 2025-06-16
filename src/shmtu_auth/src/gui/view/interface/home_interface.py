@@ -1,37 +1,32 @@
-# -*- coding: utf-8 -*-
-
-from PySide6.QtCore import Qt, QRectF, QSize
+from PySide6.QtCore import QRectF, QSize, Qt
 from PySide6.QtGui import (
-    QPixmap,
-    QPainter,
-    QColor,
     QBrush,
-    QPainterPath,
+    QColor,
     QLinearGradient,
+    QPainter,
+    QPainterPath,
+    QPixmap,
 )
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from qfluentwidgets import (
-    ScrollArea,
-    isDarkTheme,
     FluentIcon,
-    SettingCardGroup,
+    ScrollArea,
     SettingCard,
+    SettingCardGroup,
+    isDarkTheme,
 )
 
+from shmtu_auth.src.gui.common import font_confg
 from shmtu_auth.src.gui.common.components.link_card import LinkCardView
 from shmtu_auth.src.gui.common.components.sample_card import SampleCardView
-from shmtu_auth.src.gui.common.signal_bus import signal_bus
-
-from shmtu_auth.src.gui.common.style_sheet import StyleSheet
-from shmtu_auth.src.gui.common import font_confg
 from shmtu_auth.src.gui.common.config import (
+    AUTHOR_MAIN_PAGE_URL,
     FEEDBACK_URL,
     HELP_URL,
     REPO_URL,
-    AUTHOR_MAIN_PAGE_URL,
 )
-
+from shmtu_auth.src.gui.common.signal_bus import signal_bus
+from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -64,13 +59,9 @@ class BannerWidget(QWidget):
 
         self.vBoxLayout.setAlignment(Qt.AlignLeft | Qt.AlignTop)
 
-        self.linkCardView.addCard(
-            ":/gui/Logo128", "快速入门", "查看本程序的在线文档。", HELP_URL
-        )
+        self.linkCardView.addCard(":/gui/Logo128", "快速入门", "查看本程序的在线文档。", HELP_URL)
 
-        self.linkCardView.addCard(
-            FluentIcon.GITHUB, "Github主页", "查看本程序的源代码。", REPO_URL
-        )
+        self.linkCardView.addCard(FluentIcon.GITHUB, "Github主页", "查看本程序的源代码。", REPO_URL)
 
         self.linkCardView.addCard(
             FluentIcon.HOME_FILL,
@@ -135,9 +126,7 @@ class BannerWidget(QWidget):
         crop_height = height_target
 
         # 裁剪图片
-        croped_pixmap = scaled_pixmap.copy(
-            int(crop_x), int(crop_y), int(crop_width), int(crop_height)
-        )
+        croped_pixmap = scaled_pixmap.copy(int(crop_x), int(crop_y), int(crop_width), int(crop_height))
 
         # print(width_target, height_target)
         # print(croped_pixmap.width(), croped_pixmap.height())
@@ -180,12 +169,8 @@ class QuickStatusCard(SettingCardGroup):
 
         # 连接信号
         signal_bus.signal_auth_status_changed.connect(self.update_network_status)
-        signal_bus.signal_auth_thread_started.connect(
-            lambda: self.service_card.setContent("运行中 ✓")
-        )
-        signal_bus.signal_auth_thread_stopped.connect(
-            lambda: self.service_card.setContent("已停止 ✗")
-        )
+        signal_bus.signal_auth_thread_started.connect(lambda: self.service_card.setContent("运行中 ✓"))
+        signal_bus.signal_auth_thread_stopped.connect(lambda: self.service_card.setContent("已停止 ✗"))
 
     def update_network_status(self, is_online: bool):
         """更新网络状态"""
@@ -238,21 +223,18 @@ class HomeInterface(ScrollArea):
         current_application_view_group.addSampleCard(
             icon=":/gui/Logo128",
             title="校园网自动认证",
-            content="监控网络状况，自动认证校园网，\n" "避免因各种因素导致断网。",
+            content="监控网络状况，自动认证校园网，\n避免因各种因素导致断网。",
             index=26,
-            url="https://a645162.github.io/shmtu-auth/"
-            "1.Guide/0.Quick%20Start/1.Quick%20Start.html",
+            url="https://a645162.github.io/shmtu-auth/1.Guide/0.Quick%20Start/1.Quick%20Start.html",
         )
         self.vBoxLayout.addWidget(current_application_view_group)
 
         # 为上海海事大学开发的项目
-        shmtu_project_view_group = SampleCardView(
-            "数字海大系列(非官方,个人学习使用)", self.view
-        )
+        shmtu_project_view_group = SampleCardView("数字海大系列(非官方,个人学习使用)", self.view)
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_terminal",
             title="用户终端(非官方)",
-            content="数字海大的用户终端(第三方)\n" "主要包括账单获取、账单分析等功能。",
+            content="数字海大的用户终端(第三方)\n主要包括账单获取、账单分析等功能。",
             index=3,
             url="https://github.com/a645162/SHMTU-Terminal-Wails",
         )
@@ -266,14 +248,14 @@ class HomeInterface(ScrollArea):
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_golang",
             title="登录流程(Golang)",
-            content="统一认证平台的登录流程\n" "包括调用识别验证码接口。",
+            content="统一认证平台的登录流程\n包括调用识别验证码接口。",
             index=5,
             url="https://github.com/a645162/shmtu-cas-go",
         )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_kotlin",
             title="登录流程(Kotlin)",
-            content="统一认证平台的登录流程\n" "包括调用识别验证码接口。",
+            content="统一认证平台的登录流程\n包括调用识别验证码接口。",
             index=5,
             url="https://github.com/a645162/shmtu-cas-kotlin",
         )
@@ -284,18 +266,14 @@ class HomeInterface(ScrollArea):
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU任务通知工具",
-            content="我与师兄合作开发的一款GPU任务监控工具，\n"
-            "GPU训练任务结束自动推送消息。",
+            content="我与师兄合作开发的一款GPU任务监控工具，\nGPU训练任务结束自动推送消息。",
             index=4,
             url="https://github.com/a645162/nvi-notify",
         )
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU看板",
-            content="GPU任务面板基于"
-            "Vue3 + Element Plus + Pinia"
-            "开发，"
-            "后端为显卡监控脚本的Flask。",
+            content="GPU任务面板基于Vue3 + Element Plus + Pinia开发，后端为显卡监控脚本的Flask。",
             index=4,
             url="https://github.com/a645162/nvi-notify",
         )

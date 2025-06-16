@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # https://github.com/prOttonicFusion/iconCreator
 # Script for creating a set of icon from a single NxN pixel image
 # Usage: python iconCreator.py image-file.png
 #
 
 import os
+from pathlib import Path
 
 # import sys
 from PIL import Image
-from pathlib import Path
 
 # Output directories
 directories = ["base", "linux", "mac"]
@@ -58,7 +57,7 @@ for dir in directories:
 
                 img.thumbnail((size, size))
                 img.save(outfile)
-        except IOError:
+        except OSError:
             print("Unable to process", infile)
             exit()
 
@@ -70,7 +69,7 @@ try:
     # Scale & convert image
     with Image.open(infile) as img:
         img.save(outfile)
-except IOError:
+except OSError:
     print("Unable to process", infile)
     exit()
 print("Created: ", outfile)

@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-
 from time import sleep as time_sleep
 
 from shmtu_auth.src.core.get_query_string_requests import (
-    is_connect_by_google,
     get_query_string_by_url,
+    is_connect_by_google,
 )
 from shmtu_auth.src.core.query_string import handle_query_string
-
 from shmtu_auth.src.core.shmtu_auth_const_value import get_default_query_string
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -23,7 +19,7 @@ def check_is_connected_retry(
     retry_times: int = 3,
     wait_time: int = 5,
 ) -> bool:
-    for i in range(retry_times):
+    for _ in range(retry_times):
         if check_is_connected():
             return True
         else:

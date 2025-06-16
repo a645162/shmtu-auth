@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 from shmtu_auth.src.core.core import ShmtuNetAuthCore
-
 from shmtu_auth.src.utils.logs import get_logger
 from shmtu_auth.src.utils.program_env_config import convert_number_to_star
 
@@ -13,7 +10,6 @@ class ShmtuNetAuth(ShmtuNetAuthCore):
         super().__init__()
 
     def login_by_list(self, user_list) -> bool:
-
         for user_3 in user_list:
             user_id = user_3[0]
             user_pwd = user_3[1]

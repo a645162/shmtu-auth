@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        python-version: [ "3.5", "3.6" ]
+        python-version: [ "3.5", "3.6", "3.7" ]
       max-parallel: 3
 
     steps:

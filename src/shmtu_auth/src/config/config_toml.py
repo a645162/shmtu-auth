@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import os
+
 import toml
 
 from shmtu_auth.src.utils.file.infer_encoding import read_file_with_auto_encoding
@@ -10,7 +9,7 @@ env_from_toml: dict = {}
 
 
 def read_file_directly(file_path: str) -> str:
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         return f.read()
 
 
@@ -26,6 +25,7 @@ def parse_toml_dict(toml_dict: dict):
 
 def output_toml_result():
     global env_from_toml
+
     if len(env_from_toml.keys()) > 0:
         print("-" * 40)
         print("TOML Config:")

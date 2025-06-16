@@ -1,5 +1,6 @@
-import requests
 import warnings
+
+import requests
 
 
 def test_ssl():

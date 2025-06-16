@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import datetime
-from typing import List
+from typing import List, Optional
 
 program_support_list = ["校园网", "iSMU"]
 
@@ -93,9 +91,11 @@ class UserItem:
         user_name: str = "",
         password: str = "",
         support_type_list: List[int] = None,
-        expire_date: datetime.date = datetime.date.today()
-        + datetime.timedelta(days=3 * 365),
+        expire_date: Optional[datetime.date] = None,
     ):
+        if expire_date is None:
+            expire_date = datetime.date.today() + datetime.timedelta(days=3 * 365)
+
         self.user_id = user_id
         self.user_name = user_name
         self.password = password
@@ -133,15 +133,9 @@ class UserItem:
 
     def update_auto_generate_info(self) -> None:
         self.expire_date_str = self.expire_date.strftime("%Y-%m-%d")
-        self.expire_date_int = (
-            self.expire_date.year * (10**4)
-            + self.expire_date.month * (10**2)
-            + self.expire_date.day
-        )
+        self.expire_date_int = self.expire_date.year * (10**4) + self.expire_date.month * (10**2) + self.expire_date.day
 
-        self.support_type_binary = NetworkType.to_binary_by_binary_list(
-            self.support_type_list
-        )
+        self.support_type_binary = NetworkType.to_binary_by_binary_list(self.support_type_list)
         self.support_type_str_list = NetworkType.to_string(self.support_type_list)
         self.support_type_str = " ".join(self.support_type_str_list).strip()
 
@@ -204,9 +198,7 @@ def get_valid_user_list(original_user_list: List[UserItem]) -> List[UserItem]:
     return valid_user_list
 
 
-def user_is_exist_in_list(
-    user_list: List[UserItem], user_id: str, excluded_indexes: List[int]
-) -> bool:
+def user_is_exist_in_list(user_list: List[UserItem], user_id: str, excluded_indexes: List[int]) -> bool:
     for i, user in enumerate(user_list):
         if i not in excluded_indexes and user.user_id == user_id:
             return True
@@ -218,7 +210,7 @@ def generate_test_user_list(count: int = 10) -> List[UserItem]:
 
     for i in range(count // 4):
         user = UserItem(
-            user_id="2024123{:05d}".format(i),
+            user_id=f"2024123{i:05d}",
             user_name=f"User_{i}",
             password=f"password_{i}",
             support_type_list=[NetworkType.ChinaEdu, NetworkType.iSMU],
@@ -230,7 +222,7 @@ def generate_test_user_list(count: int = 10) -> List[UserItem]:
 
     for i in range(count // 2):
         user = UserItem(
-            user_id="2024123{:05d}".format(i),
+            user_id=f"2024123{i:05d}",
             user_name=f"User_{i}",
             password=f"password_{i}",
             support_type_list=[NetworkType.ChinaEdu],
@@ -242,7 +234,7 @@ def generate_test_user_list(count: int = 10) -> List[UserItem]:
 
     for i in range(count):
         user = UserItem(
-            user_id="2024123{:05d}".format(i),
+            user_id=f"2024123{i:05d}",
             user_name=f"User_{i}",
             password=f"password_{i}",
             support_type_list=[NetworkType.iSMU],
@@ -262,14 +254,12 @@ def convert_to_list_list(user_list: List[UserItem]) -> List[List[str]]:
 def print_user_list_id(user_list: List[UserItem]) -> None:
     result_str = ""
     for user in user_list:
-        result_str += "{} ".format(user.user_id)
+        result_str += f"{user.user_id} "
 
     print(result_str)
 
 
-def user_list_select_list_by_index(
-    user_list: List[UserItem], index: List[int]
-) -> List[UserItem]:
+def user_list_select_list_by_index(user_list: List[UserItem], index: List[int]) -> List[UserItem]:
     result_list = []
     for i in index:
         result_list.append(user_list[i])
@@ -280,9 +270,7 @@ def user_list_swap_item(user_list: List[UserItem], index1: int, index2: int) -> 
     user_list[index1], user_list[index2] = user_list[index2], user_list[index1]
 
 
-def user_list_move_up(
-    user_list: List[UserItem], index: List[int], step: int = 1
-) -> List[int]:
+def user_list_move_up(user_list: List[UserItem], index: List[int], step: int = 1) -> List[int]:
     selected_items_count = len(index)
 
     selection_index = index.copy()
@@ -313,9 +301,7 @@ def user_list_move_up(
     return final_selection_index
 
 
-def user_list_move_down(
-    user_list: List[UserItem], index: List[int], step: int = 1
-) -> List[int]:
+def user_list_move_down(user_list: List[UserItem], index: List[int], step: int = 1) -> List[int]:
     selected_items_count = len(index)
     total_count = len(user_list)
 
@@ -356,9 +342,7 @@ def user_list_move_to_top(user_list: List[UserItem], index: List[int]) -> List[i
     if selected_items_count == 0:
         return []
 
-    return user_list_move_up(
-        user_list=user_list, index=selection_index, step=selection_index[0]
-    )
+    return user_list_move_up(user_list=user_list, index=selection_index, step=selection_index[0])
 
 
 def user_list_move_to_bottom(user_list: List[UserItem], index: List[int]) -> List[int]:

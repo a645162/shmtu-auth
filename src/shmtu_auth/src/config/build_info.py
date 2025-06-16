@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from shmtu_auth import __version__ as version
 
 program_version = version

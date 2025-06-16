@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-
 import threading
 from time import sleep as time_sleep
 
 from shmtu_auth.src.core.shmtu_auth import ShmtuNetAuth
 from shmtu_auth.src.utils.env import get_env_int
-from shmtu_auth.src.utils.program_env_config import (
-    convert_password_to_star,
-    convert_number_to_star,
-)
-from shmtu_auth.src.utils.program_env_config import get_user_list
-
 from shmtu_auth.src.utils.logs import get_logger
+from shmtu_auth.src.utils.program_env_config import (
+    convert_number_to_star,
+    convert_password_to_star,
+    get_user_list,
+)
 
 logger = get_logger()
 

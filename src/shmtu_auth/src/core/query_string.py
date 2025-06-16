@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
+import os
 
-import os.path
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -27,7 +26,7 @@ def load_query_string_from_file() -> str:
     if not os.path.exists(save_path):
         return ""
     try:
-        with open(save_path, "r") as f:
+        with open(save_path) as f:
             query_string = f.read().strip()
     except Exception as e:
         logger.error(f"Failed to load query string from {save_path}!")

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 
 
@@ -10,9 +8,7 @@ def get_now_time():
     return formatted_time
 
 
-def is_within_time_range(
-    start_time=datetime.time(11, 0), end_time=datetime.time(7, 30)
-):
+def is_within_time_range(start_time=datetime.time(11, 0), end_time=datetime.time(7, 30)):
     current_time = datetime.datetime.now().time()
 
     if start_time <= end_time:

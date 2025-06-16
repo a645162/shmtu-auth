@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 class ProgramVersion:
     """
     程序版本
@@ -19,11 +16,7 @@ class ProgramVersion:
 
     def __eq__(self, other):
         if isinstance(other, ProgramVersion):
-            return (
-                self.major == other.major
-                and self.minor == other.minor
-                and self.patch == other.patch
-            )
+            return self.major == other.major and self.minor == other.minor and self.patch == other.patch
         return False
 
     def __ne__(self, other):

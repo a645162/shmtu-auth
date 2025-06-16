@@ -1,14 +1,14 @@
 # https://github.com/PyGithub/PyGithub/issues/2300
 # https://stackoverflow.com/questions/61631955/python-requests-ssl-error-during-requests
-import requests
 import ssl
+
+import requests
 from urllib3 import poolmanager
 
 url = "https://live.euronext.com/fr/product/equities/FR0000120271-XPAR"
 
 
 class TLSAdapter(requests.adapters.HTTPAdapter):
-
     def init_poolmanager(self, connections, maxsize, block=False):
         """Create and initialize the urllib3 PoolManager."""
         ctx = ssl.create_default_context()

@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from shmtu_auth.src.config.build_info import program_version, branch
 from shmtu_auth.config.github.latest_version import get_branch_version
+from shmtu_auth.src.config.build_info import branch, program_version
 from shmtu_auth.src.gui.common.signal_bus import log_new
-from shmtu_auth.src.utils.program_version import ProgramVersion
-
 from shmtu_auth.src.utils.logs import get_logger
+from shmtu_auth.src.utils.program_version import ProgramVersion
 
 logger = get_logger()
 
@@ -45,7 +42,7 @@ def is_have_new_version() -> bool:
     have_new_version = program_version_obj < latest_version_obj
 
     if have_new_version:
-        log_text = f"Found new version {LATEST_VERSION}" f"(Current:{PROGRAM_VERSION})"
+        log_text = f"Found new version {LATEST_VERSION}(Current:{PROGRAM_VERSION})"
         log_new("Update", log_text)
         logger.info(log_text)
 

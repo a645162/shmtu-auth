@@ -50,7 +50,7 @@ jobs:
       - name: Copy Config File
         run:
           cp `
-          ".\shmtu_auth\config\config.note.toml" `
+          ".\src\shmtu_auth\config\config.note.toml" `
           ".\Build\Output\Windows\shmtu_auth_windows_console\config.toml"
 
       - name: Compress Directory to ZIP

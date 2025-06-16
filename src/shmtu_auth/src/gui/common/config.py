@@ -1,24 +1,20 @@
-# -*- coding: utf-8 -*-
-
-
 from PySide6.QtWidgets import QApplication
 from qfluentwidgets import (
-    qconfig,
-    QConfig,
-    ConfigItem,
-    OptionsConfigItem,
     BoolValidator,
+    ConfigItem,
+    FolderValidator,
+    OptionsConfigItem,
     OptionsValidator,
+    QConfig,
     RangeConfigItem,
     RangeValidator,
     Theme,
-    FolderValidator,
+    qconfig,
 )
-
 from qfluentwidgets import __version__ as q_fluent_widgets_version
+
 from shmtu_auth.src.config.build_info import program_version
 from shmtu_auth.src.system.system_info import SystemType
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -28,29 +24,17 @@ class Config(QConfig):
     """Config of application"""
 
     # shmtu-auth
-    auth_auto_start_work_thread = ConfigItem(
-        "Auth", "AutoStartWorkThread", True, BoolValidator()
-    )
+    auth_auto_start_work_thread = ConfigItem("Auth", "AutoStartWorkThread", True, BoolValidator())
 
-    check_internet_interval = RangeConfigItem(
-        "Auth", "CheckInternetInterval", 60, RangeValidator(5, 3600)
-    )
+    check_internet_interval = RangeConfigItem("Auth", "CheckInternetInterval", 60, RangeValidator(5, 3600))
 
-    check_internet_retry_times = RangeConfigItem(
-        "Auth", "CheckInternetRetryTimes", 3, RangeValidator(1, 10)
-    )
-    check_internet_retry_wait_time = RangeConfigItem(
-        "Auth", "CheckInternetRetryTimes", 30, RangeValidator(1, 600)
-    )
+    check_internet_retry_times = RangeConfigItem("Auth", "CheckInternetRetryTimes", 3, RangeValidator(1, 10))
+    check_internet_retry_wait_time = RangeConfigItem("Auth", "CheckInternetRetryTimes", 30, RangeValidator(1, 600))
 
     # 高级操作
     # - 导出到Docker
-    auth_advanced_feature = ConfigItem(
-        "Auth", "AdvancedFeature", False, BoolValidator()
-    )
-    auth_docker_save_folder = ConfigItem(
-        "Auth", "DockerSaveFolder", "", FolderValidator()
-    )
+    auth_advanced_feature = ConfigItem("Auth", "AdvancedFeature", False, BoolValidator())
+    auth_docker_save_folder = ConfigItem("Auth", "DockerSaveFolder", "", FolderValidator())
 
     # 通用设置
     auto_startup = ConfigItem("General", "AutoStartup", False, BoolValidator())
@@ -60,9 +44,7 @@ class Config(QConfig):
     close_to_tray = ConfigItem("Tray", "CloseToTray", True, BoolValidator())
     minimize_to_tray = ConfigItem("Tray", "MinimizeToTray", True, BoolValidator())
     silent_start = ConfigItem("Tray", "SilentStart", False, BoolValidator())
-    show_tray_notifications = ConfigItem(
-        "Tray", "ShowTrayNotifications", True, BoolValidator()
-    )
+    show_tray_notifications = ConfigItem("Tray", "ShowTrayNotifications", True, BoolValidator())
     tray_double_click_action = OptionsConfigItem(
         "Tray",
         "DoubleClickAction",
@@ -73,9 +55,7 @@ class Config(QConfig):
     # 界面个性化
 
     # Main Window
-    mica_enabled = ConfigItem(
-        "MainWindow", "MicaEnabled", SystemType.is_windows11(), BoolValidator()
-    )
+    mica_enabled = ConfigItem("MainWindow", "MicaEnabled", SystemType.is_windows11(), BoolValidator())
     dpi_scale = OptionsConfigItem(
         "MainWindow",
         "DpiScale",
@@ -85,14 +65,10 @@ class Config(QConfig):
     )
 
     # Material
-    blur_radius = RangeConfigItem(
-        "Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40)
-    )
+    blur_radius = RangeConfigItem("Material", "AcrylicBlurRadius", 15, RangeValidator(0, 40))
 
     # software update
-    check_update_at_start_up = ConfigItem(
-        "Update", "CheckUpdateAtStartUp", True, BoolValidator()
-    )
+    check_update_at_start_up = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
 
     def get_dpi_ratio(self) -> float:
         dpi_scale = 1.0
@@ -101,9 +77,7 @@ class Config(QConfig):
         if dpi_scale_str == "Auto":
             # Get System Dpi Scale
             if SystemType.is_windows():
-                dpi_scale: float = float(
-                    QApplication.primaryScreen().devicePixelRatio()
-                )
+                dpi_scale: float = float(QApplication.primaryScreen().devicePixelRatio())
         else:
             dpi_scale: float = float(dpi_scale_str)
 

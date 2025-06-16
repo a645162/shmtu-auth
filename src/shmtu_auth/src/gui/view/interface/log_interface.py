@@ -1,22 +1,16 @@
-# -*- coding: utf-8 -*-
-
-from typing import List
-import os.path
 import datetime
+import os.path
+import pickle
+from typing import List
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTableWidgetItem
-from qfluentwidgets import TableWidget, InfoBar, InfoBarIcon, InfoBarPosition
-
-from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
-from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
-
-import pickle
+from qfluentwidgets import InfoBar, InfoBarIcon, InfoBarPosition, TableWidget
 
 from shmtu_auth.src.config.project_directory import get_directory_data_path
-
 from shmtu_auth.src.gui.common.signal_bus import signal_bus
-
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
+from shmtu_auth.src.gui.view.interface.gallery_interface import GalleryInterface
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -26,7 +20,6 @@ pickle_log_path = os.path.join(get_directory_data_path(), pickle_log_path)
 
 
 class LogInterface(GalleryInterface):
-
     def __init__(self, parent=None):
         super().__init__(title="程序日志", subtitle="Author:Haomin Kong", parent=parent)
         self.setObjectName("logInterface")

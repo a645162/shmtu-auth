@@ -1,36 +1,32 @@
-# -*- coding: utf-8 -*-
-
-from qfluentwidgets import (
-    SettingCardGroup,
-    SwitchSettingCard,
-    OptionsSettingCard,
-    HyperlinkCard,
-    PrimaryPushSettingCard,
-    ScrollArea,
-    ExpandLayout,
-    CustomColorSettingCard,
-    setTheme,
-    setThemeColor,
-    RangeSettingCard,
-)
-from qfluentwidgets import FluentIcon as FIF
-from qfluentwidgets import InfoBar
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QWidget, QLabel
+from PySide6.QtWidgets import QLabel, QWidget
+from qfluentwidgets import (
+    CustomColorSettingCard,
+    ExpandLayout,
+    HyperlinkCard,
+    InfoBar,
+    OptionsSettingCard,
+    PrimaryPushSettingCard,
+    RangeSettingCard,
+    ScrollArea,
+    SettingCardGroup,
+    SwitchSettingCard,
+    setTheme,
+    setThemeColor,
+)
+from qfluentwidgets import FluentIcon as FIF
 
 from shmtu_auth.src.gui.common.config import (
-    cfg,
-    HELP_URL,
-    FEEDBACK_URL,
     AUTHOR,
+    FEEDBACK_URL,
+    HELP_URL,
     VERSION,
     YEAR,
+    cfg,
 )
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
-
 from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -171,12 +167,8 @@ class SettingInterface(ScrollArea):
 
         # application
         self.about_group = SettingCardGroup("关于", self.scrollWidget)
-        self.help_card = HyperlinkCard(
-            HELP_URL, "打开帮助页面", FIF.HELP, "帮助", "查看帮助信息", self.about_group
-        )
-        self.feedback_card = PrimaryPushSettingCard(
-            "反馈", FIF.FEEDBACK, "提供反馈", "帮助我们改进程序", self.about_group
-        )
+        self.help_card = HyperlinkCard(HELP_URL, "打开帮助页面", FIF.HELP, "帮助", "查看帮助信息", self.about_group)
+        self.feedback_card = PrimaryPushSettingCard("反馈", FIF.FEEDBACK, "提供反馈", "帮助我们改进程序", self.about_group)
         self.about_card = PrimaryPushSettingCard(
             "检查更新",
             FIF.INFO,
@@ -254,9 +246,7 @@ class SettingInterface(ScrollArea):
 
     def __show_restart_tooltip(self):
         """show restart tooltip"""
-        InfoBar.success(
-            "更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self
-        )
+        InfoBar.success("更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self)
 
     # def __onDownloadFolderCardClicked(self):
     #     """ download folder card clicked slot """
@@ -281,6 +271,4 @@ class SettingInterface(ScrollArea):
         self.theme_color_card.colorChanged.connect(lambda c: setThemeColor(c))
 
         # about
-        self.feedback_card.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL))
-        )
+        self.feedback_card.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))

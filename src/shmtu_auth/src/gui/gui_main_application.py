@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import sys
 
@@ -8,7 +6,6 @@ from PySide6.QtWidgets import QApplication
 
 from shmtu_auth.src.gui.common.config import cfg
 from shmtu_auth.src.gui.view.main_window import MainWindow
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()

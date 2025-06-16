@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget, QHBoxLayout
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from qfluentwidgets import FluentIcon, IconWidget, SingleDirectionScrollArea, TextWrap
 
-from qfluentwidgets import IconWidget, FluentIcon, TextWrap, SingleDirectionScrollArea
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 
 
 class LinkCard(QFrame):
-
     def __init__(self, icon, title, content, url, parent=None):
         super().__init__(parent=parent)
         self.url = QUrl(url)
@@ -35,9 +32,7 @@ class LinkCard(QFrame):
         self.vBoxLayout.addWidget(self.titleLabel)
         self.vBoxLayout.addSpacing(8)
         self.vBoxLayout.addWidget(self.contentLabel)
-        self.vBoxLayout.setAlignment(
-            Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop
-        )
+        self.vBoxLayout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.urlWidget.move(170, 192)
 
         self.titleLabel.setObjectName("titleLabel")

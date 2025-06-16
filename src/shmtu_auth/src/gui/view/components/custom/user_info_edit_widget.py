@@ -1,35 +1,31 @@
-# -*- coding: utf-8 -*-
-
 from typing import List
 
-from PySide6.QtCore import Signal, Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
-
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from qfluentwidgets import (
-    PushButton,
+    InfoBarIcon,
     LineEdit,
     PasswordLineEdit,
-    ZhDatePicker,
+    PushButton,
     TeachingTip,
     TeachingTipTailPosition,
-    InfoBarIcon,
+    ZhDatePicker,
 )
 
 from shmtu_auth.src.datatype.shmtu.auth.auth_user import (
-    UserItem,
     NetworkType,
+    UserItem,
     user_is_exist_in_list,
 )
 from shmtu_auth.src.gui.view.components.custom.list_checkbox_widget import (
     ListCheckboxWidgets,
 )
-
-from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 from shmtu_auth.src.gui.view.components.fluent.widget_date_picker import (
     FDatePicker,
     convert_date_to_qdate,
     convert_qdate_to_date,
 )
+from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 
 
 class UserInfoEditWidget(QWidget):
@@ -107,7 +103,6 @@ class UserInfoEditWidget(QWidget):
         self.__selection_changed()
 
     def __init_layout(self):
-
         class TitleLabelLevel1(QLabel):
             def __init__(self, text: str, parent=None):
                 super().__init__(parent)
@@ -177,10 +172,7 @@ class UserInfoEditWidget(QWidget):
         self.input_user_name.setText(self.input_user_name.text().strip())
         self.input_password.setText(self.input_password.text().strip())
 
-        if (
-            not self.input_user_id.text().isdigit()
-            or len(self.input_user_id.text()) != 12
-        ):
+        if not self.input_user_id.text().isdigit() or len(self.input_user_id.text()) != 12:
             TeachingTip.create(
                 target=self.input_user_id,
                 icon=InfoBarIcon.ERROR,
@@ -261,9 +253,7 @@ class UserInfoEditWidget(QWidget):
             self.checkbox_support_type.get_selected_list()
         )
 
-        current_item.expire_date = convert_qdate_to_date(
-            self.widget_expire_date.getDate()
-        )
+        current_item.expire_date = convert_qdate_to_date(self.widget_expire_date.getDate())
         current_item.update_auto_generate_info()
 
     def __update_input_box_data(self, index: int = 0):

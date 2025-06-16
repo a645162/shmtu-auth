@@ -1,6 +1,7 @@
 pytest
 pylint
 flake8
+ruff
 
 pyinstaller
 

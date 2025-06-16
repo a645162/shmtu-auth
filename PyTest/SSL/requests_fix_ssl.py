@@ -16,6 +16,4 @@ def request_set_ciphers():
 
 def request_disable_warnings():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    requests.packages.urllib3.disable_warnings(
-        urllib3.exceptions.InsecureRequestWarning
-    )
+    requests.packages.urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

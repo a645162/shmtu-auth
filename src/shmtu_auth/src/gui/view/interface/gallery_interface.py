@@ -1,27 +1,23 @@
-# -*- coding: utf-8 -*-
-
-from PySide6.QtCore import Qt, QUrl, QEvent
-from PySide6.QtGui import QDesktopServices, QPainter, QPen, QColor
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
-
+from PySide6.QtCore import QEvent, Qt, QUrl
+from PySide6.QtGui import QColor, QDesktopServices, QPainter, QPen
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QWidget
 from qfluentwidgets import (
-    ScrollArea,
-    PushButton,
-    ToolButton,
-    FluentIcon,
-    isDarkTheme,
-    IconWidget,
-    ToolTipFilter,
-    TitleLabel,
-    CaptionLabel,
-    StrongBodyLabel,
     BodyLabel,
+    CaptionLabel,
+    FluentIcon,
+    IconWidget,
+    PushButton,
+    ScrollArea,
+    StrongBodyLabel,
+    TitleLabel,
+    ToolButton,
+    ToolTipFilter,
+    isDarkTheme,
     toggleTheme,
 )
 
 from shmtu_auth.src.gui.common.config import FEEDBACK_URL, HELP_URL, REPO_URL
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -103,16 +99,10 @@ class ToolBar(QWidget):
         final_help_url = self.document_url.strip()
         if len(final_help_url) == 0:
             final_help_url = HELP_URL
-        self.documentButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(final_help_url))
-        )
+        self.documentButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(final_help_url)))
 
-        self.sourceButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(REPO_URL))
-        )
-        self.feedbackButton.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL))
-        )
+        self.sourceButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
+        self.feedbackButton.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
 
         self.subtitleLabel.setTextColor(QColor(96, 96, 96), QColor(216, 216, 216))
 

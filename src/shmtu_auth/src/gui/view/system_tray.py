@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
-
-from qfluentwidgets import RoundMenu, Action
+from qfluentwidgets import Action, RoundMenu
 from qfluentwidgets import FluentIcon as FIF
 
 from shmtu_auth.src.gui.common.config import cfg
@@ -34,9 +31,7 @@ class SystemTray:
         self.tray_icon.setToolTip("SHMTU Auth - 校园网认证助手")
 
         # 连接系统托盘图标的激活事件
-        self.tray_icon.activated.connect(
-            lambda reason: self.__on_tray_icon_activated(reason)
-        )
+        self.tray_icon.activated.connect(lambda reason: self.__on_tray_icon_activated(reason))
 
         self.__create_menu_action()
         self.tray_icon.setContextMenu(self._tray_icon_menu)
@@ -51,9 +46,7 @@ class SystemTray:
     def show_notification(self, title: str, message: str, duration: int = 3000):
         """显示托盘通知"""
         if cfg.show_tray_notifications.value and self.tray_icon.supportsMessages():
-            self.tray_icon.showMessage(
-                title, message, QSystemTrayIcon.MessageIcon.Information, duration
-            )
+            self.tray_icon.showMessage(title, message, QSystemTrayIcon.MessageIcon.Information, duration)
             logger.info(f"显示托盘通知: {title} - {message}")
 
     def update_auth_status(self, is_running: bool, is_online: bool = None):

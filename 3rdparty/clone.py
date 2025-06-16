@@ -1,6 +1,53 @@
-import subprocess
 import os
-import sys
+import subprocess
+
+
+def _get_target_directory(repo_url, target_name, base_dir):
+    """获取目标目录路径"""
+    if base_dir is None:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    if target_name is None:
+        target_name = repo_url.split("/")[-1].replace(".git", "")
+
+    return os.path.join(base_dir, target_name), target_name
+
+
+def _build_clone_command(repo_url, branch, target_dir):
+    """构建 git clone 命令"""
+    cmd = ["git", "clone"]
+    if branch:
+        cmd.extend(["-b", branch])
+    cmd.extend([repo_url, target_dir])
+    return cmd
+
+
+def _execute_git_clone(cmd, target_name):
+    """执行 git clone 命令"""
+    try:
+        print("正在执行克隆...")
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+        if result.stdout:
+            print(f"输出: {result.stdout.strip()}")
+
+        if result.returncode == 0:
+            print(f"克隆 {target_name} 成功")
+            return True
+        else:
+            print(f"克隆 {target_name} 失败，返回码: {result.returncode}")
+            return False
+
+    except subprocess.CalledProcessError as e:
+        print(f"克隆 {target_name} 失败: {e}")
+        print(f"错误输出: {e.stderr}")
+        return False
+    except FileNotFoundError:
+        print("错误: 未找到 git 命令。请确保已安装 Git 并添加到 PATH 环境变量中。")
+        return False
+    except Exception as e:
+        print(f"克隆 {target_name} 时发生未知错误: {e}")
+        return False
 
 
 def clone_repo(repo_url, branch=None, target_name=None, base_dir=None):
@@ -16,48 +63,21 @@ def clone_repo(repo_url, branch=None, target_name=None, base_dir=None):
     Returns:
         bool: 是否成功克隆
     """
-    # 获取基础目录
-    if base_dir is None:
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # 获取目标目录名
-    if target_name is None:
-        target_name = repo_url.split("/")[-1].replace(".git", "")
-
-    target_dir = os.path.join(base_dir, target_name)
+    # 获取目标目录
+    target_dir, actual_target_name = _get_target_directory(repo_url, target_name, base_dir)
 
     # 检查目录是否已存在
     if os.path.exists(target_dir):
-        print(f"目录 {target_name} 已存在，跳过克隆")
+        print(f"目录 {actual_target_name} 已存在，跳过克隆")
         return True
 
     print(f"正在克隆 {repo_url} 到: {target_dir}")
     if branch:
         print(f"分支: {branch}")
 
-    try:
-        # 构建 git clone 命令
-        cmd = ["git", "clone"]
-        if branch:
-            cmd.extend(["-b", branch])
-        cmd.extend([repo_url, target_dir])
-
-        print("正在执行克隆...")
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-
-        print(f"克隆成功: {target_name}")
-        return True
-
-    except subprocess.CalledProcessError as e:
-        print(f"克隆 {target_name} 失败: {e}")
-        print(f"错误输出: {e.stderr}")
-        return False
-    except FileNotFoundError:
-        print("错误: 未找到 git 命令。请确保已安装 Git 并添加到 PATH 环境变量中。")
-        return False
-    except Exception as e:
-        print(f"克隆 {target_name} 时发生未知错误: {e}")
-        return False
+    # 构建并执行克隆命令
+    cmd = _build_clone_command(repo_url, branch, target_dir)
+    return _execute_git_clone(cmd, actual_target_name)
 
 
 def clone_repositories():

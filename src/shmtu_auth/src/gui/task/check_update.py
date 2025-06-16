@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import threading
 
+from shmtu_auth.src.gui.common.signal_bus import log_new, signal_bus
 from shmtu_auth.src.gui.software import program_update
-
-from shmtu_auth.src.gui.common.signal_bus import signal_bus, log_new
 
 
 class CheckUpdateOnceThread(threading.Thread):

@@ -1,23 +1,18 @@
-# -*- coding: utf-8 -*-
-
-from typing import List
-
 import threading
 from time import sleep as time_sleep
-
-from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, get_valid_user_list
+from typing import List
 
 from shmtu_auth.src.core.core_exp import check_is_connected
 from shmtu_auth.src.core.shmtu_auth import ShmtuNetAuth
-
+from shmtu_auth.src.datatype.shmtu.auth.auth_user import UserItem, get_valid_user_list
 from shmtu_auth.src.gui.common.signal_bus import (
-    log_new,
-    auth_status_changed,
     auth_attempt,
-    auth_success,
     auth_failed,
+    auth_status_changed,
+    auth_success,
     auth_thread_started,
     auth_thread_stopped,
+    log_new,
 )
 
 
@@ -55,7 +50,7 @@ class AuthThread(threading.Thread):
         self.shmtu_auth_obj = ShmtuNetAuth()
 
     def check_is_connected_retry(self):
-        for i in range(self.check_internet_retry_times):
+        for _ in range(self.check_internet_retry_times):
             if check_is_connected():
                 return True
             else:
@@ -96,9 +91,7 @@ class AuthThread(threading.Thread):
             # 发送认证尝试信号
             auth_attempt(user.user_id)
 
-            login_result = self.shmtu_auth_obj.login(
-                user.user_id, user.password, user.is_encrypted
-            )
+            login_result = self.shmtu_auth_obj.login(user.user_id, user.password, user.is_encrypted)
 
             if login_result[0]:  # 登录成功
                 auth_success(user.user_id)

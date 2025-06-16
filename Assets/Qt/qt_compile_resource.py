@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 # 设置base_dir为当前py文件所在目录
@@ -7,9 +5,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # 计算输入和输出文件的绝对路径
 input_qrc_path = os.path.join(base_dir, "resources.qrc")
-output_py_path = os.path.join(
-    base_dir, "../../src/shmtu_auth/src/gui/resource/resources.py"
-)
+output_py_path = os.path.join(base_dir, "../../src/shmtu_auth/src/gui/resource/resources.py")
 
 # Convert relative paths to absolute paths
 input_qrc_path = os.path.abspath(input_qrc_path)

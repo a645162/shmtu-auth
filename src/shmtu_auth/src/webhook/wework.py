@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 import json
 import threading
@@ -9,7 +7,6 @@ import requests
 
 from shmtu_auth.src.utils import my_time
 from shmtu_auth.src.utils.env import get_env_str, get_env_time
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -41,9 +38,7 @@ def get_wework_url(webhook_env: str = ""):
     return webhook_url
 
 
-def direct_send_text(
-    webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None
-):
+def direct_send_text(webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None):
     """Send text to WeWork"""
 
     logger.info("WebHook WeWork direct send text start!")
@@ -57,7 +52,7 @@ def direct_send_text(
         print("URL Not Set!")
         return
 
-    msg = f"{machine_name}\n" f"{msg}"
+    msg = f"{machine_name}\n{msg}"
 
     headers = {"Content-Type": "application/json"}
     data = {"msgtype": "text", "text": {"content": msg}}
@@ -92,9 +87,7 @@ def send_text_thread():
                 continue
 
             current_msg = msg_queue[0]
-            direct_send_text(
-                current_msg[0], current_msg[1], current_msg[2], current_msg[3]
-            )
+            direct_send_text(current_msg[0], current_msg[1], current_msg[2], current_msg[3])
             msg_queue.pop(0)
             logger.info("WebHook WeWork send text success!")
         except Exception as e:
@@ -103,9 +96,7 @@ def send_text_thread():
             time_sleep(60)
 
 
-def add_send_text_to_queue(
-    webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None
-):
+def add_send_text_to_queue(webhook_url: str, msg: str, mentioned_id=None, mentioned_mobile=None):
     msg_queue.append((webhook_url, msg, mentioned_id, mentioned_mobile))
     logger.info("WebHook WeWork add send text to queue!")
 
@@ -125,10 +116,7 @@ if __name__ == "__main__":
     # 发送测试数据
     add_send_text_to_queue(
         get_wework_url(),
-        f"SHMTU_Auth\n"
-        f"\tMachine Name: {machine_name}\n"
-        f"\tTime: {formatted_time}\n"
-        f"Test Pass!\n",
+        f"SHMTU_Auth\n\tMachine Name: {machine_name}\n\tTime: {formatted_time}\nTest Pass!\n",
         mentioned_id=["khm"],
         mentioned_mobile=[],
     )

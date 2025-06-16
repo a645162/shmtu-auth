@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 from PySide6.QtWidgets import QHBoxLayout, QLabel
-from qfluentwidgets import MessageBoxBase, SubtitleLabel, LineEdit, SpinBox
+from qfluentwidgets import LineEdit, MessageBoxBase, SpinBox, SubtitleLabel
 
 from shmtu_auth.src.gui.view.components.fluent.widget_push_button import FPushButton
 from shmtu_auth.src.utils.system import is_dir_path_valid

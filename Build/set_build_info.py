@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
+import argparse
+import datetime
 import os
 import re
-import datetime
-import argparse
 
 import pytz
 
@@ -51,7 +49,7 @@ def read_version_from_init():
     init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "version.py")
 
     try:
-        with open(init_file_path, "r", encoding="utf-8") as f:
+        with open(init_file_path, encoding="utf-8") as f:
             content = f.read()
 
         # 使用正则表达式匹配 __version__ 变量
@@ -76,7 +74,6 @@ def check_is_docker() -> bool:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(
         description="Build Info",
     )
@@ -89,11 +86,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read Py File
-    py_path = os.path.join(
-        base_dir, "src", "shmtu_auth", "src", "config", "build_info.py"
-    )
+    py_path = os.path.join(base_dir, "src", "shmtu_auth", "src", "config", "build_info.py")
 
-    with open(py_path, "r", encoding="utf-8") as f:
+    with open(py_path, encoding="utf-8") as f:
         src = f.read()
 
     # Set Version
@@ -111,9 +106,7 @@ if __name__ == "__main__":
     if hasattr(args, "exe") and args.exe:
         src = set_build_config(src, {"exe_build_time": formatted_now})
     if hasattr(args, "gui") and args.exe:
-        file_path = os.path.join(
-            base_dir, "src", "shmtu_auth", "src", "utils", "logs.py"
-        )
+        file_path = os.path.join(base_dir, "src", "shmtu_auth", "src", "utils", "logs.py")
 
         if not os.path.exists(file_path):
             print("logs.py is not found:", file_path)

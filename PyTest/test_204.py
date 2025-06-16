@@ -1,5 +1,6 @@
-import pytest
 import requests
+
+import pytest
 
 
 def test_send_https_request_204():

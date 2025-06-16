@@ -9,7 +9,7 @@ def read_version_from_init():
     init_file_path = os.path.join(base_dir, "src", "shmtu_auth", "version.py")
 
     try:
-        with open(init_file_path, "r", encoding="utf-8") as f:
+        with open(init_file_path, encoding="utf-8") as f:
             content = f.read()
 
         # 使用正则表达式匹配 __version__ 变量
@@ -32,5 +32,3 @@ if __name__ == "__main__":
     version = read_version_from_init()
     if version:
         print(version)
-    else:
-        exit

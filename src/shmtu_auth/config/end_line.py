@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
-
 def convert_to_crlf(file_path):
     # 读取文件
-    with open(file_path, "r", newline="") as file:
+    with open(file_path, newline="") as file:
         lines = file.readlines()
 
     # 检查每一行的行尾
@@ -18,7 +15,7 @@ def convert_to_crlf(file_path):
 
 def convert_to_lf(file_path):
     # 读取文件
-    with open(file_path, "r", newline="") as file:
+    with open(file_path, newline="") as file:
         lines = file.readlines()
 
     # 检查每一行的行尾

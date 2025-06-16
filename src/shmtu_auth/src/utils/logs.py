@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import os.path
+
 import loguru
 
 from shmtu_auth.src.config.project_directory import get_directory_log_path

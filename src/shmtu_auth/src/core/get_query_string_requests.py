@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
+from typing import Tuple
 
 import requests
 
 
-def get_text_code(url: str) -> (str, int):
+def get_text_code(url: str) -> Tuple[str, int]:
     # noinspection PyBroadException
     try:
         response = requests.get(url)

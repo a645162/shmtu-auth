@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-
 """
 Unified Installation Script
 Supports different installation modes: Basic, GUI, Development Environment
 """
 
-import os
-import sys
 import argparse
+import os
 import subprocess
+import sys
 from typing import List
 
 
@@ -187,9 +185,7 @@ class InstallManager:
             command = f'pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
         else:
             print("Installing PySide6-Fluent-Widgets Lightweight Version...")
-            command = (
-                f"pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}"
-            )
+            command = f"pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}"
 
         return self.run_command(command)
 
@@ -245,9 +241,7 @@ class InstallManager:
         self.set_install_options("all", fluent_full)
         return self.execute_install("Installing All Dependencies")
 
-    def install_custom(
-        self, requirements_files: List[str], fluent_full: bool = True
-    ) -> bool:
+    def install_custom(self, requirements_files: List[str], fluent_full: bool = True) -> bool:
         """Custom installation"""
         print("=== Custom Installation ===")
         self.show_source_info()
@@ -269,18 +263,8 @@ class InstallManager:
         return success
 
 
-def main():
-    # Support backward compatibility: if there are no command line arguments, default to basic installation
-    if len(sys.argv) == 1:
-        print("=== Default Basic Installation Mode ===")
-        installer = InstallManager()
-        success = installer.install_base()
-        if success:
-            print("\n✅ Installation Complete!")
-        else:
-            print("\n❌ An error occurred during installation!")
-        return
-
+def create_argument_parser():
+    """创建并配置参数解析器"""
     parser = argparse.ArgumentParser(
         description="Unified Installation Script - Supports different installation modes",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -303,21 +287,14 @@ Examples:
   python install.py dev --source tsinghua   # Development environment installation (using Tsinghua source)
   python install.py all --source aliyun     # Install all dependencies (using Aliyun source)
   python install.py custom req1.txt req2.txt --source aliyun # Custom installation (using Aliyun source)
-  
 Supports os.system() call method:
   import os
   os.system("pip install --upgrade \\"PySide6-Fluent-Widgets[full]\\" -i https://pypi.org/simple/")
         """,
     )
 
-    parser.add_argument(
-        "mode", choices=["base", "gui", "dev", "all", "custom"], help="Installation mode"
-    )
-
-    parser.add_argument(
-        "requirements", nargs="*", help="List of requirements files in custom mode"
-    )
-
+    parser.add_argument("mode", choices=["base", "gui", "dev", "all", "custom"], help="Installation mode")
+    parser.add_argument("requirements", nargs="*", help="List of requirements files in custom mode")
     parser.add_argument(
         "--source",
         "-s",
@@ -325,50 +302,59 @@ Supports os.system() call method:
         default="official",
         help="Specify pip software source (default: official)",
     )
-
     parser.add_argument(
         "--fluent-light",
         action="store_true",
         help="Install PySide6-Fluent-Widgets lightweight version instead of full version",
     )
-
     parser.add_argument(
         "--dry-run", action="store_true", help="Only show the operations to be performed, do not actually install"
     )
+    parser.add_argument("--list-sources", action="store_true", help="Show all available software sources")
 
-    parser.add_argument(
-        "--list-sources", action="store_true", help="Show all available software sources"
-    )
+    return parser
 
-    args = parser.parse_args()
 
-    # Show available software sources
-    if args.list_sources:
-        print("Available pip software sources:")
-        for source in PYPI_SOURCES:
-            print(f"  {source['name']:<10} - {source['description']}")
-            print(f"             {source['url']}")
-        return
+def handle_default_installation():
+    """处理默认安装（向后兼容）"""
+    print("=== Default Basic Installation Mode ===")
+    installer = InstallManager()
+    success = installer.install_base()
+    if success:
+        print("\n✅ Installation Complete!")
+    else:
+        print("\n❌ An error occurred during installation!")
 
-    # Validate custom mode parameters
+
+def show_available_sources():
+    """显示可用的软件源"""
+    print("Available pip software sources:")
+    for source in PYPI_SOURCES:
+        print(f"  {source['name']:<10} - {source['description']}")
+        print(f"             {source['url']}")
+
+
+def validate_arguments(args, parser):
+    """验证命令行参数"""
     if args.mode == "custom" and not args.requirements:
         parser.error("Custom mode requires specifying at least one requirements file")
 
-    installer = InstallManager(args.source)
+
+def handle_dry_run(args, installer):
+    """处理dry run模式"""
+    print("=== Dry Run Mode - Only showing operations ===")
+    print(f"Installation Mode: {args.mode}")
+    print(f"Software Source: {args.source}")
+    installer.show_source_info()
+    if args.mode == "custom":
+        print(f"Requirements Files: {args.requirements}")
     fluent_full = not args.fluent_light
+    print(f"Fluent Widgets Version: {'Full Version' if fluent_full else 'Lightweight Version'}")
 
-    # Dry run mode
-    if args.dry_run:
-        print("=== Dry Run Mode - Only showing operations ===")
-        print(f"Installation Mode: {args.mode}")
-        print(f"Software Source: {args.source}")
-        installer.show_source_info()
-        if args.mode == "custom":
-            print(f"Requirements Files: {args.requirements}")
-        print(f"Fluent Widgets Version: {'Full Version' if fluent_full else 'Lightweight Version'}")
-        return
 
-    # Execute installation
+def execute_installation(args, installer):
+    """执行实际安装"""
+    fluent_full = not args.fluent_light
     success = False
 
     if args.mode == "base":
@@ -388,6 +374,36 @@ Supports os.system() call method:
     else:
         print("\n❌ An error occurred during installation!")
         sys.exit(1)
+
+
+def main():
+    # 处理默认安装（向后兼容）
+    if len(sys.argv) == 1:
+        handle_default_installation()
+        return
+
+    # 创建参数解析器并解析参数
+    parser = create_argument_parser()
+    args = parser.parse_args()
+
+    # 显示可用软件源
+    if args.list_sources:
+        show_available_sources()
+        return
+
+    # 验证参数
+    validate_arguments(args, parser)
+
+    # 创建安装管理器
+    installer = InstallManager(args.source)
+
+    # 处理dry run模式
+    if args.dry_run:
+        handle_dry_run(args, installer)
+        return
+
+    # 执行安装
+    execute_installation(args, installer)
 
 
 if __name__ == "__main__":

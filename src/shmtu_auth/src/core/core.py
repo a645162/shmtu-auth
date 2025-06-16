@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 
 import requests
@@ -7,7 +5,6 @@ import requests
 from shmtu_auth.src.core.core_exp import check_is_connected_retry, get_query_string
 from shmtu_auth.src.core.shmtu_auth_const_value import ServiceType
 from shmtu_auth.src.utils.env import get_env_str
-
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -64,9 +61,7 @@ class ShmtuNetAuthCore:
 
         # noinspection PyBroadException
         try:
-            res = requests.get(
-                "http://ismu.shmtu.edu.cn/", headers=self.header, verify=False
-            )
+            res = requests.get("http://ismu.shmtu.edu.cn/", headers=self.header, verify=False)
             # print(res.geturl())
             if res.url.find("success.jsp") > 0:
                 self.isLogin = True
@@ -148,9 +143,7 @@ class ShmtuNetAuthCore:
 
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-        res = requests.get(
-            self.url + "getOnlineUserInfo", headers=self.header, verify=False
-        )
+        res = requests.get(self.url + "getOnlineUserInfo", headers=self.header, verify=False)
         try:
             self.allData = json.loads(res.text)
             logger.info(f"Get All Data: {self.allData}")

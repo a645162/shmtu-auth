@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QMenuBar
 
 
 class MenuAction(QAction):
-
     def __init__(self, text="", parent=None):
         super().__init__(text, parent)
 

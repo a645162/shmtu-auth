@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-import os.path
+import os
 
 from shmtu_auth.src.config.data_directory import get_data_path
 
