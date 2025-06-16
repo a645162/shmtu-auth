@@ -16,9 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: TheMrMilchmann/setup-msvc-dev@v3
+      - name: Initialize MSVC Dev Environment
+        uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
+
+      - name: List Downlevel Directories
+        run: |
+          # C:\Windows\System32\downlevel
+          ls C:\Windows\System32\downlevel
+          ls "C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64"
+
+          # Append to PATH
+          $env:PATH += ";C:\Windows\System32\downlevel;C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs\x64"
+          echo $env:PATH
 
       - name: Set up Python
         uses: actions/setup-python@v5

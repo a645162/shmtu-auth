@@ -72,9 +72,9 @@ Name: "{commondesktop}\shmtu-auth"; \
 	Tasks: DesktopIcon
 
 [Tasks]
-Name: "DesktopIcon"; Description: "创建桌面快捷方式"
+Name: "DesktopIcon"; Description: "Create desktop shortcut"
 
 [Run]
 Filename: "{app}\shmtu_auth_windows_gui.exe"; \
-	Description: "直接运行程序"; \
+	Description: "Directly run program"; \
 	Flags: postinstall nowait

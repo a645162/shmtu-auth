@@ -6,18 +6,15 @@ $DebugMode = $false
 $parentProcess = (Get-WmiObject -Class Win32_Process -Filter "ProcessId =$PID").ParentProcessId
 $parentProcessName = (Get-WmiObject -Class Win32_Process -Filter "ProcessId =$parentProcess").Name
 # Check is include "pycharm"
-if ($parentProcessName -like "pycharm*.exe")
-{
+if ($parentProcessName -like "pycharm*.exe") {
     Write-Host "Running in PyCharm"
     $DebugMode = $true
 }
 
-if ($DebugMode)
-{
+if ($DebugMode) {
     Write-Host "Debug mode is enabled."
 }
-else
-{
+else {
     Write-Host "Debug mode is disabled."
 }
 
@@ -26,14 +23,12 @@ $pythonCommandPath = (Get-Command -Name "python" -ErrorAction SilentlyContinue).
 
 # python --version
 
-if (-not $pythonCommandPath)
-{
+if (-not $pythonCommandPath) {
     $pythonCommandPath = "C:\Users\konghaomin\miniconda3\envs\shmtu-auth\python.exe"
 }
 
 # 检查Python命令是否存在
-if (-not $pythonCommandPath)
-{
+if (-not $pythonCommandPath) {
     Write-Host "Python command not found."
     exit
 }
@@ -45,15 +40,13 @@ $python_path = $pythonCommandPath
 Write-Host "Python path: $python_path"
 
 # Check requirements.txt is exist
-if (-not (Test-Path "requirements.txt"))
-{
+if (-not (Test-Path "requirements.txt")) {
     # Go to parent directory
     Set-Location ..
 }
 
 # Check again
-if (-not (Test-Path "requirements.txt"))
-{
+if (-not (Test-Path "requirements.txt")) {
     Write-Host "File requirements.txt not found"
     exit
 }
@@ -63,13 +56,11 @@ $baseLocation = Get-Location
 
 Write-Host "Installing requirements..."
 
-if ($DebugMode)
-{
+if ($DebugMode) {
     Write-Host "Running in Debug Mode"
     Write-Host "Passing the requirements installation..."
 }
-else
-{
+else {
     Write-Host "Running in Release Mode"
     # $null = Read-Host "Press Enter to Continue"
     Write-Host "Installing requirements..."
@@ -119,13 +110,11 @@ Write-Host "Build Completed"
 Write-Host "Cleaning up..."
 
 # Nuitka creates .build and .dist folders, clean them up
-if (Test-Path "$srcLocation\main_gui.build")
-{
+if (Test-Path "$srcLocation\main_gui.build") {
     Remove-Item -Recurse -Force "$srcLocation\main_gui.build"
 }
 
-if (Test-Path "$srcLocation\main_gui.dist")
-{
+if (Test-Path "$srcLocation\main_gui.dist") {
     Remove-Item -Recurse -Force "$srcLocation\main_gui.dist"
 }
 

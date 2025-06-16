@@ -55,7 +55,7 @@ var ICONS_GROUP
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Language files
-!insertmacro MUI_LANGUAGE "SimpChinese"
+!insertmacro MUI_LANGUAGE "English"
 
 ; Reserve files
 ; 'MUI_RESERVEFILE_INSTALLOPTIONS' Not compatible with MUI2
@@ -70,7 +70,7 @@ InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
-Section "主程序" SEC01
+Section "Main Program" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite on
   File /r "Output\Windows\shmtu_auth_windows_gui\shmtu_auth_windows_gui\*.*"
@@ -113,11 +113,11 @@ SectionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) 已成功卸载。"
+  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) has been successfully uninstalled."
 FunctionEnd
 
 Function un.onInit
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "您是否需要完全卸载 $(^Name) ？" IDYES +2
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Do you want to completely uninstall $(^Name)?" IDYES +2
   Abort
 FunctionEnd
 

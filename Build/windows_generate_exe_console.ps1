@@ -5,27 +5,27 @@ $DebugMode = $false
 $parentProcess = (Get-WmiObject -Class Win32_Process -Filter "ProcessId =$PID").ParentProcessId
 $parentProcessName = (Get-WmiObject -Class Win32_Process -Filter "ProcessId =$parentProcess").Name
 # Check is include "pycharm"
-if ($parentProcessName -like "pycharm*.exe")
-{
+if ($parentProcessName -like "pycharm*.exe") {
     Write-Host "Running in PyCharm"
     $DebugMode = $true
 }
 
-if ($DebugMode)
-{
+if ($DebugMode) {
     Write-Host "Debug mode is enabled."
 }
-else
-{
+else {
     Write-Host "Debug mode is disabled."
 }
 
 # 获取Python命令的路径
 $pythonCommandPath = (Get-Command -Name "python" -ErrorAction SilentlyContinue).Path
 
+if (-not $pythonCommandPath) {
+    $pythonCommandPath = "C:\Users\konghaomin\miniconda3\envs\shmtu-auth\python.exe"
+}
+
 # 检查Python命令是否存在
-if (-not $pythonCommandPath)
-{
+if (-not $pythonCommandPath) {
     Write-Host "Python command not found."
     exit
 }
@@ -37,15 +37,13 @@ $python_path = $pythonCommandPath
 Write-Host "Python path: $python_path"
 
 # Check requirements.txt is exist
-if (-not (Test-Path "requirements.txt"))
-{
+if (-not (Test-Path "requirements.txt")) {
     # Go to parent directory
     Set-Location ..
 }
 
 # Check again
-if (-not (Test-Path "requirements.txt"))
-{
+if (-not (Test-Path "requirements.txt")) {
     Write-Host "File requirements.txt not found"
     exit
 }
@@ -55,13 +53,11 @@ $baseLocation = Get-Location
 
 Write-Host "Installing requirements..."
 
-if ($DebugMode)
-{
+if ($DebugMode) {
     Write-Host "Debug mode is enabled."
     Write-Host "Passing the requirements installation..."
 }
-else
-{
+else {
     Write-Host "Debug mode is disabled."
     # $null = Read-Host "Press Enter to Continue"
     # pip install -r requirements.txt > $null
