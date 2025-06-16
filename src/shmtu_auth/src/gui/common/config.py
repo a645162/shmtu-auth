@@ -121,7 +121,7 @@ for attr in dir(cfg):
         # Check is methond or property
         if callable(getattr(cfg, attr)):
             continue
-        
+
         value = getattr(cfg, attr)
         logger.info(f"Config {attr}: {value}")
 

@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QLabel, QWidget, QApplication
+from PySide6.QtWidgets import QApplication, QLabel, QWidget
 from qfluentwidgets import (
     ComboBoxSettingCard,
     CustomColorSettingCard,
@@ -18,6 +18,7 @@ from qfluentwidgets import (
 )
 from qfluentwidgets import FluentIcon as FIF
 
+from shmtu_auth.config.github.latest_version import get_github_branches
 from shmtu_auth.src.gui.common.config import (
     AUTHOR,
     FEEDBACK_URL,
@@ -26,10 +27,9 @@ from shmtu_auth.src.gui.common.config import (
     YEAR,
     cfg,
 )
-from shmtu_auth.config.github.latest_version import get_github_branches
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
-from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
 from shmtu_auth.src.gui.software.program_update import check_update_manually
+from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -174,6 +174,9 @@ class SettingInterface(ScrollArea):
             "选择从哪个分支获取更新",
             texts=["main", "beta", "dev"],  # 默认选项，会在初始化时动态更新
             parent=self.update_software_group,
+        )
+        self.update_branch_card.objectNameChanged.connect(
+            lambda: self.update_branch_card.comboBox.setObjectName("updateBranchComboBox")
         )
         self.manual_check_update_card = PrimaryPushSettingCard(
             "立即检查",
@@ -352,9 +355,10 @@ class SettingInterface(ScrollArea):
             latest_version = result["latest_version"]
             selected_branch = result["selected_branch"]
             has_update = result["has_update"]
+            is_ahead = result.get("is_ahead", False)
 
             logger.info(
-                f"版本信息 - 当前: {current_version}, 最新: {latest_version}, 分支: {selected_branch}, 有更新: {has_update}"
+                f"版本信息 - 当前: {current_version}, 最新: {latest_version}, 分支: {selected_branch}, 有更新: {has_update}, 版本超前: {is_ahead}"
             )
 
             if has_update:
@@ -362,6 +366,11 @@ class SettingInterface(ScrollArea):
                 success_msg = f"当前版本: {current_version}\n最新版本: {latest_version}\n分支: {selected_branch}"
                 InfoBar.success("发现新版本", success_msg, duration=5000, parent=self)
                 logger.info(f"New version available: {latest_version} (current: {current_version})")
+            elif is_ahead:
+                # 当前版本超前
+                success_msg = f"当前版本: {current_version}\n远端版本: {latest_version}\n分支: {selected_branch}\n当前版本超前，可能不稳定，仅供测试"
+                InfoBar.warning("版本超前", success_msg, duration=5000, parent=self)
+                logger.info(f"Version ahead of remote: {current_version} > {latest_version}")
             else:
                 # 已是最新版本
                 success_msg = f"当前版本: {current_version}\n远端版本: {latest_version}\n分支: {selected_branch}\n您使用的已经是最新版本！"
@@ -389,7 +398,7 @@ class SettingInterface(ScrollArea):
         if w.exec():
             logger.info("用户确认退出程序")
             # 通过主窗口的强制退出方法退出
-            if hasattr(self.window(), 'force_quit'):
+            if hasattr(self.window(), "force_quit"):
                 self.window().force_quit()
             else:
                 # 备用退出方法

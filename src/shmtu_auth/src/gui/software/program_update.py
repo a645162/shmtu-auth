@@ -1,7 +1,7 @@
 from shmtu_auth.config.github.latest_version import get_branch_version
 from shmtu_auth.src.config.build_info import branch, program_version
-from shmtu_auth.src.gui.common.signal_bus import log_new
 from shmtu_auth.src.gui.common.config import cfg
+from shmtu_auth.src.gui.common.signal_bus import log_new
 from shmtu_auth.src.utils.logs import get_logger
 from shmtu_auth.src.utils.program_version import ProgramVersion
 
@@ -67,6 +67,7 @@ def check_update_manually(selected_branch=None) -> dict:
     result = {
         "success": False,
         "has_update": False,
+        "is_ahead": False,
         "current_version": PROGRAM_VERSION,
         "latest_version": "",
         "selected_branch": "",
@@ -107,12 +108,19 @@ def check_update_manually(selected_branch=None) -> dict:
                 program_version_obj = ProgramVersion.from_str(PROGRAM_VERSION)
                 result["has_update"] = program_version_obj < latest_version_obj
 
+                # 检查当前版本是否超前于远端版本
+                result["is_ahead"] = program_version_obj > latest_version_obj
+
                 logger.info(
-                    f"版本比较结果: 当前版本 {PROGRAM_VERSION} {'<' if result['has_update'] else '>='} 最新版本 {latest_version}"
+                    f"版本比较结果: 当前版本 {PROGRAM_VERSION} {'<' if result['has_update'] else ('>' if result['is_ahead'] else '=')} 最新版本 {latest_version}"
                 )
 
                 if result["has_update"]:
                     log_msg = f"发现新版本: {latest_version} (当前: {PROGRAM_VERSION})"
+                    logger.info(log_msg)
+                    log_new("Update", log_msg)
+                elif result["is_ahead"]:
+                    log_msg = f"当前版本超前: {PROGRAM_VERSION} > 远端版本: {latest_version}"
                     logger.info(log_msg)
                     log_new("Update", log_msg)
                 else:

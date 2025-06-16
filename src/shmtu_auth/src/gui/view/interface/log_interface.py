@@ -1,10 +1,11 @@
+import csv
 import datetime
 import os.path
 import pickle
 from typing import List
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTableWidgetItem
+from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QTableWidgetItem, QWidget
 from qfluentwidgets import InfoBar, InfoBarIcon, InfoBarPosition, TableWidget
 
 from shmtu_auth.src.config.project_directory import get_directory_data_path
@@ -36,10 +37,24 @@ class LogInterface(GalleryInterface):
         )
         self.vBoxLayout.addWidget(info_bar)
 
+        # 创建按钮容器
+        button_widget = QWidget()
+        button_layout = QHBoxLayout(button_widget)
+        button_layout.setContentsMargins(0, 0, 0, 0)
+
         button_save_log = FPushButton(self, "导出日志")
         button_save_log.setFixedWidth(100)
         button_save_log.clicked.connect(self.export_logs)
-        self.vBoxLayout.addWidget(button_save_log)
+
+        button_clear_log = FPushButton(self, "清空日志")
+        button_clear_log.setFixedWidth(100)
+        button_clear_log.clicked.connect(self.clear_logs)
+
+        button_layout.addWidget(button_save_log)
+        button_layout.addWidget(button_clear_log)
+        button_layout.addStretch()  # 添加弹性空间，让按钮靠左对齐
+
+        self.vBoxLayout.addWidget(button_widget)
 
         self.logTable = LogTableFrame(self)
         self.vBoxLayout.addWidget(self.logTable)
@@ -48,7 +63,79 @@ class LogInterface(GalleryInterface):
         self.logTable.add_record(time=time, event=event, status=status)
 
     def export_logs(self):
-        pass
+        """导出日志到文件"""
+        logger.info("用户点击导出日志按钮")
+
+        # 检查是否有日志数据
+        if not self.logTable.record_list:
+            InfoBar.warning(title="无数据", content="当前没有日志记录可导出", duration=2000, parent=self)
+            return
+
+        # 打开文件保存对话框
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "导出日志",
+            f"shmtu_auth_logs_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            "CSV文件 (*.csv);;文本文件 (*.txt);;所有文件 (*.*)",
+        )
+
+        if not file_path:
+            logger.info("用户取消导出日志")
+            return
+
+        try:
+            # 根据文件扩展名选择导出格式
+            if file_path.lower().endswith(".csv"):
+                # 导出为CSV格式
+                with open(file_path, "w", newline="", encoding="utf-8-sig") as csvfile:
+                    writer = csv.writer(csvfile)
+                    # 写入表头
+                    writer.writerow(["日志时间", "事件", "状态"])
+                    # 写入数据
+                    for record in self.logTable.record_list:
+                        writer.writerow(record)
+            else:
+                # 导出为文本格式
+                with open(file_path, "w", encoding="utf-8") as txtfile:
+                    txtfile.write("SHMTU Auth 日志导出\n")
+                    txtfile.write("=" * 50 + "\n")
+                    txtfile.write(f"导出时间: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    txtfile.write(f"总记录数: {len(self.logTable.record_list)}\n")
+                    txtfile.write("=" * 50 + "\n\n")
+
+                    for record in self.logTable.record_list:
+                        txtfile.write(f"时间: {record[0]}\n")
+                        txtfile.write(f"事件: {record[1]}\n")
+                        txtfile.write(f"状态: {record[2]}\n")
+                        txtfile.write("-" * 30 + "\n")
+
+            logger.info(f"日志导出成功: {file_path}")
+            InfoBar.success(
+                title="导出成功", content=f"日志已成功导出到: {os.path.basename(file_path)}", duration=3000, parent=self
+            )
+
+        except Exception as e:
+            logger.error(f"导出日志失败: {str(e)}")
+            InfoBar.error(title="导出失败", content=f"导出过程中发生错误: {str(e)}", duration=4000, parent=self)
+
+    def clear_logs(self):
+        """清空日志功能"""
+        # 显示确认对话框
+        from qfluentwidgets import MessageBox
+
+        title = "清空日志"
+        content = "确定要清空所有日志记录吗？此操作不可撤销！"
+
+        w = MessageBox(title, content, self)
+        if w.exec():
+            logger.info("用户确认清空日志")
+            # 清空日志表格
+            self.logTable.clear_all_logs()
+
+            # 显示成功提示
+            InfoBar.success(title="清空成功", content="所有日志记录已清空", duration=2000, parent=self)
+        else:
+            logger.info("用户取消清空日志")
 
 
 class LogTableFrame(TableWidget):
@@ -145,3 +232,19 @@ class LogTableFrame(TableWidget):
         self.save_status()
 
         self.resizeColumnsToContents()
+
+    def clear_all_logs(self):
+        """清空所有日志记录"""
+        logger.info("开始清空所有日志记录")
+
+        # 清空记录列表
+        self.record_list = []
+        self.record_count = 0
+
+        # 清空表格显示
+        self.setRowCount(0)
+
+        # 保存清空后的状态到文件
+        self.save_status()
+
+        logger.info("所有日志记录已清空")
