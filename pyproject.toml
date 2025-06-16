@@ -1,25 +1,33 @@
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=40.8.0", "wheel"]
+
+[tool.uv]
+dev-dependencies = [
+  "pytest>=6.0",
+  "flake8",
+  "black",
+  "isort",
+]
 
 [project]
-name = "shmtu-auth"
-dynamic = ["version"]
-description = "上海海事大学校园网自动认证工具"
-readme = "README.md"
-requires-python = ">=3.5"
-license = {text = "GPLv3"}
 authors = [
-    {name = "Haomin Kong", email = "a645162@gmail.com"}
+  {name = "Haomin Kong", email = "a645162@gmail.com"},
 ]
 dependencies = [
-    "urllib3<2",
-    "requests",
-    "chardet",
-    "PyYaml",
-    "toml",
-    "loguru"
+  "urllib3<2",
+  "requests>=2.20.0",
+  "chardet>=3.0.0",
+  "PyYaml>=5.1.0",
+  "toml>=0.10.0",
+  "loguru>=0.5.0",
 ]
+description = "上海海事大学校园网自动认证工具"
+dynamic = ["version"]
+license = {text = "GPLv3"}
+name = "shmtu-auth"
+readme = "README.md"
+requires-python = ">=3.8"
 
 [project.urls]
 Homepage = "https://github.com/a645162/shmtu-auth"

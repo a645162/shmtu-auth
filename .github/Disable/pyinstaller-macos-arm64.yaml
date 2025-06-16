@@ -13,7 +13,7 @@ jobs:
     # macOS Latest ARM64
     runs-on: macos-latest
     # macOS Latest Intel x64
-    # runs-on: macos-latest-large
+    # runs-on: macos-13
 
     steps:
       - uses: actions/checkout@v4

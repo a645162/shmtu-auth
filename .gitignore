@@ -5,6 +5,10 @@ gui_config.json
 # PyPi Token
 /.pypi_token
 
+# UV 相关文件
+.venv/
+uv.lock
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -266,4 +270,3 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .idea
-
