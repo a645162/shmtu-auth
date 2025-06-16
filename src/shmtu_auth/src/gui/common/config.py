@@ -69,6 +69,12 @@ class Config(QConfig):
 
     # software update
     check_update_at_start_up = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
+    update_branch = OptionsConfigItem(
+        "Update",
+        "UpdateBranch",
+        "main",
+        OptionsValidator(["main", "beta", "dev"]),  # 默认选项，会在运行时动态更新
+    )
 
     def get_dpi_ratio(self) -> float:
         dpi_scale = 1.0
@@ -104,6 +110,19 @@ INTERFACE_URL_LOG = ""
 
 cfg = Config()
 cfg.themeMode.value = Theme.AUTO
-qconfig.load("config/gui_config.json", cfg)
+
+config_path = "config/gui_config.json"
+
+qconfig.load(config_path, cfg)
+
+# Print all attributes of the config(Only properties without underscore)
+for attr in dir(cfg):
+    if not attr.startswith("_"):
+        # Check is methond or property
+        if callable(getattr(cfg, attr)):
+            continue
+
+        value = getattr(cfg, attr)
+        logger.info(f"Config {attr}: {value}")
 
 logger.info(f"QFluentWidgets Version: {q_fluent_widgets_version}")
