@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # https://github.com/prOttonicFusion/iconCreator
 # Script for creating a set of icon from a single NxN pixel image
 # Usage: python iconCreator.py image-file.png
 #
 
 import os
+from pathlib import Path
+
 # import sys
 from PIL import Image
-from pathlib import Path
 
 # Output directories
 directories = ["base", "linux", "mac"]
@@ -37,7 +37,7 @@ for dir in directories:
     if not os.path.exists(pathToDir):
         os.makedirs(pathToDir)
 
-    if dir == 'base':
+    if dir == "base":
         # General icons
         imgSizes = [16, 24, 32, 48, 64]
     else:
@@ -50,14 +50,14 @@ for dir in directories:
             with Image.open(infile) as img:
                 # Scale & convert image
 
-                if 'mac' in dir:
+                if "mac" in dir:
                     # Add ~5% margin to Mac icons
                     m = int(img.size[0] * 0.05)
                     img = addMargin(img, m, m, m, m)
 
                 img.thumbnail((size, size))
                 img.save(outfile)
-        except IOError:
+        except OSError:
             print("Unable to process", infile)
             exit()
 
@@ -69,7 +69,7 @@ try:
     # Scale & convert image
     with Image.open(infile) as img:
         img.save(outfile)
-except IOError:
+except OSError:
     print("Unable to process", infile)
     exit()
 print("Created: ", outfile)

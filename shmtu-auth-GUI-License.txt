@@ -1,0 +1,11 @@
+上海海事大学校园网自动登录程序
+==============================
+这是一个用于上海海事大学校园网自动登录的程序，使用Python编写。
+程序为免费开源软件，遵循GPLv3协议。
+
+官方网站:
+https://a645162.github.io/shmtu-auth/
+开源仓库:
+https://github.com/a645162/shmtu-auth
+
+程序遵循GPLv3协议，其中使用到PySide6以及QFluentWidget库，均使用GPLv3协议，因此，请您务必遵守协议！

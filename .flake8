@@ -1,0 +1,7 @@
+[flake8]
+exclude = ./src/shmtu_auth/src/gui/resource/resources.py
+ignore = E402, E126, W504, E123 ,E251, W503, F824
+
+per-file-ignores =
+    ./shmtu_auth/src/gui/view/main_window.py: F401,
+    ./shmtu_auth/src/gui/view/interface/user_list_interface.py: F401

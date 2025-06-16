@@ -82,16 +82,16 @@ jobs:
         run: |
           case ${{ github.ref }} in
             refs/heads/main)
-              echo ::set-output name=version::edge
-              echo ::set-output name=push::false
+              echo "version=edge" >>$GITHUB_OUTPUT
+              echo "push=false" >>$GITHUB_OUTPUT
             ;;
             refs/tags/*)
-              echo ::set-output name=version::$(echo ${{ github.ref }} | sed -E 's|refs/tags/||')
-              echo ::set-output name=push::true
+              echo "version=$(echo${{ github.ref }} | sed -E 's|refs/tags/||')" >> $GITHUB_OUTPUT
+              echo "push=true" >> $GITHUB_OUTPUT
             ;;
             *)
-              echo ::set-output name=version::${{ github.sha }}
-              echo ::set-output name=push::false
+              echo "version=${{ github.sha }}" >>$GITHUB_OUTPUT
+              echo "push=false" >>$GITHUB_OUTPUT
             ;;
           esac;
 
