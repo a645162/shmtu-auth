@@ -5,16 +5,20 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
   build:
-    # runs-on: windows-latest
-    runs-on: windows-2022
+    runs-on: windows-latest
+    # runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,18 +49,15 @@ jobs:
         run: . .\Build\windows_generate_exe_console.ps1
 
       - name: Make logs directory
-        run:
-          mkdir ".\Build\Output\Windows\shmtu_auth_windows_console\logs"
+        run: mkdir ".\Build\Output\Windows\shmtu_auth_windows_console\logs"
 
       - name: Copy Config File
-        run:
-          cp `
+        run: cp `
           ".\src\shmtu_auth\config\config.note.toml" `
           ".\Build\Output\Windows\shmtu_auth_windows_console\config.toml"
 
       - name: Compress Directory to ZIP
-        run:
-          Compress-Archive `
+        run: Compress-Archive `
           -Path ".\Build\Output\Windows\shmtu_auth_windows_console" `
           -DestinationPath ".\Build\Output\Windows\shmtu_auth_windows_console.zip"
 

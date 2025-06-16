@@ -3,3 +3,5 @@ PySideSix-Frameless-Window>=0.3.1
 darkdetect
 
 PySide6-Fluent-Widgets[full]
+
+scipy

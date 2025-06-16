@@ -5,16 +5,20 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
   build:
-    # runs-on: windows-latest
-    runs-on: windows-2022
+    runs-on: windows-latest
+    # runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
 
       - name: Set up Python
         uses: actions/setup-python@v5
