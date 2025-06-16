@@ -36,7 +36,7 @@ requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = "ALL"
 
 然而却提示下面的错误
 
-```
+```bash
 cannot import name 'DEFAULT_CIPHERS' from 'urllib3.util.ssl_'
 ```
 
@@ -71,15 +71,15 @@ pip install requests "urllib3<2"
 
 `requirements.txt`中这样编写:
 
-```
+```txt
 requests
 urllib3<2
 ```
 
 ## Reference
 
-https://github.com/JurajNyiri/pytapo/issues/65
+<https://github.com/JurajNyiri/pytapo/issues/65>
 
-https://github.com/psf/requests/issues/6443
+<https://github.com/psf/requests/issues/6443>
 
-https://github.com/psf/requests/blob/main/HISTORY.md#2300-2023-05-03
+<https://github.com/psf/requests/blob/main/HISTORY.md#2300-2023-05-03>
