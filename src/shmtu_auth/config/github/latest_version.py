@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 github_author_name = "a645162"
@@ -5,13 +7,24 @@ github_repo_name = "shmtu-auth"
 
 
 def get_branch_version(branch: str = "main") -> str:
-    url = f"https://raw.githubusercontent.com/{github_author_name}/{github_repo_name}/{branch}/version.txt"
+    url = f"https://raw.githubusercontent.com/{github_author_name}/{github_repo_name}"
+    url += f"/refs/heads/{branch}/"
+    url += "src/shmtu_auth/version.py"
 
     try:
         response = requests.get(url)
-        version_str = response.text.strip()
-        if len(version_str) == 0:
+        content = response.text.strip()
+        if len(content) == 0:
             return ""
+
+        # 使用正则表达式匹配 __version__ 变量
+        version_pattern = r'__version__\s*=\s*["\']([^"\']+)["\']'
+        match = re.search(version_pattern, content)
+
+        if not match:
+            return ""
+
+        version_str = match.group(1)
 
         spilt_list = version_str.split(".")
         if len(spilt_list) != 3:
