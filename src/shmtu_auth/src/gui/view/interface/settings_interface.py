@@ -29,6 +29,7 @@ from shmtu_auth.src.gui.common.config import (
 from shmtu_auth.config.github.latest_version import get_github_branches
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
+from shmtu_auth.src.gui.software.program_update import check_update_manually
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -174,6 +175,13 @@ class SettingInterface(ScrollArea):
             texts=["main", "beta", "dev"],  # 默认选项，会在初始化时动态更新
             parent=self.update_software_group,
         )
+        self.manual_check_update_card = PrimaryPushSettingCard(
+            "立即检查",
+            FIF.SYNC,
+            "手动检查更新",
+            "立即检查是否有新版本可用",
+            self.update_software_group,
+        )
 
         # application
         self.about_group = SettingCardGroup("关于", self.scrollWidget)
@@ -240,6 +248,7 @@ class SettingInterface(ScrollArea):
 
         self.update_software_group.addSettingCard(self.update_on_start_up_card)
         self.update_software_group.addSettingCard(self.update_branch_card)
+        self.update_software_group.addSettingCard(self.manual_check_update_card)
 
         self.about_group.addSettingCard(self.help_card)
         self.about_group.addSettingCard(self.feedback_card)
@@ -295,6 +304,64 @@ class SettingInterface(ScrollArea):
             self.update_branch_card.comboBox.clear()
             self.update_branch_card.comboBox.addItems(default_branches)
 
+    def __manual_check_update(self):
+        """手动检查更新"""
+        logger.info("用户点击手动检查更新按钮")
+
+        # 获取当前选择的分支
+        current_selected_branch = cfg.get(cfg.update_branch)
+        current_combobox_text = self.update_branch_card.comboBox.currentText()
+        logger.info(f"配置中的分支: {current_selected_branch}")
+        logger.info(f"下拉框中的分支: {current_combobox_text}")
+
+        # 使用下拉框当前显示的分支
+        selected_branch = current_combobox_text if current_combobox_text else current_selected_branch
+
+        # 显示检查中的提示
+        InfoBar.info("检查更新", f"正在检查 {selected_branch} 分支的更新，请稍候...", duration=2000, parent=self)
+
+        try:
+            logger.info(f"开始执行手动更新检查，使用分支: {selected_branch}")
+            # 执行更新检查，传递当前选择的分支
+            result = check_update_manually(selected_branch)
+
+            logger.info(f"更新检查结果: {result}")
+
+            if not result["success"]:
+                # 检查失败
+                error_msg = result["error_message"]
+                logger.error(f"更新检查失败: {error_msg}")
+                InfoBar.error("检查更新失败", error_msg, duration=4000, parent=self)
+                return
+
+            # 检查成功，显示结果
+            current_version = result["current_version"]
+            latest_version = result["latest_version"]
+            selected_branch = result["selected_branch"]
+            has_update = result["has_update"]
+
+            logger.info(
+                f"版本信息 - 当前: {current_version}, 最新: {latest_version}, 分支: {selected_branch}, 有更新: {has_update}"
+            )
+
+            if has_update:
+                # 有新版本
+                success_msg = f"当前版本: {current_version}\n最新版本: {latest_version}\n分支: {selected_branch}"
+                InfoBar.success("发现新版本", success_msg, duration=5000, parent=self)
+                logger.info(f"New version available: {latest_version} (current: {current_version})")
+            else:
+                # 已是最新版本
+                success_msg = f"当前版本: {current_version}\n远端版本: {latest_version}\n分支: {selected_branch}\n您使用的已经是最新版本！"
+                InfoBar.success("已是最新版本", success_msg, duration=4000, parent=self)
+                logger.info(f"Already up to date: {current_version} (remote: {latest_version})")
+
+        except Exception as e:
+            # 异常处理
+            error_msg = f"检查更新时发生未知错误: {str(e)}"
+            logger.error(f"Manual update check exception: {e}")
+            logger.error(f"Exception details: {type(e).__name__}: {str(e)}")
+            InfoBar.error("检查更新失败", error_msg, duration=4000, parent=self)
+
     def __connectSignalToSlot(self):
         """connect signal to slot"""
         cfg.appRestartSig.connect(self.__show_restart_tooltip)
@@ -309,3 +376,6 @@ class SettingInterface(ScrollArea):
 
         # about
         self.feedback_card.clicked.connect(lambda: QDesktopServices.openUrl(QUrl(FEEDBACK_URL)))
+
+        # update
+        self.manual_check_update_card.clicked.connect(self.__manual_check_update)
