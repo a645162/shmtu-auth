@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtWidgets import QLabel, QWidget
+from PySide6.QtWidgets import QLabel, QWidget, QApplication
 from qfluentwidgets import (
     ComboBoxSettingCard,
     CustomColorSettingCard,
@@ -196,6 +196,16 @@ class SettingInterface(ScrollArea):
         )
         self.about_card.clicked.connect(lambda: start_check_update_once_thread())
 
+        # 程序控制组
+        self.program_control_group = SettingCardGroup("程序控制", self.scrollWidget)
+        self.quit_app_card = PrimaryPushSettingCard(
+            "退出程序",
+            FIF.POWER_BUTTON,
+            "退出程序",
+            "立即退出整个应用程序",
+            self.program_control_group,
+        )
+
         self.__init_widget()
         self.__init_branch_options()
 
@@ -254,6 +264,8 @@ class SettingInterface(ScrollArea):
         self.about_group.addSettingCard(self.feedback_card)
         self.about_group.addSettingCard(self.about_card)
 
+        self.program_control_group.addSettingCard(self.quit_app_card)
+
         # add setting card group to layout
         self.expandLayout.setSpacing(28)
         self.expandLayout.setContentsMargins(36, 10, 36, 0)
@@ -264,6 +276,7 @@ class SettingInterface(ScrollArea):
         self.expandLayout.addWidget(self.material_group)
         self.expandLayout.addWidget(self.update_software_group)
         self.expandLayout.addWidget(self.about_group)
+        self.expandLayout.addWidget(self.program_control_group)
 
     def __show_restart_tooltip(self):
         """show restart tooltip"""
@@ -362,6 +375,28 @@ class SettingInterface(ScrollArea):
             logger.error(f"Exception details: {type(e).__name__}: {str(e)}")
             InfoBar.error("检查更新失败", error_msg, duration=4000, parent=self)
 
+    def __quit_application(self):
+        """退出应用程序"""
+        logger.info("用户在设置界面点击退出程序按钮")
+
+        # 确认对话框
+        from qfluentwidgets import MessageBox
+
+        title = "退出程序"
+        content = "确定要退出程序吗？"
+
+        w = MessageBox(title, content, self.window())
+        if w.exec():
+            logger.info("用户确认退出程序")
+            # 通过主窗口的强制退出方法退出
+            if hasattr(self.window(), 'force_quit'):
+                self.window().force_quit()
+            else:
+                # 备用退出方法
+                QApplication.instance().quit()
+        else:
+            logger.info("用户取消退出程序")
+
     def __connectSignalToSlot(self):
         """connect signal to slot"""
         cfg.appRestartSig.connect(self.__show_restart_tooltip)
@@ -379,3 +414,6 @@ class SettingInterface(ScrollArea):
 
         # update
         self.manual_check_update_card.clicked.connect(self.__manual_check_update)
+
+        # program control
+        self.quit_app_card.clicked.connect(self.__quit_application)

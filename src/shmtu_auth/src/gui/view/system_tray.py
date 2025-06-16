@@ -1,6 +1,6 @@
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
-from qfluentwidgets import Action, RoundMenu
+from qfluentwidgets import Action, SystemTrayMenu
 from qfluentwidgets import FluentIcon as FIF
 
 from shmtu_auth.src.gui.common.config import cfg
@@ -18,7 +18,7 @@ class SystemTray:
         self.window = window
 
         # 菜单
-        self._tray_icon_menu = RoundMenu(parent=self.window)
+        self._tray_icon_menu = SystemTrayMenu(parent=self.window)
         # 菜单项
         self._restore_action = QAction()
         self._quit_action = QAction()
