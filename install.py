@@ -169,7 +169,7 @@ class InstallManager:
     def upgrade_pip(self) -> bool:
         """Upgrade pip"""
         print("Upgrading pip...")
-        command = f'"{self.python_path}" -m pip install --upgrade pip{self.extra_index_params}'
+        command = f"pip install --upgrade pip{self.extra_index_params}"
         return self.run_command(command)
 
     def install_requirements(self, requirements_file: str) -> bool:
@@ -179,17 +179,17 @@ class InstallManager:
             return False
 
         print(f"Installing dependencies from {requirements_file}...")
-        command = f'"{self.python_path}" -m pip install -r {requirements_file}{self.extra_index_params}'
+        command = f"pip install -r {requirements_file}{self.extra_index_params}"
         return self.run_command(command)
 
     def install_fluent_widgets_package(self) -> bool:
         """Install PySide6-Fluent-Widgets"""
         if self.fluent_full_version:
             print("Installing PySide6-Fluent-Widgets Full Version...")
-            command = f'"{self.python_path}" -m pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
+            command = f'pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
         else:
             print("Installing PySide6-Fluent-Widgets Lightweight Version...")
-            command = f'"{self.python_path}" -m pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}'
+            command = f"pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}"
 
         return self.run_command(command)
 
