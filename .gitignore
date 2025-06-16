@@ -1,5 +1,7 @@
 !/Build/
 
+gui_config.json
+
 # PyPi Token
 /.pypi_token
 

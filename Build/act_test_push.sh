@@ -1,4 +1,4 @@
 clear
 
 act push \
-  --secret-file .env \
+  --secret-file .env

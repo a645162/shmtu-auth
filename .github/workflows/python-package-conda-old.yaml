@@ -6,10 +6,10 @@ on:
 
 jobs:
   build-linux-old:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [ "3.5", "3.6" ]
+        python-version: [ "3.5", "3.6", "3.7" ]
       max-parallel: 3
 
     steps:
@@ -27,6 +27,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install -r requirements/old-r-python-requirements.txt
+          pip install -r requirements/old-r-gui-requirements.txt
 
       - name: Lint with flake8
         run: |

@@ -1,0 +1,114 @@
+hdiutil create: create a disk image image
+Usage:	hdiutil create <sizespec> <imagepath>
+	Size specifiers:
+	    -size < ?? | ??b | ??k | ??m | ??g | ??t | ??p | ??e >
+	    -sectors <count>
+	    -megabytes <count>
+
+	Image options:
+	    -library <MKDrivers>
+	    -layout <layout>			[GPTSPUD or per -fs]
+		MBRSPUD - 单个分区 - 主引导记录分区图
+		SPUD - 单个分区 - Apple分区图
+		UNIVERSAL CD - CD/DVD
+		NONE - 无分区图
+		GPTSPUD - 单个分区 - GUID分区图
+		SPCD - 单个分区 - CD/DVD
+		UNIVERSAL HD - 硬盘
+		ISOCD - 单个分区 - 带ISO数据的CD/DVD
+	    -partitionType <partitionType>	[per -fs]
+	    -align <sector alignment>		[8 sectors]
+	    -ov
+
+	Filesystem options:
+	    -fs <filesystem>
+		UDF - Universal Disk Format (UDF)
+		MS-DOS FAT12 - MS-DOS (FAT12)
+		MS-DOS - MS-DOS (FAT)
+		MS-DOS FAT16 - MS-DOS (FAT16)
+		MS-DOS FAT32 - MS-DOS (FAT32)
+		HFS+ - Mac OS Extended
+		Case-sensitive HFS+ - Mac OS Extended (Case-sensitive)
+		Case-sensitive Journaled HFS+ - Mac OS Extended (Case-sensitive, Journaled)
+		Journaled HFS+ - Mac OS Extended (Journaled)
+		ExFAT - ExFAT
+		Case-sensitive APFS - APFS (Case-sensitive)
+		APFS - APFS
+	   -volname <volumename>		["untitled"]
+	   -stretch < ?? | ?b | ??k | ??m | ??g | ??t | ??p | ??e > (HFS+)
+
+	New Blank Image options:
+	    -type <image type>			[UDIF]
+		SPARSEBUNDLE - 稀疏捆绑磁盘映像
+		SPARSE - 稀疏磁盘映像
+		UDIF - 读/写磁盘映像
+		UDTO - DVD/CD主映像
+	   -[no]spotlight		do (not) create a Spotlight™ index
+
+	Image from Folder options:
+	   -srcfolder <source folder>
+	   -[no]spotlight		do (not) create a Spotlight™ index
+	   -[no]anyowners		do (not) attempt to preserve owners
+	   -[no]skipunreadable		do (not) skip unreadable objects [no]
+	   -[no]atomic		do (not) copy to temp location and then rename [yes]
+	   -srcowners on|off|any|auto [auto]
+	   		on	enable owners on source
+	   		off	disable owners on source
+	   		any	leave owners state on source unchanged
+	   		auto	enable owners if source is a volume
+	   -format <image type>			[UDZO]
+		UDRO - 只读
+		UDCO - 已压缩(ADC)
+		UDZO - 压缩
+		UDBZ - compressed (bzip2), deprecated
+		ULFO - 已压缩(lzfse)
+		ULMO - 已压缩(lzma)
+		UFBI - 整个设备
+		IPOD - iPod映像
+		UDSB - sparsebundle
+		UDSP - 稀疏
+		UDRW - 读/写
+		UDTO - DVD/CD主映像
+		UNIV - 混合映像(HFS+/ISO/UDF)
+		SPARSEBUNDLE - 稀疏捆绑磁盘映像
+		SPARSE - 稀疏磁盘映像
+		UDIF - 读/写磁盘映像
+		UDTO - DVD/CD主映像
+
+	Image from Device options:
+	Note: Filesystem options (-fs, -volname, -stretch) ignored with -srcdevice
+	   -srcdevice <source dev node, e.g. disk1, disk2s1>
+	   -format <image type>			[UDZO]
+		UDRO - 只读
+		UDCO - 已压缩(ADC)
+		UDZO - 压缩
+		UDBZ - compressed (bzip2), deprecated
+		ULFO - 已压缩(lzfse)
+		ULMO - 已压缩(lzma)
+		UFBI - 整个设备
+		IPOD - iPod映像
+		UDSB - sparsebundle
+		UDSP - 稀疏
+		UDRW - 读/写
+		UDTO - DVD/CD主映像
+	    -segmentSize < ?? | ??b | ??k | ??m | ??g | ??t | ??p | ??e > (deprecated)
+	                 (sectors, bytes, KiB, MiB, GiB, TiB, PiB, EiB)
+
+	Attach options:
+	   -attach			attach image after creation
+
+	Common options:
+	    -encryption <crypto method>
+	    	AES-128 - 128位AES加密（建议）
+	    	AES-256 - 256位AES加密（更安全但速度较慢）
+	    -stdinpass
+	    -agentpass
+	    -certificate <path-to-cert-file>
+	    -pubkey <public-key-hash>[,pkh2,...]
+	    -imagekey <key>=<value>
+	    -tgtimagekey <key>=<value>
+	    -plist
+	    -puppetstrings
+	    -verbose
+	    -debug
+	    -quiet

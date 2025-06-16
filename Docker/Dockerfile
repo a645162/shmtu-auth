@@ -5,14 +5,14 @@ MAINTAINER Haomin Kong
 LABEL AUTHOR="Haomin Kong" VERSION=3
 ENV DOCKER_MODE="Haomin Kong"
 
-ENV BASE_PATH="/usr/local/shmtu/shmtu-auth"
+ENV BASE_PATH="/usr/local/shmtu/shmtu-auth/shmtu_auth"
 
 WORKDIR "$BASE_PATH"
 
 ENV LOGS_PATH="$BASE_PATH/logs"
 
 # Copy Directory
-COPY shmtu_auth/ "$BASE_PATH/"
+COPY src/shmtu_auth/ "$BASE_PATH/"
 
 # Copy Files
 COPY requirements.txt $BASE_PATH/requirements.txt
@@ -35,7 +35,7 @@ RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
     && mkdir $BASE_PATH/logs \
     && chmod +x "$BASE_PATH/start.sh"
 
-ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/start.sh"]
+ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/shmtu_auth/start.sh"]
 
 # Only for debug use!
 #ENTRYPOINT ["top"]

@@ -1,11 +1,11 @@
-name: Create Tag from version.txt
+name: Create Tag from version.py
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'version.txt'
+      - 'src/shmtu_auth/version.py'
   workflow_dispatch:
 
 jobs:
@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 确保可以访问完整的提交历史
+      #        with:
+      #          fetch-depth: 0  # 确保可以访问完整的提交历史
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -58,11 +58,8 @@ jobs:
       - name: Create Tag
         if: steps.check_changes.outputs.file_changed == 'true'
         run: |
-          # 使用 version.txt 文件的内容作为 tag
           version_tag="v${{ steps.read_version.outputs.version }}"
           echo "Creating tag: $version_tag"
-          # 打 tag
           git tag $version_tag
-          # 推送 tag 到远程仓库
           # git push origin $version_tag
-          git push
+          git push origin --tags

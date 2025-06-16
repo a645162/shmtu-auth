@@ -1,0 +1,57 @@
+# 目标 Python 版本
+target-version = "py38"
+
+# 代码行长度限制
+line-length = 127
+
+# 选择要启用的规则
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+
+# 忽略特定规则
+ignore = [
+    "E402",  # Module level import not at top of file
+    "E501",  # 行长度由 line-length 处理
+	"B018", # B018 Found useless expression. Either assign it to a variable or remove it.
+]
+
+# 排除的文件和目录
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+	"resources.py" # Qt Resource file, not a Python module
+]
+
+# 每个文件的最大复杂度
+[mccabe]
+max-complexity = 10
+
+# import 排序配置
+[isort]
+known-first-party = ["shmtu_auth"]
