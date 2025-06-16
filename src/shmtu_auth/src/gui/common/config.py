@@ -69,6 +69,12 @@ class Config(QConfig):
 
     # software update
     check_update_at_start_up = ConfigItem("Update", "CheckUpdateAtStartUp", True, BoolValidator())
+    update_branch = OptionsConfigItem(
+        "Update",
+        "UpdateBranch",
+        "main",
+        OptionsValidator(["main", "beta", "dev"]),  # 默认选项，会在运行时动态更新
+    )
 
     def get_dpi_ratio(self) -> float:
         dpi_scale = 1.0

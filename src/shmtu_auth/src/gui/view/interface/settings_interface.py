@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QLabel, QWidget
 from qfluentwidgets import (
+    ComboBoxSettingCard,
     CustomColorSettingCard,
     ExpandLayout,
     HyperlinkCard,
@@ -25,6 +26,7 @@ from shmtu_auth.src.gui.common.config import (
     YEAR,
     cfg,
 )
+from shmtu_auth.config.github.latest_version import get_github_branches
 from shmtu_auth.src.gui.common.style_sheet import StyleSheet
 from shmtu_auth.src.gui.task.check_update import start_check_update_once_thread
 from shmtu_auth.src.utils.logs import get_logger
@@ -164,6 +166,14 @@ class SettingInterface(ScrollArea):
             configItem=cfg.check_update_at_start_up,
             parent=self.update_software_group,
         )
+        self.update_branch_card = ComboBoxSettingCard(
+            cfg.update_branch,
+            FIF.GITHUB,
+            "更新分支",
+            "选择从哪个分支获取更新",
+            texts=["main", "beta", "dev"],  # 默认选项，会在初始化时动态更新
+            parent=self.update_software_group,
+        )
 
         # application
         self.about_group = SettingCardGroup("关于", self.scrollWidget)
@@ -179,6 +189,7 @@ class SettingInterface(ScrollArea):
         self.about_card.clicked.connect(lambda: start_check_update_once_thread())
 
         self.__init_widget()
+        self.__init_branch_options()
 
     def __init_widget(self):
         self.resize(1000, 800)
@@ -228,6 +239,7 @@ class SettingInterface(ScrollArea):
         self.material_group.addSettingCard(self.blurRadiusCard)
 
         self.update_software_group.addSettingCard(self.update_on_start_up_card)
+        self.update_software_group.addSettingCard(self.update_branch_card)
 
         self.about_group.addSettingCard(self.help_card)
         self.about_group.addSettingCard(self.feedback_card)
@@ -248,15 +260,40 @@ class SettingInterface(ScrollArea):
         """show restart tooltip"""
         InfoBar.success("更新成功", "设置已经保存，重启程序后生效。", duration=1500, parent=self)
 
-    # def __onDownloadFolderCardClicked(self):
-    #     """ download folder card clicked slot """
-    #     folder = QFileDialog.getExistingDirectory(
-    #         self, self.tr("Choose folder"), "./")
-    #     if not folder or cfg.get(cfg.downloadFolder) == folder:
-    #         return
-    #
-    #     cfg.set(cfg.downloadFolder, folder)
-    #     self.downloadFolderCard.setContent(folder)
+    def __init_branch_options(self):
+        """初始化分支选项"""
+        try:
+            # 获取GitHub分支列表
+            branches = get_github_branches()
+
+            # 更新配置项的验证器选项
+            cfg.update_branch.validator.options = branches
+
+            # 更新界面下拉框选项
+            self.update_branch_card.comboBox.clear()
+            self.update_branch_card.comboBox.addItems(branches)
+
+            # 设置当前选中的分支
+            current_branch = cfg.get(cfg.update_branch)
+            if current_branch in branches:
+                index = branches.index(current_branch)
+                self.update_branch_card.comboBox.setCurrentIndex(index)
+            else:
+                # 如果当前配置的分支不在列表中，设置为main
+                cfg.set(cfg.update_branch, "main")
+                if "main" in branches:
+                    index = branches.index("main")
+                    self.update_branch_card.comboBox.setCurrentIndex(index)
+
+            logger.info(f"Available update branches: {branches}")
+
+        except Exception as e:
+            logger.error(f"Failed to initialize branch options: {e}")
+            # 如果获取分支失败，使用默认选项
+            default_branches = ["main", "beta", "dev"]
+            cfg.update_branch.validator.options = default_branches
+            self.update_branch_card.comboBox.clear()
+            self.update_branch_card.comboBox.addItems(default_branches)
 
     def __connectSignalToSlot(self):
         """connect signal to slot"""

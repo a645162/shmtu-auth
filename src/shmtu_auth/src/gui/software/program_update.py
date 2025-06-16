@@ -1,6 +1,7 @@
 from shmtu_auth.config.github.latest_version import get_branch_version
 from shmtu_auth.src.config.build_info import branch, program_version
 from shmtu_auth.src.gui.common.signal_bus import log_new
+from shmtu_auth.src.gui.common.config import cfg
 from shmtu_auth.src.utils.logs import get_logger
 from shmtu_auth.src.utils.program_version import ProgramVersion
 
@@ -13,7 +14,10 @@ LATEST_VERSION = ""
 
 
 def get_latest_version() -> str:
-    latest_version = get_branch_version(GIT_BRANCH)
+    # 从配置中获取用户选择的分支
+    selected_branch = cfg.get(cfg.update_branch) if cfg else "main"
+
+    latest_version = get_branch_version(selected_branch)
 
     if len(latest_version) == 0:
         return ""
@@ -23,8 +27,8 @@ def get_latest_version() -> str:
         logger.info("Get Github Version Failed.")
         return ""
 
-    log_new("Update", f"Branch:{GIT_BRANCH} Latest Version:{latest_version}")
-    logger.info(f"Branch:{GIT_BRANCH} Latest Version:{latest_version}")
+    log_new("Update", f"Branch:{selected_branch} Latest Version:{latest_version}")
+    logger.info(f"Branch:{selected_branch} Latest Version:{latest_version}")
 
     global LATEST_VERSION
     LATEST_VERSION = latest_version
