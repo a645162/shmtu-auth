@@ -4,6 +4,7 @@ flake8
 ruff
 
 pyinstaller
+# nuitka
 
 setuptools
 wheel

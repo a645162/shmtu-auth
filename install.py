@@ -77,6 +77,10 @@ class InstallManager:
         self.source_url = self._get_source_url(source_name)
         self.extra_index_params = f" -i {self.source_url}" if self.source_url else ""
 
+        # Get current Python executable path
+        self.python_path = sys.executable
+        print(f"Using Python executable: {self.python_path}")
+
         # Installation option control variables
         self.install_base_deps = False
         self.install_gui_deps = False
@@ -165,7 +169,7 @@ class InstallManager:
     def upgrade_pip(self) -> bool:
         """Upgrade pip"""
         print("Upgrading pip...")
-        command = f"pip install --upgrade pip{self.extra_index_params}"
+        command = f'"{self.python_path}" -m pip install --upgrade pip{self.extra_index_params}'
         return self.run_command(command)
 
     def install_requirements(self, requirements_file: str) -> bool:
@@ -175,17 +179,17 @@ class InstallManager:
             return False
 
         print(f"Installing dependencies from {requirements_file}...")
-        command = f"pip install -r {requirements_file}{self.extra_index_params}"
+        command = f'"{self.python_path}" -m pip install -r {requirements_file}{self.extra_index_params}'
         return self.run_command(command)
 
     def install_fluent_widgets_package(self) -> bool:
         """Install PySide6-Fluent-Widgets"""
         if self.fluent_full_version:
             print("Installing PySide6-Fluent-Widgets Full Version...")
-            command = f'pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
+            command = f'"{self.python_path}" -m pip install --upgrade "PySide6-Fluent-Widgets[full]"{self.extra_index_params}'
         else:
             print("Installing PySide6-Fluent-Widgets Lightweight Version...")
-            command = f"pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}"
+            command = f'"{self.python_path}" -m pip install --upgrade PySide6-Fluent-Widgets{self.extra_index_params}'
 
         return self.run_command(command)
 

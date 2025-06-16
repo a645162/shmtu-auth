@@ -1,4 +1,5 @@
-# https://pyinstaller.org/en/stable/usage.html
+# https://nuitka.net/doc/user-manual.html
+# https://doc.qt.io/qtforpython-6/deployment/deployment-pyside6-deploy.html
 
 $DebugMode = $false
 
@@ -76,6 +77,8 @@ else
     # pip install -r r-dev-requirements.txt > $null
     # pip install -r r-gui-requirements.txt > $null
     python install.py all
+    # Install Nuitka if not already installed
+    pip install nuitka
 }
 
 $project_name = "shmtu_auth"
@@ -94,17 +97,20 @@ Write-Host "Building the executable..."
 
 Set-Location $srcLocation
 
-pyinstaller `
-    --strip `
-    --hidden-import=qfluentwidgets `
-    --noupx `
-    --windowed `
-    --noconfirm `
-    --clean `
-    --icon "$baseLocation\Assets\Icon\icons\Icon.ico" `
-    --name $project_name_with_profile `
-    --distpath $outputLocation `
-    --workpath $tmpLocation `
+python -m nuitka `
+    --standalone `
+    --onefile `
+    --windows-disable-console `
+    --enable-plugin=pyside6 `
+    --include-package=PySide6 `
+    --include-data-dir=PySide6=PySide6 `
+    --windows-icon-from-ico="$baseLocation\Assets\Icon\icons\Icon.ico" `
+    --output-filename="$project_name_with_profile.exe" `
+    --output-dir="$outputLocation" `
+    --remove-output `
+    --assume-yes-for-downloads `
+    --show-progress `
+    --show-memory `
     .\main_gui.py
 
 Write-Host "Build Completed"
@@ -112,11 +118,19 @@ Write-Host "Build Completed"
 # Clean up
 Write-Host "Cleaning up..."
 
-# Remove File "shmtu_auth.spec"
-Remove-Item -Recurse -Force "$srcLocation\$project_name_with_profile.spec"
+# Nuitka creates .build and .dist folders, clean them up
+if (Test-Path "$srcLocation\main_gui.build")
+{
+    Remove-Item -Recurse -Force "$srcLocation\main_gui.build"
+}
 
-# Remove Temp Files
-Remove-Item -Recurse -Force $tmpLocation
+if (Test-Path "$srcLocation\main_gui.dist")
+{
+    Remove-Item -Recurse -Force "$srcLocation\main_gui.dist"
+}
+
+# Remove any .pyi files created by Nuitka
+Get-ChildItem -Path $srcLocation -Filter "*.pyi" | Remove-Item -Force
 
 Write-Host "Cleanup Completed"
 
