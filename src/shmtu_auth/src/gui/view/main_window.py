@@ -136,10 +136,15 @@ class MainWindow(FluentWindow):
                     self.auth_interface.work_thread.join(timeout=3)
                     logger.info("认证线程已停止")
 
-            # 隐藏托盘图标
+            # 清理认证接口（包括网络测试管理器）
+            if hasattr(self, "auth_interface"):
+                self.auth_interface.cleanup()
+                logger.info("认证接口已清理")
+
+            # 清理系统托盘（包括网络检查线程）
             if hasattr(self, "system_tray"):
-                self.system_tray.tray_icon.hide()
-                logger.info("托盘图标已隐藏")
+                self.system_tray.cleanup()
+                logger.info("系统托盘已清理")
 
         except Exception as e:
             logger.error(f"清理资源时出错: {e}")

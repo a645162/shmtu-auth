@@ -17,13 +17,14 @@
 - 退出程序
 """
 
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
-from PySide6.QtCore import QTimer
 from qfluentwidgets import Action, SystemTrayMenu
 from qfluentwidgets import FluentIcon as FIF
 
 from shmtu_auth.src.gui.common.config import cfg
+from shmtu_auth.src.gui.utils.async_network_test import NetworkTestManager
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
@@ -44,6 +45,9 @@ class SystemTray:
         self._quit_action = None
         self._auth_status_action = None
         self._network_status_action = None
+
+        # 网络测试管理器
+        self._network_test_manager = NetworkTestManager()
 
         # 托盘图标
         self.tray_icon = QSystemTrayIcon(self.window)
@@ -180,32 +184,81 @@ class SystemTray:
         logger.debug(f"托盘菜单创建完成，认证状态Action ID: {id(self._auth_status_action)}")
         logger.debug(f"网络状态Action ID: {id(self._network_status_action)}")
 
-        # 初始化网络状态
-        self.__update_network_status()
+        # 初始化网络状态（异步）
+        self.__update_network_status_async()
 
     def __quick_network_test(self):
-        """快速网络测试"""
-        logger.info("从托盘执行快速网络测试")
-        try:
-            from shmtu_auth.src.core.core_exp import check_is_connected
+        """快速网络测试（异步版本）"""
+        logger.info("从托盘执行快速网络测试（异步）")
 
-            is_connected = check_is_connected()
+        # 如果已有测试在进行，不重复启动
+        if self._network_test_manager.is_testing():
+            logger.info("网络测试已在进行中，跳过")
+            self.show_notification("网络测试", "测试正在进行中，请稍候...")
+            return
 
-            # 更新网络状态显示
-            self.update_network_status_only(is_connected)
+        # 禁用快速测试按钮，防止重复点击
+        if self._quick_test_action:
+            self._quick_test_action.setEnabled(False)
 
-            if is_connected:
-                self.show_notification("网络测试", "网络连接正常 ✓")
-            else:
-                self.show_notification("网络测试", "网络连接异常，需要认证 ✗")
+        # 显示测试开始状态
+        if self._network_status_action:
+            self._network_status_action.setText("网络状态: 检查中... ⏳")
+            self._network_status_action.setIcon(FIF.SYNC)
 
-        except Exception as e:
-            logger.error(f"快速网络测试失败: {str(e)}")
-            self.show_notification("网络测试", f"测试失败: {str(e)}")
-            # 测试失败时显示为检查失败状态
-            if self._network_status_action:
-                self._network_status_action.setText("网络状态: 检查失败 ⚠")
-                self._network_status_action.setIcon(FIF.LABEL)
+        # 启动异步网络检查
+        success = self._network_test_manager.start_test(
+            on_started=self.__on_quick_test_started,
+            on_completed=self.__on_quick_test_completed,
+            on_error=self.__on_quick_test_error,
+            on_progress=self.__on_quick_test_progress,
+        )
+
+        if not success:
+            # 如果启动失败，恢复按钮状态
+            if self._quick_test_action:
+                self._quick_test_action.setEnabled(True)
+
+    def __on_quick_test_started(self):
+        """快速测试开始回调"""
+        logger.debug("快速网络测试已开始")
+        self.show_notification("网络测试", "正在检查网络连接...")
+
+    def __on_quick_test_progress(self, message: str):
+        """快速测试进度回调"""
+        logger.debug(f"快速网络测试进度: {message}")
+
+    def __on_quick_test_completed(self, is_connected: bool):
+        """快速测试完成回调"""
+        logger.debug(f"快速网络测试完成，结果: {is_connected}")
+
+        # 更新网络状态显示
+        self.update_network_status_only(is_connected)
+
+        # 显示结果通知
+        if is_connected:
+            self.show_notification("网络测试", "网络连接正常 ✓")
+        else:
+            self.show_notification("网络测试", "网络连接异常，需要认证 ✗")
+
+        # 启用快速测试按钮
+        if self._quick_test_action:
+            self._quick_test_action.setEnabled(True)
+
+    def __on_quick_test_error(self, error_msg: str):
+        """快速测试出错回调"""
+        logger.error(f"快速网络测试失败: {error_msg}")
+
+        # 显示错误状态
+        if self._network_status_action:
+            self._network_status_action.setText("网络状态: 检查失败 ⚠")
+            self._network_status_action.setIcon(FIF.LABEL)
+
+        self.show_notification("网络测试", f"测试失败: {error_msg}")
+
+        # 启用快速测试按钮
+        if self._quick_test_action:
+            self._quick_test_action.setEnabled(True)
 
     def __quit_application(self):
         """退出应用程序"""
@@ -329,6 +382,60 @@ class SystemTray:
             logger.debug("网络状态已更新为: 未连接")
 
     def refresh_network_status(self):
-        """刷新网络状态（公共方法，可被外部调用）"""
-        logger.info("手动刷新网络状态")
-        self.__update_network_status()
+        """刷新网络状态（公共方法，可被外部调用）- 异步版本"""
+        logger.info("手动刷新网络状态（异步）")
+        self.__update_network_status_async()
+
+    def __update_network_status_async(self):
+        """异步更新网络状态显示"""
+        logger.debug("启动异步网络状态检查...")
+
+        # 显示检查中状态
+        if self._network_status_action:
+            self._network_status_action.setText("网络状态: 检查中... ⏳")
+            self._network_status_action.setIcon(FIF.SYNC)
+
+        # 启动异步检查
+        self._network_test_manager.start_test(
+            on_completed=self.__on_network_status_checked, on_error=self.__on_network_status_check_error
+        )
+
+    def __on_network_status_checked(self, is_connected: bool):
+        """网络状态检查完成回调"""
+        logger.debug(f"网络状态检查完成，结果: {is_connected}")
+
+        if self._network_status_action is None:
+            logger.warning("网络状态Action未创建，无法更新状态")
+            return
+
+        if is_connected:
+            self._network_status_action.setText("网络状态: 已连接 ✓")
+            self._network_status_action.setIcon(FIF.WIFI)
+            logger.debug("网络状态已更新为: 已连接")
+        else:
+            self._network_status_action.setText("网络状态: 未连接 ✗")
+            self._network_status_action.setIcon(FIF.DISCONNECT)
+            logger.debug("网络状态已更新为: 未连接")
+
+    def __on_network_status_check_error(self, error_msg: str):
+        """网络状态检查出错回调"""
+        logger.error(f"网络状态检查失败: {error_msg}")
+
+        if self._network_status_action:
+            self._network_status_action.setText("网络状态: 检查失败 ⚠")
+            self._network_status_action.setIcon(FIF.LABEL)
+
+    def cleanup(self):
+        """清理资源，包括停止网络检查线程"""
+        logger.info("清理SystemTray资源...")
+
+        # 停止网络测试管理器
+        if self._network_test_manager:
+            self._network_test_manager.cleanup()
+            self._network_test_manager = None
+
+        # 隐藏托盘图标
+        if hasattr(self, "tray_icon"):
+            self.tray_icon.hide()
+
+        logger.info("SystemTray资源清理完成")

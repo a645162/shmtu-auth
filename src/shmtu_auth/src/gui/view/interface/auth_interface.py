@@ -331,35 +331,89 @@ class AuthInterface(GalleryInterface):
         self.authSettingsWidget.status_group.update_service_status(True)
 
     def __on_work_button_clicked(self):
-        """处理启动/停止按钮点击"""
+        """处理启动/停止按钮点击（异步优化版本）"""
         logger.info(f"认证服务按钮点击，当前状态：{self.current_status}")
 
         if not self.current_status:
             # 当前为False,需要启动
             logger.info("准备启动认证服务...")
 
-            # 检查用户列表 - 添加更详细的调试信息
-            logger.info(f"当前用户列表长度: {len(self.user_list)}")
-            logger.info(
-                f"用户列表内容: {[user.user_id if hasattr(user, 'user_id') else str(user) for user in self.user_list]}"
+            # 禁用按钮，防止重复点击
+            start_button = getattr(self.authSettingsWidget.start_card, "button", None)
+            if start_button:
+                start_button.setEnabled(False)
+
+            # 显示启动中状态
+            InfoBar.info("启动中", "正在验证用户列表并启动认证服务...", duration=2000, parent=self)
+
+            # 异步验证用户列表并启动服务
+            self.__start_auth_service_async()
+
+        else:
+            # 当前为True,需要停止
+            self.__stop_auth_service()
+
+    def __start_auth_service_async(self):
+        """异步启动认证服务"""
+        # 初始化用户验证管理器（如果尚未创建）
+        if not hasattr(self, "_user_validation_manager"):
+            from shmtu_auth.src.gui.utils.async_network_test import NetworkTestManager
+
+            self._user_validation_manager = NetworkTestManager()
+
+        # 使用自定义工作线程来处理用户验证
+        from PySide6.QtCore import QThread, Signal
+
+        class UserValidationWorker(QThread):
+            validation_completed = Signal(list)  # 验证完成信号，传递有效用户列表
+            validation_error = Signal(str)  # 验证出错信号
+
+            def __init__(self, user_list):
+                super().__init__()
+                self.user_list = user_list
+
+            def run(self):
+                try:
+                    from shmtu_auth.src.datatype.shmtu.auth.auth_user import get_valid_user_list
+
+                    valid_users = get_valid_user_list(self.user_list)
+                    self.validation_completed.emit(valid_users)
+                except Exception as e:
+                    self.validation_error.emit(str(e))
+
+        # 创建并启动用户验证线程
+        self._validation_worker = UserValidationWorker(self.user_list)
+        self._validation_worker.validation_completed.connect(self.__on_user_validation_completed)
+        self._validation_worker.validation_error.connect(self.__on_user_validation_error)
+        self._validation_worker.start()
+
+    def __on_user_validation_completed(self, valid_users):
+        """用户验证完成回调"""
+        logger.info(f"用户验证完成，有效用户数量: {len(valid_users)}")
+
+        if not valid_users or len(valid_users) == 0:
+            logger.warning("没有有效的认证用户，无法启动认证服务")
+            InfoBar.warning(
+                "启动失败",
+                "请先在用户列表中添加有效的认证用户",
+                duration=3000,
+                parent=self,
             )
+            self.__restore_start_button()
+            return
 
-            # 过滤有效用户
-            from shmtu_auth.src.datatype.shmtu.auth.auth_user import get_valid_user_list
+        # 继续启动认证服务
+        self.__do_start_auth_service_with_users(valid_users)
 
-            valid_users = get_valid_user_list(self.user_list)
-            logger.info(f"有效用户数量: {len(valid_users)}")
+    def __on_user_validation_error(self, error_msg):
+        """用户验证出错回调"""
+        logger.error(f"用户验证失败: {error_msg}")
+        InfoBar.error("验证失败", f"用户验证过程中出现错误：{error_msg}", duration=3000, parent=self)
+        self.__restore_start_button()
 
-            if not valid_users or len(valid_users) == 0:
-                logger.warning("没有有效的认证用户，无法启动认证服务")
-                InfoBar.warning(
-                    "启动失败",
-                    "请先在用户列表中添加有效的认证用户",
-                    duration=3000,
-                    parent=self,
-                )
-                return
-
+    def __do_start_auth_service_with_users(self, valid_users):
+        """使用验证过的用户启动认证服务"""
+        try:
             # 停止已有线程
             if self.work_thread is not None:
                 if self.work_thread.is_alive():
@@ -381,24 +435,50 @@ class AuthInterface(GalleryInterface):
             self.current_status = True
 
             InfoBar.success("启动成功", "认证服务已启动", duration=2000, parent=self)
+            self.set_auth_work_status(self.current_status)
 
-        else:
-            # 当前为True,需要停止
-            logger.info("准备停止认证服务...")
+        except Exception as e:
+            logger.error(f"启动认证服务时出错: {str(e)}")
+            InfoBar.error("启动失败", f"启动过程中出现错误：{str(e)}", duration=3000, parent=self)
 
-            if self.work_thread is not None:
-                if self.work_thread.is_alive():
-                    logger.info("停止认证线程...")
-                    self.work_thread.stop()
-                    self.work_thread.join(timeout=5)
-                self.work_thread = None
+        finally:
+            self.__restore_start_button()
 
-            self.current_status = False
-
-            InfoBar.info("已停止", "认证服务已停止", duration=2000, parent=self)
-
-        self.set_auth_work_status(self.current_status)
         logger.info(f"认证服务状态已更新：{self.current_status}")
+
+    def __restore_start_button(self):
+        """恢复启动按钮状态"""
+        start_button = getattr(self.authSettingsWidget.start_card, "button", None)
+        if start_button:
+            start_button.setEnabled(True)
+
+    def __stop_auth_service(self):
+        """停止认证服务"""
+        logger.info("准备停止认证服务...")
+
+        # 禁用按钮，防止重复点击
+        start_button = getattr(self.authSettingsWidget.start_card, "button", None)
+        if start_button:
+            start_button.setEnabled(False)
+
+        if self.work_thread is not None:
+            if self.work_thread.is_alive():
+                logger.info("停止认证线程...")
+                self.work_thread.stop()
+                self.work_thread.join(timeout=5)
+            self.work_thread = None
+
+        self.current_status = False
+        InfoBar.info("已停止", "认证服务已停止", duration=2000, parent=self)
+        self.set_auth_work_status(self.current_status)
+        self.__restore_start_button()
+        logger.info(f"认证服务状态已更新：{self.current_status}")
+
+    def __restore_start_button(self):
+        """恢复启动按钮状态"""
+        start_button = getattr(self.authSettingsWidget.start_card, "button", None)
+        if start_button:
+            start_button.setEnabled(True)
 
     def set_auth_work_status(self, status: bool):
         """设置认证工作状态"""
@@ -418,27 +498,95 @@ class AuthInterface(GalleryInterface):
             self.authSettingsWidget.status_group.update_service_status(False)
 
     def __on_manual_test_clicked(self):
-        """处理手动测试按钮点击"""
-        logger.info("开始手动测试网络连接...")
+        """处理手动测试按钮点击（异步版本）"""
+        logger.info("开始手动测试网络连接（异步）...")
 
-        # 显示测试进行中的提示
-        InfoBar.info("测试中", "正在测试网络连接状态，请稍候...", duration=2000, parent=self)
+        # 检查是否已有测试在进行
+        if hasattr(self, "_network_test_manager") and self._network_test_manager.is_testing():
+            InfoBar.warning("测试进行中", "网络测试正在进行，请稍候...", duration=2000, parent=self)
+            return
 
-        # 执行网络测试
-        from shmtu_auth.src.core.core_exp import check_is_connected
+        # 初始化网络测试管理器（如果尚未创建）
+        if not hasattr(self, "_network_test_manager"):
+            from shmtu_auth.src.gui.utils.async_network_test import NetworkTestManager
 
-        try:
-            is_connected = check_is_connected()
+            self._network_test_manager = NetworkTestManager()
 
-            if is_connected:
-                logger.info("手动测试结果：网络已连接")
-                InfoBar.success("测试完成", "网络连接正常 ✓", duration=3000, parent=self)
-                self.authSettingsWidget.status_group.update_network_status(True)
-            else:
-                logger.warning("手动测试结果：网络未连接")
-                InfoBar.warning("测试完成", "网络连接异常，需要认证 ✗", duration=3000, parent=self)
-                self.authSettingsWidget.status_group.update_network_status(False)
+        # 禁用测试按钮，防止重复点击
+        test_button = getattr(self, "manual_test_button", None)
+        if test_button:
+            test_button.setEnabled(False)
 
-        except Exception as e:
-            logger.error(f"手动测试出错：{str(e)}")
-            InfoBar.error("测试失败", f"测试过程中出现错误：{str(e)}", duration=3000, parent=self)
+        # 显示测试开始的提示
+        InfoBar.info("测试开始", "正在异步测试网络连接状态，请稍候...", duration=2000, parent=self)
+
+        # 启动异步网络测试
+        success = self._network_test_manager.start_test(
+            on_completed=self.__on_manual_test_completed,
+            on_error=self.__on_manual_test_error,
+            on_started=self.__on_manual_test_started,
+        )
+
+        if not success:
+            # 如果启动失败，恢复按钮状态
+            if test_button:
+                test_button.setEnabled(True)
+            InfoBar.error("启动失败", "无法启动网络测试，请重试", duration=3000, parent=self)
+
+    def __on_manual_test_started(self):
+        """手动测试开始回调"""
+        logger.debug("手动网络测试已开始")
+
+    def __on_manual_test_completed(self, is_connected: bool):
+        """手动测试完成回调"""
+        logger.info(f"手动测试结果：{'网络已连接' if is_connected else '网络未连接'}")
+
+        # 恢复测试按钮
+        test_button = getattr(self, "manual_test_button", None)
+        if test_button:
+            test_button.setEnabled(True)
+
+        if is_connected:
+            InfoBar.success("测试完成", "网络连接正常 ✓", duration=3000, parent=self)
+            self.authSettingsWidget.status_group.update_network_status(True)
+        else:
+            InfoBar.warning("测试完成", "网络连接异常，需要认证 ✗", duration=3000, parent=self)
+            self.authSettingsWidget.status_group.update_network_status(False)
+
+    def __on_manual_test_error(self, error_msg: str):
+        """手动测试出错回调"""
+        logger.error(f"手动测试出错：{error_msg}")
+
+        # 恢复测试按钮
+        test_button = getattr(self, "manual_test_button", None)
+        if test_button:
+            test_button.setEnabled(True)
+
+        InfoBar.error("测试失败", f"测试过程中出现错误：{error_msg}", duration=3000, parent=self)
+
+    def cleanup(self):
+        """清理认证接口资源"""
+        logger.info("清理AuthInterface资源...")
+
+        # 停止用户验证线程
+        if hasattr(self, "_validation_worker"):
+            if self._validation_worker.isRunning():
+                logger.debug("停止用户验证线程...")
+                self._validation_worker.quit()
+                if not self._validation_worker.wait(3000):
+                    logger.warning("用户验证线程未能正常停止，强制终止")
+                    self._validation_worker.terminate()
+                    self._validation_worker.wait()
+            self._validation_worker = None
+
+        # 清理网络测试管理器
+        if hasattr(self, "_network_test_manager"):
+            self._network_test_manager.cleanup()
+            self._network_test_manager = None
+
+        # 清理用户验证管理器
+        if hasattr(self, "_user_validation_manager"):
+            self._user_validation_manager.cleanup()
+            self._user_validation_manager = None
+
+        logger.info("AuthInterface资源清理完成")
