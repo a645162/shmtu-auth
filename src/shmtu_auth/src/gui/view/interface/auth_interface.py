@@ -164,6 +164,13 @@ class AuthSettingWidget(ScrollArea):
         # 注意：信号连接将在AuthInterface中进行
         self.auth_group_general.addSettingCard(self.manual_test_card)
 
+        # 重置统计按钮
+        self.reset_stats_card = PrimaryPushSettingCard(
+            text="重置", icon=FIF.DELETE, title="重置统计", content="清除所有认证历史统计数据"
+        )
+        # 注意：信号连接将在AuthInterface中进行
+        self.auth_group_general.addSettingCard(self.reset_stats_card)
+
         self.expand_layout.addWidget(self.auth_group_general)
 
         self.__init_widget()
@@ -202,11 +209,15 @@ class AuthStatusCard(SettingCardGroup):
         self.last_auth_card = self.__create_status_card("最后认证", "无", FIF.PEOPLE)
         self.addSettingCard(self.last_auth_card)
 
-        # 认证尝试次数
-        self.auth_attempts_card = self.__create_status_card("认证次数", "0", FIF.FLAG)
-        self.addSettingCard(self.auth_attempts_card)
+        # 认证统计
+        self.auth_stats_card = self.__create_status_card("认证统计", "成功: 0 | 失败: 0", FIF.FLAG)
+        self.addSettingCard(self.auth_stats_card)
 
-        self.auth_attempt_count = 0
+        # 当前会话认证尝试次数
+        self.current_session_attempts = 0
+
+        # 加载保存的状态
+        self.__load_saved_status()
 
     def __create_status_card(self, title, content, icon):
         """创建状态显示卡片"""
@@ -215,12 +226,56 @@ class AuthStatusCard(SettingCardGroup):
         card = SettingCard(icon, title, content)
         return card
 
+    def __load_saved_status(self):
+        """从配置文件加载保存的状态"""
+        from shmtu_auth.src.gui.common.config import cfg
+
+        logger.info("加载保存的认证状态...")
+
+        # 加载最后认证用户和时间
+        last_user = cfg.last_auth_user.value
+        last_time = cfg.last_auth_time.value
+        if last_user and last_time:
+            self.last_auth_card.setContent(f"{last_user} ({last_time})")
+        else:
+            self.last_auth_card.setContent("无")
+
+        # 加载网络状态
+        last_network_status = cfg.last_network_status.value
+        self.update_network_status(last_network_status)
+
+        # 加载认证统计
+        success_count = cfg.auth_success_count.value
+        failure_count = cfg.auth_failure_count.value
+        self.__update_auth_stats(success_count, failure_count)
+
+        logger.info(f"状态加载完成 - 最后用户: {last_user}, 成功: {success_count}, 失败: {failure_count}")
+
+    def __save_auth_status(self):
+        """保存认证状态到配置文件"""
+        from shmtu_auth.src.gui.common.config import qconfig
+
+        # 自动保存配置
+        qconfig.save()
+        logger.debug("认证状态已保存到配置文件")
+
+    def __update_auth_stats(self, success_count, failure_count):
+        """更新认证统计显示"""
+        total = success_count + failure_count
+        self.auth_stats_card.setContent(f"总计: {total} | 成功: {success_count} | 失败: {failure_count}")
+
     def update_network_status(self, is_online: bool):
         """更新网络状态"""
+        from shmtu_auth.src.gui.common.config import cfg
+
         if is_online:
             self.network_status_card.setContent("已连接 ✓")
         else:
             self.network_status_card.setContent("未连接 ✗")
+
+        # 保存网络状态
+        cfg.last_network_status.value = is_online
+        self.__save_auth_status()
 
     def update_service_status(self, is_running: bool):
         """更新服务状态"""
@@ -231,17 +286,94 @@ class AuthStatusCard(SettingCardGroup):
 
     def update_last_auth_user(self, user_id: str):
         """更新最后认证用户"""
-        self.last_auth_card.setContent(f"{user_id}")
+        import datetime
+        from shmtu_auth.src.gui.common.config import cfg
+
+        # 获取当前时间
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # 更新显示
+        self.last_auth_card.setContent(f"{user_id} ({current_time})")
+
+        # 保存到配置
+        cfg.last_auth_user.value = user_id
+        cfg.last_auth_time.value = current_time
+        self.__save_auth_status()
+
+        logger.info(f"已更新最后认证用户: {user_id} at {current_time}")
 
     def update_auth_attempt(self, user_id: str):
         """更新认证尝试"""
-        self.auth_attempt_count += 1
-        self.auth_attempts_card.setContent(f"{self.auth_attempt_count}")
+        from shmtu_auth.src.gui.common.config import cfg
+
+        # 增加总尝试次数
+        current_total = cfg.total_auth_attempts.value
+        cfg.total_auth_attempts.value = current_total + 1
+
+        # 增加当前会话尝试次数
+        self.current_session_attempts += 1
+
+        self.__save_auth_status()
+        logger.debug(
+            f"认证尝试计数更新: 用户={user_id}, 总计={cfg.total_auth_attempts.value}, 本次会话={self.current_session_attempts}"
+        )
+
+    def record_auth_success(self, user_id: str):
+        """记录认证成功"""
+        from shmtu_auth.src.gui.common.config import cfg
+
+        # 增加成功计数
+        success_count = cfg.auth_success_count.value + 1
+        cfg.auth_success_count.value = success_count
+
+        # 更新最后认证用户
+        self.update_last_auth_user(user_id)
+
+        # 更新统计显示
+        failure_count = cfg.auth_failure_count.value
+        self.__update_auth_stats(success_count, failure_count)
+
+        self.__save_auth_status()
+        logger.info(f"记录认证成功: {user_id}, 总成功次数: {success_count}")
+
+    def record_auth_failure(self, user_id: str, error_msg: str):
+        """记录认证失败"""
+        from shmtu_auth.src.gui.common.config import cfg
+
+        # 增加失败计数
+        failure_count = cfg.auth_failure_count.value + 1
+        cfg.auth_failure_count.value = failure_count
+
+        # 更新统计显示
+        success_count = cfg.auth_success_count.value
+        self.__update_auth_stats(success_count, failure_count)
+
+        self.__save_auth_status()
+        logger.warning(f"记录认证失败: {user_id}, 错误: {error_msg}, 总失败次数: {failure_count}")
 
     def reset_counters(self):
-        """重置计数器"""
-        self.auth_attempt_count = 0
-        self.auth_attempts_card.setContent("0")
+        """重置计数器（仅重置当前会话计数，不影响历史统计）"""
+        self.current_session_attempts = 0
+        logger.info("当前会话计数器已重置")
+
+    def reset_all_statistics(self):
+        """重置所有统计数据（包括历史记录）"""
+        from shmtu_auth.src.gui.common.config import cfg
+
+        # 重置所有计数
+        cfg.total_auth_attempts.value = 0
+        cfg.auth_success_count.value = 0
+        cfg.auth_failure_count.value = 0
+        cfg.last_auth_user.value = ""
+        cfg.last_auth_time.value = ""
+        self.current_session_attempts = 0
+
+        # 更新显示
+        self.last_auth_card.setContent("无")
+        self.__update_auth_stats(0, 0)
+
+        self.__save_auth_status()
+        logger.info("所有认证统计数据已重置")
 
 
 class AuthInterface(GalleryInterface):
@@ -270,6 +402,7 @@ class AuthInterface(GalleryInterface):
 
         self.authSettingsWidget.start_card.clicked.connect(self.__on_work_button_clicked)
         self.authSettingsWidget.manual_test_card.clicked.connect(self.__on_manual_test_clicked)
+        self.authSettingsWidget.reset_stats_card.clicked.connect(self.__on_reset_stats_clicked)
 
         # 连接信号
         self.__connect_signals()
@@ -312,12 +445,15 @@ class AuthInterface(GalleryInterface):
     def __on_auth_success(self, user_id: str):
         """处理认证成功"""
         logger.info(f"GUI收到认证成功信号：{user_id}")
-        self.authSettingsWidget.status_group.update_last_auth_user(user_id)
+        # 使用新的记录方法
+        self.authSettingsWidget.status_group.record_auth_success(user_id)
         InfoBar.success("认证成功", f"用户 {user_id} 认证成功", duration=3000, parent=self)
 
     def __on_auth_failed(self, user_id: str, error_msg: str):
         """处理认证失败"""
         logger.warning(f"GUI收到认证失败信号：{user_id} - {error_msg}")
+        # 使用新的记录方法
+        self.authSettingsWidget.status_group.record_auth_failure(user_id, error_msg)
         InfoBar.warning(
             "认证失败",
             f"用户 {user_id} 认证失败：{error_msg}",
@@ -563,6 +699,32 @@ class AuthInterface(GalleryInterface):
             test_button.setEnabled(True)
 
         InfoBar.error("测试失败", f"测试过程中出现错误：{error_msg}", duration=3000, parent=self)
+
+    def __on_reset_stats_clicked(self):
+        """处理重置统计按钮点击"""
+        from qfluentwidgets import MessageBox, MessageBoxButton
+
+        logger.info("用户点击重置统计按钮")
+
+        # 创建确认对话框
+        msg_box = MessageBox(
+            title="确认重置",
+            content="此操作将清除所有认证历史统计数据，包括：\n• 最后认证用户和时间\n• 认证成功/失败次数\n• 总认证尝试次数\n\n此操作不可撤销，是否继续？",
+            parent=self,
+        )
+
+        # 设置按钮
+        msg_box.yesButton.setText("重置")
+        msg_box.cancelButton.setText("取消")
+
+        # 显示对话框并处理结果
+        if msg_box.exec() == MessageBoxButton.YES:
+            # 用户确认重置
+            logger.info("用户确认重置统计数据")
+            self.authSettingsWidget.status_group.reset_all_statistics()
+            InfoBar.success("重置完成", "所有认证统计数据已清除", duration=3000, parent=self)
+        else:
+            logger.info("用户取消重置操作")
 
     def cleanup(self):
         """清理认证接口资源"""

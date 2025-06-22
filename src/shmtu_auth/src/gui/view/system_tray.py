@@ -124,6 +124,150 @@ class SystemTray:
         else:
             self.window.show()
 
+        # 跨平台窗口激活处理
+        self.__activate_window_cross_platform()
+
+        logger.debug("窗口已还原并激活")
+
+    def __activate_window_cross_platform(self):
+        """跨平台窗口激活处理"""
+        import sys
+
+        try:
+            # 首先使用标准Qt方法
+            self.window.activateWindow()
+            self.window.raise_()
+
+            # 根据不同平台进行特殊处理
+            if sys.platform == "win32":
+                self.__activate_window_windows()
+            elif sys.platform == "darwin":
+                self.__activate_window_macos()
+            elif sys.platform.startswith("linux"):
+                self.__activate_window_linux()
+            else:
+                logger.debug(f"未知平台 {sys.platform}，仅使用Qt标准方法")
+
+        except Exception as e:
+            logger.error(f"跨平台窗口激活失败: {e}")
+            # fallback到基本的Qt方法
+            try:
+                self.window.activateWindow()
+                self.window.raise_()
+            except Exception as fallback_e:
+                logger.error(f"Qt标准激活方法也失败: {fallback_e}")
+
+    def __activate_window_windows(self):
+        """Windows系统特定的窗口激活处理"""
+        try:
+            import ctypes
+
+            # 获取窗口句柄
+            hwnd = int(self.window.winId())
+
+            # 强制窗口置于前台
+            user32 = ctypes.windll.user32
+            kernel32 = ctypes.windll.kernel32
+
+            # 获取当前前台窗口的线程ID
+            current_thread_id = kernel32.GetCurrentThreadId()
+            foreground_window = user32.GetForegroundWindow()
+
+            if foreground_window:
+                foreground_thread_id = user32.GetWindowThreadProcessId(foreground_window, None)
+
+                # 如果不是同一个线程，需要附加到前台线程
+                if foreground_thread_id != current_thread_id:
+                    user32.AttachThreadInput(foreground_thread_id, current_thread_id, True)
+                    user32.SetForegroundWindow(hwnd)
+                    user32.AttachThreadInput(foreground_thread_id, current_thread_id, False)
+                else:
+                    user32.SetForegroundWindow(hwnd)
+            else:
+                user32.SetForegroundWindow(hwnd)
+
+            # 确保窗口可见并激活
+            user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+            user32.SetActiveWindow(hwnd)
+
+            logger.debug("Windows API窗口激活完成")
+
+        except Exception as e:
+            logger.warning(f"Windows API激活窗口失败: {e}")
+
+    def __activate_window_macos(self):
+        """macOS系统特定的窗口激活处理"""
+        try:
+            # 在macOS上，使用NSApp来激活应用
+            try:
+                from AppKit import NSApp
+
+                # 激活应用程序
+                NSApp.activateIgnoringOtherApps_(True)
+                logger.debug("macOS NSApp窗口激活完成")
+
+            except ImportError:
+                # 如果没有PyObjC，尝试使用osascript
+                import subprocess
+                import os
+
+                # 使用AppleScript激活应用
+                script = f"""
+                tell application "System Events"
+                    set frontmost of first process whose unix id is {os.getpid()} to true
+                end tell
+                """
+
+                subprocess.run(["osascript", "-e", script], capture_output=True, timeout=5)
+                logger.debug("macOS osascript窗口激活完成")
+
+        except Exception as e:
+            logger.warning(f"macOS窗口激活失败: {e}")
+
+    def __activate_window_linux(self):
+        """Linux系统特定的窗口激活处理"""
+        try:
+            # 在Linux上，尝试使用X11方法
+            import subprocess
+
+            # 获取窗口ID
+            wid = int(self.window.winId())
+
+            # 尝试使用wmctrl激活窗口
+            try:
+                subprocess.run(["wmctrl", "-i", "-a", str(wid)], capture_output=True, timeout=5, check=True)
+                logger.debug("Linux wmctrl窗口激活完成")
+                return
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
+
+            # 如果wmctrl不可用，尝试使用xdotool
+            try:
+                subprocess.run(["xdotool", "windowactivate", str(wid)], capture_output=True, timeout=5, check=True)
+                logger.debug("Linux xdotool窗口激活完成")
+                return
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                pass
+
+            # 如果以上都不可用，尝试直接使用Qt方法
+            try:
+                # 请求注意力
+                self.window.requestActivate()
+
+                # 尝试设置窗口属性
+                if hasattr(self.window, "setWindowState"):
+                    from PySide6.QtCore import Qt
+
+                    self.window.setWindowState(Qt.WindowState.WindowActive)
+
+                logger.debug("Linux Qt方法窗口激活完成")
+
+            except Exception as qt_e:
+                logger.warning(f"Linux Qt方法激活失败: {qt_e}")
+
+        except Exception as e:
+            logger.warning(f"Linux窗口激活失败: {e}")
+
     def __on_tray_icon_activated(self, reason):
         """托盘图标点击事件处理"""
         logger.debug(f"托盘图标激活事件: {reason}")
@@ -303,6 +447,8 @@ class SystemTray:
         else:
             logger.debug("show_window")
             self.window.show()
+            # 使用跨平台激活方法
+            self.__activate_window_cross_platform()
 
     def test_status_update(self):
         """测试状态更新功能 - 仅用于调试"""

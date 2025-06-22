@@ -210,6 +210,7 @@ class MainWindow(FluentWindow):
         dpi_scale = cfg.get_dpi_ratio()
         logger.info(f"MainWindow DPI Scale: {dpi_scale}")
 
+        # 默认尺寸随DPI缩放
         default_width: int = int(800 * dpi_scale)
         default_height: int = int(600 * dpi_scale)
 
@@ -220,8 +221,12 @@ class MainWindow(FluentWindow):
             default_width = int(960 * dpi_scale)
             default_height = int(840 * dpi_scale)
 
-        min_width: int = int(800 * dpi_scale)
-        min_height: int = int(600 * dpi_scale)
+        # 最小尺寸使用固定的逻辑像素值，不随DPI缩放
+        # 这样可以确保窗口可以缩小到合理的尺寸
+        min_width: int = 640
+        min_height: int = 480
+
+        logger.info(f"Window size - Default: {default_width}x{default_height}, Minimum: {min_width}x{min_height}")
 
         self.setMinimumWidth(min_width)
         self.setMinimumHeight(min_height)

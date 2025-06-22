@@ -76,6 +76,14 @@ class Config(QConfig):
         OptionsValidator(["main", "beta", "dev"]),  # 默认选项，会在运行时动态更新
     )
 
+    # 认证状态记录
+    last_auth_user = ConfigItem("AuthStatus", "LastAuthUser", "")
+    last_auth_time = ConfigItem("AuthStatus", "LastAuthTime", "")
+    total_auth_attempts = ConfigItem("AuthStatus", "TotalAuthAttempts", 0)
+    last_network_status = ConfigItem("AuthStatus", "LastNetworkStatus", False, BoolValidator())
+    auth_success_count = ConfigItem("AuthStatus", "AuthSuccessCount", 0)
+    auth_failure_count = ConfigItem("AuthStatus", "AuthFailureCount", 0)
+
     def get_dpi_ratio(self) -> float:
         dpi_scale = 1.0
         dpi_scale_str = str(self.get(cfg.dpi_scale))
