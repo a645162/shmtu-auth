@@ -1,6 +1,8 @@
 import json
+from typing import Tuple
 
 import requests
+from urllib3 import __version__ as urllib3_version
 
 from shmtu_auth.src.core.core_exp import check_is_connected_retry, get_query_string
 from shmtu_auth.src.core.shmtu_auth_const_value import ServiceType
@@ -8,6 +10,17 @@ from shmtu_auth.src.utils.env import get_env_str
 from shmtu_auth.src.utils.logs import get_logger
 
 logger = get_logger()
+
+if urllib3_version.startswith("2."):
+    logger.warning(
+        "You are using urllib3 version 2.x, which is not fully compatible with this module. "
+        "Please use urllib3 version 1.x for better compatibility.",
+        stacklevel=2,
+    )
+    logger.warning(
+        'Please run: pip install "urllib3<2"',
+        stacklevel=2,
+    )
 
 
 class ShmtuNetAuthCore:
@@ -71,7 +84,7 @@ class ShmtuNetAuthCore:
             self.isLogin = False
         return self.isLogin
 
-    def login(self, user, pwd, password_encrypt=False) -> (bool, str):
+    def login(self, user, pwd, password_encrypt=False) -> Tuple[bool, str]:
         """
         输入参数登入校园网，自动检测当前网络是否认证。
         :param user:登入id
@@ -147,14 +160,14 @@ class ShmtuNetAuthCore:
         try:
             self.allData = json.loads(res.text)
             logger.info(f"Get All Data: {self.allData}")
-        except json.decoder.JSONDecodeError as e:
+        except Exception as e:
             print("数据解析失败，请稍后重试。")
             logger.exception(f"Data Parse Error: {e}")
             print(e)
         print(self.allData)
         return self.allData
 
-    def logout(self) -> (bool, str):
+    def logout(self) -> Tuple[bool, str]:
         """
         登出，操作内会自动获取特征码，海事这个操作没啥用，会自动重连
         :return:元组第一项：是否操作成功；第二项：详细信息

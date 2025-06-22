@@ -70,6 +70,7 @@ $profile_name = "windows_console"
 $project_name_with_profile = "$project_name" + "_" + "$profile_name"
 
 $srcLocation = "$baseLocation\src\$project_name"
+$pkgLocation = "$srcLocation"
 $outputLocation = "$baseLocation\Build\Output\Windows\$project_name_with_profile"
 $tmpLocation = "$outputLocation\tmp"
 
@@ -79,7 +80,7 @@ Write-Host "tmp Location: $tmpLocation"
 
 Write-Host "Building the executable..."
 
-Set-Location $srcLocation
+Set-Location $baseLocation
 
 pyinstaller `
     --onefile `
@@ -92,7 +93,7 @@ pyinstaller `
     --name "$project_name_with_profile" `
     --distpath "$outputLocation" `
     --workpath "$tmpLocation" `
-    .\main_pyinstaller.py
+    $pkgLocation\main_pyinstaller.py
 
 Write-Host "Build Completed"
 

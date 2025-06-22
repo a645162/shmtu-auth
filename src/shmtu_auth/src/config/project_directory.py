@@ -18,7 +18,7 @@ def get_current_py_path() -> str:
 def get_pyfile_base_path() -> str:
     current_dir_path = get_current_py_path()
 
-    for _ in range(2):
+    for _ in range(4):
         current_dir_path = os.path.dirname(current_dir_path)
 
     return current_dir_path
