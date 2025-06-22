@@ -1,5 +1,25 @@
-from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
+"""
+系统托盘类 - 增强版
+
+新增功能：
+1. 网络状态显示：在托盘菜单中显示当前网络连接状态
+2. 实时状态更新：网络状态会实时更新并显示不同的图标
+3. 快速网络测试：测试后会自动更新网络状态显示
+4. 状态同步：认证状态和网络状态保持同步更新
+
+托盘菜单结构：
+- 认证服务: [运行中/已停止] ✓/✗
+- 网络状态: [已连接/未连接/检查失败] ✓/✗/⚠
+- ─────────────────
+- 显示主窗口
+- 快速测试网络
+- ─────────────────
+- 退出程序
+"""
+
+from PySide6.QtGui import QIcon, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QMainWindow, QSystemTrayIcon
+from PySide6.QtCore import QTimer
 from qfluentwidgets import Action, SystemTrayMenu
 from qfluentwidgets import FluentIcon as FIF
 
@@ -19,10 +39,11 @@ class SystemTray:
 
         # 菜单
         self._tray_icon_menu = SystemTrayMenu(parent=self.window)
-        # 菜单项
-        self._restore_action = QAction()
-        self._quit_action = QAction()
-        self._auth_status_action = QAction()
+        # 菜单项 - 先初始化为None，在创建菜单时赋值
+        self._restore_action = None
+        self._quit_action = None
+        self._auth_status_action = None
+        self._network_status_action = None
 
         # 托盘图标
         self.tray_icon = QSystemTrayIcon(self.window)
@@ -49,20 +70,44 @@ class SystemTray:
             self.tray_icon.showMessage(title, message, QSystemTrayIcon.MessageIcon.Information, duration)
             logger.info(f"显示托盘通知: {title} - {message}")
 
-    def update_auth_status(self, is_running: bool, is_online: bool = None):
+    def update_auth_status(self, is_running: bool | None = None, is_online: bool | None = None):
         """更新认证状态显示"""
-        if is_running:
-            self._auth_status_action.setText("认证服务: 运行中 ✓")
-            self.tray_icon.setToolTip("SHMTU Auth - 认证服务运行中")
-        else:
-            self._auth_status_action.setText("认证服务: 已停止 ✗")
-            self.tray_icon.setToolTip("SHMTU Auth - 认证服务已停止")
+        logger.debug(f"更新认证状态: is_running={is_running}, is_online={is_online}")
+        logger.debug(f"当前认证状态Action ID: {id(self._auth_status_action) if self._auth_status_action else 'None'}")
 
-        if is_online is not None:
-            if is_online:
-                self.tray_icon.setToolTip(f"{self.tray_icon.toolTip()} | 网络已连接")
+        # 确保Action对象已创建
+        if self._auth_status_action is None:
+            logger.warning("认证状态Action未创建，无法更新状态")
+            return
+
+        # 处理运行状态更新
+        if is_running is not None:
+            if is_running:
+                self._auth_status_action.setText("认证服务: 运行中 ✓")
+                self.tray_icon.setToolTip("SHMTU Auth - 认证服务运行中")
+                logger.debug("托盘状态已更新为: 运行中")
             else:
-                self.tray_icon.setToolTip(f"{self.tray_icon.toolTip()} | 网络未连接")
+                self._auth_status_action.setText("认证服务: 已停止 ✗")
+                self.tray_icon.setToolTip("SHMTU Auth - 认证服务已停止")
+                logger.debug("托盘状态已更新为: 已停止")
+
+        # 处理在线状态更新（同时更新网络状态Action和工具提示）
+        if is_online is not None:
+            # 更新网络状态Action
+            self.update_network_status_only(is_online)
+
+            # 更新工具提示
+            current_tooltip = self.tray_icon.toolTip()
+            # 移除之前的网络状态信息
+            if " | 网络" in current_tooltip:
+                current_tooltip = current_tooltip.split(" | 网络")[0]
+
+            if is_online:
+                self.tray_icon.setToolTip(f"{current_tooltip} | 网络已连接")
+                logger.debug("托盘提示已更新: 网络已连接")
+            else:
+                self.tray_icon.setToolTip(f"{current_tooltip} | 网络未连接")
+                logger.debug("托盘提示已更新: 网络未连接")
 
     def __restore_from_tray(self):
         logger.info("restore_from_tray")
@@ -109,6 +154,10 @@ class SystemTray:
         self._auth_status_action = Action(FIF.INFO, "认证服务: 未知")
         self._auth_status_action.setEnabled(False)  # 只用于显示状态，不可点击
 
+        # 网络状态显示
+        self._network_status_action = Action(FIF.WIFI, "网络状态: 未知")
+        self._network_status_action.setEnabled(False)  # 只用于显示状态，不可点击
+
         self._restore_action = Action(FIF.LINK, "显示主窗口")
         self._restore_action.triggered.connect(lambda: self.__restore_from_tray())
 
@@ -121,11 +170,18 @@ class SystemTray:
 
         # 添加到菜单
         self._tray_icon_menu.addAction(self._auth_status_action)
+        self._tray_icon_menu.addAction(self._network_status_action)
         self._tray_icon_menu.addSeparator()
         self._tray_icon_menu.addAction(self._restore_action)
         self._tray_icon_menu.addAction(self._quick_test_action)
         self._tray_icon_menu.addSeparator()
         self._tray_icon_menu.addAction(self._quit_action)
+
+        logger.debug(f"托盘菜单创建完成，认证状态Action ID: {id(self._auth_status_action)}")
+        logger.debug(f"网络状态Action ID: {id(self._network_status_action)}")
+
+        # 初始化网络状态
+        self.__update_network_status()
 
     def __quick_network_test(self):
         """快速网络测试"""
@@ -135,6 +191,9 @@ class SystemTray:
 
             is_connected = check_is_connected()
 
+            # 更新网络状态显示
+            self.update_network_status_only(is_connected)
+
             if is_connected:
                 self.show_notification("网络测试", "网络连接正常 ✓")
             else:
@@ -143,6 +202,10 @@ class SystemTray:
         except Exception as e:
             logger.error(f"快速网络测试失败: {str(e)}")
             self.show_notification("网络测试", f"测试失败: {str(e)}")
+            # 测试失败时显示为检查失败状态
+            if self._network_status_action:
+                self._network_status_action.setText("网络状态: 检查失败 ⚠")
+                self._network_status_action.setIcon(FIF.LABEL)
 
     def __quit_application(self):
         """退出应用程序"""
@@ -153,8 +216,6 @@ class SystemTray:
             self.window.force_quit()
 
             # 等待一下，然后检查是否退出
-            from PySide6.QtCore import QTimer
-
             QTimer.singleShot(1000, self.__force_quit_if_needed)
 
         except Exception as e:
@@ -189,3 +250,85 @@ class SystemTray:
         else:
             logger.debug("show_window")
             self.window.show()
+
+    def test_status_update(self):
+        """测试状态更新功能 - 仅用于调试"""
+        logger.info("开始测试托盘状态更新...")
+
+        # 测试运行状态更新
+        logger.info("测试更新为运行中...")
+        self.update_auth_status(is_running=True)
+
+        # 等待2秒
+        QTimer.singleShot(2000, lambda: self._test_stopped_status())
+
+    def _test_stopped_status(self):
+        """测试停止状态"""
+        logger.info("测试更新为已停止...")
+        self.update_auth_status(is_running=False)
+
+        # 测试在线状态
+        QTimer.singleShot(2000, lambda: self._test_online_status())
+
+    def _test_online_status(self):
+        """测试在线状态"""
+        logger.info("测试更新网络状态...")
+        self.update_auth_status(is_running=None, is_online=True)
+
+        # 测试离线状态
+        QTimer.singleShot(2000, lambda: self._test_offline_status())
+
+    def _test_offline_status(self):
+        """测试离线状态"""
+        logger.info("测试更新为离线状态...")
+        self.update_auth_status(is_running=None, is_online=False)
+        logger.info("托盘状态测试完成")
+
+    def __update_network_status(self):
+        """更新网络状态显示"""
+        try:
+            from shmtu_auth.src.core.core_exp import check_is_connected
+
+            logger.debug("检查网络连接状态...")
+            is_connected = check_is_connected()
+
+            if self._network_status_action is None:
+                logger.warning("网络状态Action未创建，无法更新状态")
+                return
+
+            if is_connected:
+                self._network_status_action.setText("网络状态: 已连接 ✓")
+                self._network_status_action.setIcon(FIF.WIFI)
+                logger.debug("网络状态已更新为: 已连接")
+            else:
+                self._network_status_action.setText("网络状态: 未连接 ✗")
+                self._network_status_action.setIcon(FIF.DISCONNECT)
+                logger.debug("网络状态已更新为: 未连接")
+
+        except Exception as e:
+            logger.error(f"更新网络状态失败: {str(e)}")
+            if self._network_status_action:
+                self._network_status_action.setText("网络状态: 检查失败 ⚠")
+                self._network_status_action.setIcon(FIF.LABEL)
+
+    def update_network_status_only(self, is_online: bool):
+        """仅更新网络状态显示（不影响认证状态）"""
+        logger.debug(f"更新网络状态: is_online={is_online}")
+
+        if self._network_status_action is None:
+            logger.warning("网络状态Action未创建，无法更新状态")
+            return
+
+        if is_online:
+            self._network_status_action.setText("网络状态: 已连接 ✓")
+            self._network_status_action.setIcon(FIF.WIFI)
+            logger.debug("网络状态已更新为: 已连接")
+        else:
+            self._network_status_action.setText("网络状态: 未连接 ✗")
+            self._network_status_action.setIcon(FIF.DISCONNECT)
+            logger.debug("网络状态已更新为: 未连接")
+
+    def refresh_network_status(self):
+        """刷新网络状态（公共方法，可被外部调用）"""
+        logger.info("手动刷新网络状态")
+        self.__update_network_status()

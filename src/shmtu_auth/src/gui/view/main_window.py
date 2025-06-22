@@ -84,9 +84,11 @@ class MainWindow(FluentWindow):
     def __connect_tray_signals(self):
         """连接托盘相关信号"""
         # 连接认证状态信号到托盘更新
-        signal_bus.signal_auth_thread_started.connect(lambda: self.system_tray.update_auth_status(True))
-        signal_bus.signal_auth_thread_stopped.connect(lambda: self.system_tray.update_auth_status(False))
-        signal_bus.signal_auth_status_changed.connect(lambda is_online: self.system_tray.update_auth_status(None, is_online))
+        signal_bus.signal_auth_thread_started.connect(lambda: self.system_tray.update_auth_status(is_running=True))
+        signal_bus.signal_auth_thread_stopped.connect(lambda: self.system_tray.update_auth_status(is_running=False))
+        signal_bus.signal_auth_status_changed.connect(
+            lambda is_online: self.system_tray.update_auth_status(is_running=None, is_online=is_online)
+        )
         signal_bus.signal_auth_success.connect(
             lambda user_id: self.system_tray.show_notification("认证成功", f"用户 {user_id} 认证成功")
         )
