@@ -1,6 +1,7 @@
 from typing import List
 
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import QRegularExpression, Qt, Signal
+from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from qfluentwidgets import (
     InfoBarIcon,
@@ -68,21 +69,27 @@ class UserInfoEditWidget(QWidget):
         self.__init_layout()
 
     def __init_widget(self):
+        # 定义统一的输入框宽度
+        input_width = 240
+
         self.input_user_id = LineEdit(self)
         self.input_user_id.setText("")
-        self.input_user_id.setPlaceholderText("请输入学号")
+        self.input_user_id.setPlaceholderText("请输入12位学号")
         self.input_user_id.setClearButtonEnabled(True)
-        # 只允许数字
-        self.input_user_id.setInputMask("0" * 12)
+        self.input_user_id.setFixedWidth(input_width)
+        # 只允许数字，使用正则验证器代替输入掩码
+        digit_validator = QRegularExpressionValidator(QRegularExpression(r"^\d{0,12}$"))
+        self.input_user_id.setValidator(digit_validator)
         self.input_user_id.setMaxLength(12)
 
         self.input_user_name = LineEdit(self)
         self.input_user_name.setText("")
         self.input_user_name.setPlaceholderText("请输入姓名")
         self.input_user_name.setClearButtonEnabled(True)
+        self.input_user_name.setFixedWidth(input_width)
 
         self.input_password = PasswordLineEdit(self)
-        self.input_password.setFixedWidth(230)
+        self.input_password.setFixedWidth(input_width)
         self.input_password.setPlaceholderText("请输入密码")
 
         self.checkbox_support_type = ListCheckboxWidgets(
@@ -94,6 +101,7 @@ class UserInfoEditWidget(QWidget):
         )
 
         self.widget_expire_date = FDatePicker(self)
+        self.widget_expire_date.setFixedWidth(input_width)
 
         self.button_save = FPushButton(self, "保存修改")
         self.button_save.clicked.connect(self.__button_save_clicked)
