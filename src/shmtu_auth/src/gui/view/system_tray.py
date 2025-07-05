@@ -208,8 +208,8 @@ class SystemTray:
 
             except ImportError:
                 # 如果没有PyObjC，尝试使用osascript
-                import subprocess
                 import os
+                import subprocess
 
                 # 使用AppleScript激活应用
                 script = f"""

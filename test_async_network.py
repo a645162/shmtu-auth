@@ -9,16 +9,20 @@ def test_imports():
     try:
         print("测试AsyncNetworkTester导入...")
         from shmtu_auth.src.gui.utils.async_network_test import AsyncNetworkTester, NetworkTestManager
+        print(AsyncNetworkTester)
+        print(NetworkTestManager)
 
         print("✅ AsyncNetworkTester导入成功")
 
         print("测试SystemTray导入...")
         from shmtu_auth.src.gui.view.system_tray import SystemTray
+        print(SystemTray)
 
         print("✅ SystemTray导入成功")
 
         print("测试MainWindow导入...")
         from shmtu_auth.src.gui.view.main_window import MainWindow
+        print(MainWindow)
 
         print("✅ MainWindow导入成功")
 

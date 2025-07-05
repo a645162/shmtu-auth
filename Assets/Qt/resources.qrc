@@ -11,9 +11,12 @@
     <qresource prefix="/project">
         <file alias="logo_shmtu">image/Project/logopng.fw.png</file>
         <file alias="logo_terminal">image/Project/shmtuTerminalLogo.png</file>
+        <file alias="logo_csharp">image/Project/c-sharp-c-seeklogo.svg</file>
         <file alias="logo_golang">image/Project/Go-Logo_Aqua.png</file>
         <file alias="logo_kotlin">image/Project/Kotlin Full Color Logo Mark RGB.png</file>
         <file alias="logo_gpu_dashboard">image/Project/gpu-dashboard.png</file>
+        <file alias="logo_camera">image/Project/camera.svg</file>
+        <file alias="logo_puzzle">image/Project/puzzle.svg</file>
     </qresource>
 
     <qresource prefix="/about">

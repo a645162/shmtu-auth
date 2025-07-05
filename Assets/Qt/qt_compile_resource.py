@@ -3,9 +3,21 @@ import os
 # 设置base_dir为当前py文件所在目录
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
+# 设置base_dir为程序的工作目录
+os.chdir(base_dir)
+
+# Find Project Root Directory
+project_base_dir= base_dir
+while not os.path.exists(os.path.join(project_base_dir, "pyproject.toml")):
+    project_base_dir = os.path.dirname(project_base_dir)
+
 # 计算输入和输出文件的绝对路径
 input_qrc_path = os.path.join(base_dir, "resources.qrc")
-output_py_path = os.path.join(base_dir, "../../src/shmtu_auth/src/gui/resource/resources.py")
+output_py_path = os.path.join(project_base_dir, "src/shmtu_auth/src/gui/resource/resources.py")
+
+# 将斜杠和反斜杠统一
+input_qrc_path = os.path.normpath(input_qrc_path)
+output_py_path = os.path.normpath(output_py_path)
 
 # Convert relative paths to absolute paths
 input_qrc_path = os.path.abspath(input_qrc_path)

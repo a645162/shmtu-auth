@@ -287,6 +287,7 @@ class AuthStatusCard(SettingCardGroup):
     def update_last_auth_user(self, user_id: str):
         """更新最后认证用户"""
         import datetime
+
         from shmtu_auth.src.gui.common.config import cfg
 
         # 获取当前时间

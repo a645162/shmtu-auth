@@ -231,19 +231,49 @@ class HomeInterface(ScrollArea):
 
         # 为上海海事大学开发的项目
         shmtu_project_view_group = SampleCardView("数字海大系列(非官方,个人学习使用)", self.view)
-        shmtu_project_view_group.addSampleCard(
-            icon=":/project/logo_terminal",
-            title="用户终端(非官方)",
-            content="数字海大的用户终端(第三方)\n主要包括账单获取、账单分析等功能。",
-            index=3,
-            url="https://github.com/a645162/SHMTU-Terminal-Wails",
-        )
+        # shmtu_project_view_group.addSampleCard(
+        #     icon=":/project/logo_terminal",
+        #     title="用户终端(非官方)",
+        #     content="数字海大的用户终端(第三方)\n主要包括账单获取、账单分析等功能。",
+        #     index=3,
+        #     url="https://github.com/a645162/SHMTU-Terminal-Wails",
+        # )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_shmtu",
             title="验证码识别服务器(C++)",
             content="自动识别统一认证平台的验证码。",
             index=4,
             url="https://github.com/a645162/shmtu-cas-ocr-server",
+        )
+
+        shmtu_project_view_group.addSampleCard(
+            icon=":/project/logo_shmtu",
+            title="验证码识别Demo-Windows",
+            content="Win32+WPF+WinForms\n自动识别统一认证平台的验证码。",
+            index=4,
+            url="https://github.com/a645162/shmtu-cas-ocr-demo-windows",
+        )
+        shmtu_project_view_group.addSampleCard(
+            icon=":/project/logo_shmtu",
+            title="验证码识别Demo-Qt",
+            content="Windows+macOS+Linux\n自动识别统一认证平台的验证码。",
+            index=4,
+            url="https://github.com/a645162/shmtu-cas-ocr-demo-qt",
+        )
+        shmtu_project_view_group.addSampleCard(
+            icon=":/project/logo_shmtu",
+            title="验证码识别Demo-Android",
+            content="自动识别统一认证平台的验证码。",
+            index=4,
+            url="https://github.com/a645162/shmtu-cas-demo-android",
+        )
+
+        shmtu_project_view_group.addSampleCard(
+            icon=":/project/logo_csharp",
+            title="登录流程(.Net)",
+            content="统一认证平台的登录流程\n包括调用识别验证码接口。",
+            index=5,
+            url="https://github.com/a645162/shmtu-dotnet-lib",
         )
         shmtu_project_view_group.addSampleCard(
             icon=":/project/logo_golang",
@@ -259,10 +289,25 @@ class HomeInterface(ScrollArea):
             index=5,
             url="https://github.com/a645162/shmtu-cas-kotlin",
         )
+
         self.vBoxLayout.addWidget(shmtu_project_view_group)
 
         # 为课题组开发的项目
         group_project_view_group = SampleCardView("为课题组开发的项目", self.view)
+        group_project_view_group.addSampleCard(
+            icon=":/project/logo_camera",
+            title="DahuaCameraMaster",
+            content="大华摄像机控制软件",
+            index=4,
+            url="https://github.com/a645162/DahuaCameraMaster",
+        )
+        group_project_view_group.addSampleCard(
+            icon=":/project/logo_puzzle",
+            title="PicPuzzle",
+            content="拼图工具",
+            index=4,
+            url="https://github.com/a645162/PicPuzzle",
+        )
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU任务通知工具",
@@ -273,8 +318,15 @@ class HomeInterface(ScrollArea):
         group_project_view_group.addSampleCard(
             icon=":/project/logo_gpu_dashboard",
             title="GPU看板",
-            content="GPU任务面板基于Vue3 + Element Plus + Pinia开发，后端为显卡监控脚本的Flask。",
+            content="GPU任务面板基于 React+ Ant Design 开发\n后端为显卡监控脚本的Flask。",
             index=4,
-            url="https://github.com/a645162/nvi-notify",
+            url="https://github.com/a645162/group-center-dashboard",
+        )
+        group_project_view_group.addSampleCard(
+            icon=":/project/logo_gpu_dashboard",
+            title="GPU看板",
+            content="GPU任务面板基于 Vue3 + Element Plus + Pinia 开发，后端为显卡监控脚本的Flask。",
+            index=4,
+            url="https://github.com/a645162/web-gpu-dashboard",
         )
         self.vBoxLayout.addWidget(group_project_view_group)
