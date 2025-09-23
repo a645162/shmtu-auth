@@ -7,7 +7,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(base_dir)
 
 # Find Project Root Directory
-project_base_dir= base_dir
+project_base_dir = base_dir
 while not os.path.exists(os.path.join(project_base_dir, "pyproject.toml")):
     project_base_dir = os.path.dirname(project_base_dir)
 
@@ -34,6 +34,11 @@ ret = os.system(f'pyside6-rcc "{input_qrc_path}" -o "{output_py_path}"')
 
 if ret != 0:
     print("Failed!")
+    exit(1)
+
+# Check target file
+if not os.path.exists(output_py_path):
+    print("Failed!(Target file not found)")
     exit(1)
 
 print("Done!")

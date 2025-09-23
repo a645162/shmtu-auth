@@ -9,6 +9,10 @@ dev-dependencies = [
   "black",
   "isort",
 ]
+extra-index-url = [
+  "https://pypi.org/simple/",
+]
+index-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
 
 [project]
 authors = [
@@ -43,3 +47,46 @@ where = ["src"]
 
 [tool.setuptools.dynamic]
 version = {attr = "shmtu_auth.__version__"}
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pylint",
+  "flake8",
+  "ruff",
+  "pyinstaller",
+  "setuptools",
+  "wheel",
+  "twine",
+  "pillow",
+  "pytz",
+]
+gui = [
+  "PySide6",
+  "PySideSix-Frameless-Window>=0.3.1",
+  "darkdetect",
+  "PySide6-Fluent-Widgets[full]",
+]
+
+[dependency-groups]
+build = ["pyinstaller", "setuptools", "wheel", "twine"]
+dev = [
+  "pytest",
+  "pylint",
+  "flake8",
+  "ruff",
+  "pyinstaller",
+  "setuptools",
+  "wheel",
+  "twine",
+  "pillow",
+  "pytz",
+]
+gui = [
+  "PySide6",
+  "PySideSix-Frameless-Window>=0.3.1",
+  "darkdetect",
+  "PySide6-Fluent-Widgets[full]",
+]
+lint = ["flake8", "ruff", "pylint"]
+test = ["pytest", "pytest-cov"]
