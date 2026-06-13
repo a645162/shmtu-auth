@@ -15,14 +15,14 @@ class ShmtuNetAuth(ShmtuNetAuthCore):
             user_pwd = user_3[1]
             is_encrypt = user_3[2]
 
-            status = self.login(user_id, user_pwd, is_encrypt)
+            status = self.login(user_id, user_pwd, is_encrypt, skip_network_check=True)
 
             if status[0]:
                 return True
             else:
                 encrypt_id = convert_number_to_star(user_id)
-                logger.exception(f"Login failed:{encrypt_id}")
-                logger.exception(f"{status[1]}")
+                logger.warning(f"Login failed: {encrypt_id}")
+                logger.warning(f"{status[1]}")
 
         return False
 

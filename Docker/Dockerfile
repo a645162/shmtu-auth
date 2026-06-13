@@ -1,41 +1,35 @@
 FROM python:3.12-alpine
 
-MAINTAINER Haomin Kong
+LABEL maintainer="Haomin Kong" \
+      author="Haomin Kong" \
+      version="3" \
+      description="SHMTU Campus Network Auto Auth - Full"
 
-LABEL AUTHOR="Haomin Kong" VERSION=3
-ENV DOCKER_MODE="Haomin Kong"
-
-ENV BASE_PATH="/usr/local/shmtu/shmtu-auth/shmtu_auth"
+ENV DOCKER_MODE="Haomin Kong" \
+    BASE_PATH="/usr/local/shmtu/shmtu-auth/shmtu_auth" \
+    LOGS_PATH="/usr/local/shmtu/shmtu-auth/shmtu_auth/logs"
 
 WORKDIR "$BASE_PATH"
 
-ENV LOGS_PATH="$BASE_PATH/logs"
-
-# Copy Directory
+# Copy source code
 COPY src/shmtu_auth/ "$BASE_PATH/"
-
-# Copy Files
 COPY requirements.txt $BASE_PATH/requirements.txt
 
-RUN    sed -i 's/\r$//' $BASE_PATH/*.sh \
+# Setup
+RUN sed -i 's/\r$//' $BASE_PATH/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/scripts/*.sh \
     && sed -i 's/\r$//' $BASE_PATH/config/*.sh \
     && rm -f $BASE_PATH/config.toml \
     && rm -f $BASE_PATH/config/config.toml \
-    && apk add --no-cache bash \
+    && apk add --no-cache bash tzdata \
     && pip3 --no-cache-dir install -r $BASE_PATH/requirements.txt \
     && pip3 uninstall setuptools -y \
     && pip3 uninstall pip -y \
     && rm -f $BASE_PATH/requirements.txt \
-    && rm -rf ~/.cache/pip \
-    && rm -rf /tmp/* \
+    && rm -rf ~/.cache/pip /tmp/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo Haomin Kong >> /docker_author \
     && echo "Asia/Shanghai" > /etc/timezone \
-    && mkdir $BASE_PATH/logs \
+    && mkdir -p $BASE_PATH/logs \
     && chmod +x "$BASE_PATH/start.sh"
 
 ENTRYPOINT ["/usr/local/shmtu/shmtu-auth/shmtu_auth/start.sh"]
-
-# Only for debug use!
-#ENTRYPOINT ["top"]

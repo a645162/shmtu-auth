@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  shmtu-auth-headless:
+    build:
+      context: ..
+      dockerfile: docker_headless/Dockerfile
+    image: shmtu-auth-headless:local
+    container_name: shmtu-auth-headless
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      # 用户配置（多个学号用分号分隔）
+      - SHMTU_AUTH_USER_LIST=your_student_id
+      - SHMTU_AUTH_USER_PWD_your_student_id=your_password
+      # 检测间隔（秒）
+      - SHMTU_AUTH_CHECK_INTERVAL=60
+      # 可选：自定义探测URL
+      # - SHMTU_AUTH_PROBE_URL=http://1.1.1.1
+      # 可选：自定义User-Agent
+      # - SHMTU_AUTH_USER_AGENT=Mozilla/5.0...
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
