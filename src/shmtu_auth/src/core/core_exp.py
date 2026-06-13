@@ -1,8 +1,6 @@
-from time import sleep as time_sleep
-
 from shmtu_auth.src.core.get_query_string_requests import (
     get_query_string_by_url,
-    is_connect_by_google,
+    is_connect_by_sites,
 )
 from shmtu_auth.src.core.query_string import handle_query_string
 from shmtu_auth.src.core.shmtu_auth_const_value import get_default_query_string
@@ -12,26 +10,29 @@ logger = get_logger()
 
 
 def check_is_connected() -> bool:
-    return is_connect_by_google()
+    return is_connect_by_sites()
 
 
 def check_is_connected_retry(
     retry_times: int = 3,
     wait_time: int = 5,
 ) -> bool:
-    for _ in range(retry_times):
-        if check_is_connected():
-            return True
-        else:
-            # logger.info("[SHMTU Auth] Checking internet connection failed!")
-            # logger.info(f"Waiting for {wait_time} seconds...")
-            time_sleep(wait_time)
-            # logger.info(f"[SHMTU Auth] Retrying({i + 1})...")
-    return False
+    # Keep signature for compatibility, but do a single fast probe without retry/wait.
+    _ = retry_times
+    _ = wait_time
+    return check_is_connected()
 
 
-def get_query_string() -> str:
-    try_str: str = get_query_string_by_url().strip()
+def get_query_string(skip_connectivity_check: bool = False) -> str:
+    """获取认证URL和query string。
+
+    Args:
+        skip_connectivity_check: 是否跳过网络连通性检测（外部已检测过时设为True）
+
+    Returns:
+        格式: 'portal_url|query_string' 或者只返回 query_string(兼容旧逻辑)
+    """
+    try_str: str = get_query_string_by_url(skip_connectivity_check=skip_connectivity_check).strip()
 
     try_str = handle_query_string(try_str)
 

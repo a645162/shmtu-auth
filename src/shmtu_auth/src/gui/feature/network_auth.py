@@ -50,15 +50,8 @@ class AuthThread(threading.Thread):
         self.shmtu_auth_obj = ShmtuNetAuth()
 
     def check_is_connected_retry(self):
-        for _ in range(self.check_internet_retry_times):
-            if check_is_connected():
-                return True
-            else:
-                for _ in range(self.check_internet_retry_wait_time):
-                    if not self.need_work:
-                        return False
-                    time_sleep(1)
-        return False
+        # Fast probe only: no retry/wait before entering auth flow.
+        return check_is_connected()
 
     def main_loop(self):
         # 检查状态
@@ -91,7 +84,12 @@ class AuthThread(threading.Thread):
             # 发送认证尝试信号
             auth_attempt(user.user_id)
 
-            login_result = self.shmtu_auth_obj.login(user.user_id, user.password, user.is_encrypted)
+            login_result = self.shmtu_auth_obj.login(
+                user.user_id,
+                user.password,
+                user.is_encrypted,
+                skip_network_check=True,
+            )
 
             if login_result[0]:  # 登录成功
                 auth_success(user.user_id)

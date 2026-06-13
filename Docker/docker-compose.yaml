@@ -1,18 +1,26 @@
-version: "3"
+version: "3.8"
+
 services:
-  shmtu_auth_1: #第1个
-    # image: a645162/shmtu_auth:latest
-    image: registry.cn-shanghai.aliyuncs.com/a645162/shmtu-auth:latest
-    restart: always
-    container_name: shmtu_auth
+  shmtu-auth:
+    build:
+      context: ..
+      dockerfile: Docker/Dockerfile
+    image: shmtu-auth:local
+    container_name: shmtu-auth
+    restart: unless-stopped
     network_mode: host
     tty: true
     volumes:
-      - /root/shmtu/auth/logs:/usr/local/shmtu/shmtu-auth/shmtu_auth/logs
+      - ./logs:/usr/local/shmtu/shmtu-auth/shmtu_auth/logs
     environment:
-      # 1、每个学生之间使用&隔开
-      # 2、每个学生，请提供其对应密码
-      # 3、请将大括号一并删除
-      - SHMTU_AUTH_USER_LIST=学号1;学号2
-      - SHMTU_AUTH_USER_PWD_学号1=学号1的密码
-      - SHMTU_AUTH_USER_PWD_学号2=学号2的密码
+      # 用户配置（多个学号用分号分隔）
+      - SHMTU_AUTH_USER_LIST=your_student_id
+      - SHMTU_AUTH_USER_PWD_your_student_id=your_password
+      # 检测间隔（秒）
+      - SHMTU_AUTH_TIME_INTERVAL=60
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

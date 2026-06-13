@@ -13,7 +13,7 @@ from shmtu_auth.src.utils.program_env_config import (
 logger = get_logger()
 
 # 检测时间间隔，单位：秒
-time_interval = 60
+time_interval = 10
 
 env_time_interval = get_env_int("SHMTU_AUTH_TIME_INTERVAL", -1)
 if env_time_interval > 0:
@@ -42,12 +42,18 @@ def monitor_auth():
     logger.info("Auth status monitor started.")
 
     while True:
-        if not net_auth.check_is_online():
+        logger.info("Checking network status...")
+        is_online = net_auth.check_is_online()
+        if not is_online:
+            logger.info("Network offline, trying to login...")
             if net_auth.login_by_list(user_list_3):
                 logger.info("Login success.")
             else:
                 logger.error("Login failed.")
+        else:
+            logger.info("Network is online, no action needed.")
 
+        logger.info(f"Sleeping for {time_interval} seconds...")
         time_sleep(time_interval)
 
 
